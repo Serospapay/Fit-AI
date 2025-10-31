@@ -70,7 +70,7 @@ export default function DashboardPage() {
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3 flex-wrap">
               <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                💪 Кишеньковий тренер
+                Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3 flex-wrap">
                 <a href="/exercises" className="text-decoration-none text-dark">
@@ -105,43 +105,43 @@ export default function DashboardPage() {
               {/* Stats Overview Cards */}
               <Row className="g-4 mb-4">
                 <Col md={3} sm={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body className="text-center">
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
+                    <Card.Body className="text-center p-4">
                       <div className="display-4 fw-bold text-primary mb-2">{stats.totalWorkouts || 0}</div>
-                      <div className="text-muted">Всього тренувань</div>
+                      <div className="text-muted fw-semibold">Всього тренувань</div>
                       <small className="text-muted">За 30 днів</small>
                     </Card.Body>
                   </Card>
                 </Col>
                 <Col md={3} sm={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body className="text-center">
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift" style={{ borderTop: '3px solid #10b981' }}>
+                    <Card.Body className="text-center p-4">
                       <div className="display-4 fw-bold text-success mb-2">
                         {stats.workoutStreak || 0}
                       </div>
-                      <div className="text-muted">Днів підряд</div>
-                      <small className="text-muted">🔥 Серія</small>
+                      <div className="text-muted fw-semibold">Днів підряд</div>
+                      <small className="text-muted">Серія</small>
                     </Card.Body>
                   </Card>
                 </Col>
                 <Col md={3} sm={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body className="text-center">
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift" style={{ borderTop: '3px solid #f59e0b' }}>
+                    <Card.Body className="text-center p-4">
                       <div className="display-4 fw-bold text-warning mb-2">
                         {stats.avgRating?.toFixed(1) || '0'}
                       </div>
-                      <div className="text-muted">Середня оцінка</div>
+                      <div className="text-muted fw-semibold">Середня оцінка</div>
                       <small className="text-muted">З 5.0</small>
                     </Card.Body>
                   </Card>
                 </Col>
                 <Col md={3} sm={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body className="text-center">
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift" style={{ borderTop: '3px solid #06b6d4' }}>
+                    <Card.Body className="text-center p-4">
                       <div className="display-4 fw-bold text-info mb-2">
                         {Math.round(stats.avgDuration || 0)}
                       </div>
-                      <div className="text-muted">Хвилин в середньому</div>
+                      <div className="text-muted fw-semibold">Хвилин в середньому</div>
                       <small className="text-muted">На тренування</small>
                     </Card.Body>
                   </Card>
@@ -151,37 +151,37 @@ export default function DashboardPage() {
               {/* Weekly and Monthly Comparison */}
               <Row className="g-4 mb-4">
                 <Col md={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body>
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
+                    <Card.Body className="p-4">
                       <h5 className="fw-bold mb-3">
-                        <i className="bi bi-calendar-week me-2"></i>
+                        <i className="bi bi-calendar-week me-2 text-primary"></i>
                         Статистика за тиждень
                       </h5>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span className="text-muted">Тренувань:</span>
-                        <Badge bg="primary" className="fs-6">{stats.weekWorkouts || 0}</Badge>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <span className="text-muted fw-semibold">Тренувань:</span>
+                        <Badge bg="primary" className="fs-6 px-3 py-2">{stats.weekWorkouts || 0}</Badge>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
-                        <span className="text-muted">Середня тривалість:</span>
-                        <span className="fw-bold">{Math.round(stats.weekAvgDuration || 0)} хв</span>
+                        <span className="text-muted fw-semibold">Середня тривалість:</span>
+                        <span className="fw-bold text-primary">{Math.round(stats.weekAvgDuration || 0)} хв</span>
                       </div>
                     </Card.Body>
                   </Card>
                 </Col>
                 <Col md={6}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body>
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
+                    <Card.Body className="p-4">
                       <h5 className="fw-bold mb-3">
-                        <i className="bi bi-calendar-month me-2"></i>
+                        <i className="bi bi-calendar-month me-2 text-success"></i>
                         Статистика за місяць
                       </h5>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span className="text-muted">Тренувань:</span>
-                        <Badge bg="success" className="fs-6">{stats.monthWorkouts || 0}</Badge>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <span className="text-muted fw-semibold">Тренувань:</span>
+                        <Badge bg="success" className="fs-6 px-3 py-2">{stats.monthWorkouts || 0}</Badge>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
-                        <span className="text-muted">Середня тривалість:</span>
-                        <span className="fw-bold">{Math.round(stats.monthAvgDuration || 0)} хв</span>
+                        <span className="text-muted fw-semibold">Середня тривалість:</span>
+                        <span className="fw-bold text-success">{Math.round(stats.monthAvgDuration || 0)} хв</span>
                       </div>
                     </Card.Body>
                   </Card>
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                                 {new Date(workout.date).toLocaleDateString('uk-UA')}
                               </small>
                               {workout.rating && (
-                                <Badge bg="warning">{workout.rating}⭐</Badge>
+                                <Badge bg="warning">{workout.rating}</Badge>
                               )}
                             </div>
                             {workout.duration && (
@@ -286,9 +286,11 @@ export default function DashboardPage() {
               {/* Quick Actions */}
               <Row className="g-4">
                 <Col md={4}>
-                  <Card className="border-0 shadow-sm h-100 text-center">
+                  <Card className="border-0 shadow-sm h-100 text-center card-hover-lift">
                     <Card.Body className="p-4">
-                      <div className="display-1 mb-3">➕</div>
+                      <div className="display-3 mb-3">
+                        <i className="bi bi-plus-circle-fill text-primary"></i>
+                      </div>
                       <h5 className="fw-bold mb-3">Додати тренування</h5>
                       <p className="text-muted mb-3">Записати нове тренування</p>
                       <Button variant="primary" className="w-100" href="/workouts/new">
@@ -298,9 +300,11 @@ export default function DashboardPage() {
                   </Card>
                 </Col>
                 <Col md={4}>
-                  <Card className="border-0 shadow-sm h-100 text-center">
+                  <Card className="border-0 shadow-sm h-100 text-center card-hover-lift">
                     <Card.Body className="p-4">
-                      <div className="display-1 mb-3">💪</div>
+                      <div className="display-3 mb-3">
+                        <i className="bi bi-dumbbell-fill text-secondary"></i>
+                      </div>
                       <h5 className="fw-bold mb-3">Перегляд вправ</h5>
                       <p className="text-muted mb-3">Бібліотека вправ</p>
                       <Button variant="outline-primary" className="w-100" href="/exercises">
@@ -310,9 +314,11 @@ export default function DashboardPage() {
                   </Card>
                 </Col>
                 <Col md={4}>
-                  <Card className="border-0 shadow-sm h-100 text-center">
+                  <Card className="border-0 shadow-sm h-100 text-center card-hover-lift">
                     <Card.Body className="p-4">
-                      <div className="display-1 mb-3">📊</div>
+                      <div className="display-3 mb-3">
+                        <i className="bi bi-calculator-fill text-info"></i>
+                      </div>
                       <h5 className="fw-bold mb-3">Калькулятори</h5>
                       <p className="text-muted mb-3">Розрахувати показники</p>
                       <Button variant="outline-primary" className="w-100" href="/calculators">
@@ -326,7 +332,9 @@ export default function DashboardPage() {
           ) : (
             <Card className="border-0 shadow-sm">
               <Card.Body className="text-center py-5">
-                <div className="display-1 mb-4">👋</div>
+                <div className="display-3 mb-4">
+                  <i className="bi bi-emoji-smile text-primary"></i>
+                </div>
                 <h3 className="fw-bold mb-3">Вітаємо!</h3>
                 <p className="text-muted mb-4">Додайте перше тренування та почніть відстежувати свій прогрес</p>
                 <Button variant="primary" size="lg" href="/workouts/new">

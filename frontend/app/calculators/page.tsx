@@ -87,7 +87,7 @@ export default function CalculatorsPage() {
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
               <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                💪 Кишеньковий тренер
+                Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
                 <a href="/dashboard" className="text-decoration-none text-dark">Dashboard</a>

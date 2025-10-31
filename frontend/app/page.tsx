@@ -32,7 +32,7 @@ export default function Home() {
       >
         <Container>
           <Navbar.Brand href="#" className="fw-bold fs-3 text-gradient">
-            💪 Кишеньковий тренер
+            Кишеньковий тренер
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -406,7 +406,7 @@ export default function Home() {
         <Container>
           <Row>
             <Col md={4} className="mb-4">
-              <h5 className="fw-bold mb-3">💪 Кишеньковий тренер</h5>
+              <h5 className="fw-bold mb-3">Кишеньковий тренер</h5>
               <p className="text-muted">
                 Ваш надійний партнер на шляху до здорового способу життя. 
                 Відстежуйте, аналізуйте та досягайте своїх цілей

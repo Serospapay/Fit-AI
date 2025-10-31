@@ -85,7 +85,7 @@ export default function ExercisesPage() {
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
               <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                💪 Кишеньковий тренер
+                Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
                 <a href="/dashboard" className="text-decoration-none text-dark">Dashboard</a>
@@ -172,11 +172,11 @@ export default function ExercisesPage() {
             <Row className="g-4">
               {exercises.map((exercise) => (
                 <Col key={exercise.id} md={6} lg={4}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body>
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
+                    <Card.Body className="p-4">
                       <div className="d-flex justify-content-between align-items-start mb-3">
                         <h5 className="fw-bold mb-0">{exercise.nameUk || exercise.name}</h5>
-                        <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`}>
+                        <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
                           {exercise.difficulty}
                         </span>
                       </div>
@@ -185,7 +185,7 @@ export default function ExercisesPage() {
                         {exercise.descriptionUk || exercise.description}
                       </p>
                       
-                      <div className="d-flex flex-wrap gap-2 mb-2">
+                      <div className="d-flex flex-wrap gap-2 mb-3">
                         {exercise.type && (
                           <span className="badge bg-primary">{exercise.type}</span>
                         )}
@@ -211,6 +211,7 @@ export default function ExercisesPage() {
           ) : (
             <Card className="border-0 shadow-sm">
               <Card.Body className="text-center py-5">
+                <i className="bi bi-search display-4 text-muted mb-3"></i>
                 <p className="text-muted">Вправи не знайдено</p>
               </Card.Body>
             </Card>

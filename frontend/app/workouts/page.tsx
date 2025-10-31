@@ -59,7 +59,7 @@ export default function WorkoutsPage() {
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
               <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                💪 Кишеньковий тренер
+                Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
                 <a href="/dashboard" className="text-decoration-none text-dark">Dashboard</a>
@@ -90,7 +90,9 @@ export default function WorkoutsPage() {
           ) : workouts.length === 0 ? (
             <Card className="border-0 shadow-sm">
               <Card.Body className="text-center py-5">
-                <div className="display-1 mb-3">📝</div>
+                <div className="display-3 mb-3">
+                  <i className="bi bi-calendar-x text-primary"></i>
+                </div>
                 <h4 className="fw-bold mb-3">Немає тренувань</h4>
                 <p className="text-muted mb-4">Додайте перше тренування для відстеження прогресу</p>
                 <Button variant="primary" href="/workouts/new">
@@ -102,8 +104,8 @@ export default function WorkoutsPage() {
             <Row className="g-4">
               {workouts.map((workout) => (
                 <Col key={workout.id} md={6} lg={4}>
-                  <Card className="border-0 shadow-sm h-100">
-                    <Card.Body>
+                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
+                    <Card.Body className="p-4">
                       <div className="d-flex justify-content-between align-items-start mb-3">
                         <div>
                           <h5 className="fw-bold mb-2">
