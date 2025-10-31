@@ -21,56 +21,48 @@
 
 ## 🚀 Швидкий старт
 
-### Передумови
-
-- Node.js 20+ 
-- Python 3.11+
-- PostgreSQL 15+ (або Docker)
-
 ### Встановлення
 
 1. **Frontend:**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 2. **Backend:**
-   ```bash
-   cd backend
-   npm install
-   # Налаштуйте .env файл
-   npx prisma generate
-   npx prisma migrate dev
-   npm run dev
-   ```
+```bash
+cd backend
+npm install
+# Налаштуйте .env файл (DATABASE_URL)
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev
+```
 
 3. **ML Service:**
-   ```bash
-   cd ml-service
-   python -m venv venv
-   .\venv\Scripts\Activate.ps1  # Windows
-   pip install -r requirements.txt
-   uvicorn app.main:app --reload
-   ```
+```bash
+cd ml-service
+python -m venv venv
+.\venv\Scripts\Activate.ps1  # Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+## 🔧 Налаштування БД
+
+1. Створіть базу даних PostgreSQL: `CREATE DATABASE fitness_trainer;`
+2. Оновіть `backend/.env`: встановіть правильний `DATABASE_URL`
+3. Виконайте міграції: `npm run prisma:migrate`
+4. Перевірте: `npm run prisma:studio`
 
 ## 📖 Документація
 
 - [PLAN.md](./PLAN.md) - Детальний план розробки
-- [SETUP.md](./SETUP.md) - Інструкції з налаштування середовища
 
-## 🔧 Налаштування
+## 📝 Статус
 
-1. Скопіюйте `.env.example` у `.env` у папці `backend`
-2. Налаштуйте `DATABASE_URL` для підключення до PostgreSQL
-3. Встановіть `JWT_SECRET` для безпеки
+**В розробці** - Етап 1 завершено: налаштування проекту, схема БД готова
 
-## 📝 Розробка
-
-Проект розробляється поетапно згідно з планом у `PLAN.md`.
-
----
-
-**Статус:** 🚧 В розробці
+**Rепозиторій:** https://github.com/Serospapay/Fit-AI
 
