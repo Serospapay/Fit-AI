@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
+import BootstrapClient from '../components/BootstrapClient';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       
-      router.push('/');
+      router.push('/dashboard');
       router.refresh();
     } catch (err) {
       setError('Помилка підключення до сервера');
@@ -42,65 +44,79 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 px-6">
-      <div className="w-full max-w-md">
-        <div className="mb-12">
-          <a href="/" className="text-2xl font-bold text-gray-900 inline-block mb-4">Кишеньковий тренер</a>
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Вхід</h1>
-          <p className="text-xl text-gray-600">Увійдіть до свого облікового запису</p>
-        </div>
+    <>
+      <BootstrapClient />
+      <div className="min-h-screen d-flex align-items-center bg-light">
+        <Container>
+          <Row className="justify-content-center">
+            <Col md={6} lg={5}>
+              <Card className="border-0 shadow-lg">
+                <Card.Body className="p-5">
+                  <div className="text-center mb-4">
+                    <h2 className="fw-bold mb-2">Увійти</h2>
+                    <p className="text-muted">Поверніться до свого профілю</p>
+                  </div>
 
-        {error && (
-          <div className="mb-8 p-4 bg-red-50 border-2 border-red-200 text-red-700 rounded-xl">
-            {error}
-          </div>
-        )}
+                  {error && (
+                    <div className="alert alert-danger" role="alert">
+                      {error}
+                    </div>
+                  )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
-              placeholder="your@email.com"
-            />
-          </div>
+                  <Form onSubmit={handleLogin}>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        required
+                      />
+                    </Form.Group>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Пароль
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
+                    <Form.Group className="mb-4">
+                      <Form.Label className="fw-semibold">Пароль</Form.Label>
+                      <Form.Control
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                      />
+                    </Form.Group>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg transition-all hover:shadow-xl"
-          >
-            {loading ? 'Вхід...' : 'Увійти'}
-          </button>
-        </form>
+                    <Button 
+                      type="submit" 
+                      disabled={loading} 
+                      className="w-100 bg-gradient-primary border-0 rounded-pill py-3 fw-bold"
+                    >
+                      {loading ? 'Вхід...' : 'Увійти'}
+                    </Button>
+                  </Form>
 
-        <div className="mt-8 text-center text-gray-600">
-          <p>Немає аккаунту?</p>
-          <a href="/register" className="text-gray-900 hover:underline font-semibold">
-            Зареєструватися
-          </a>
-        </div>
+                  <div className="text-center mt-4">
+                    <p className="text-muted mb-0">
+                      Немає профілю?{' '}
+                      <a href="/register" className="text-decoration-none fw-bold">
+                        Зареєструватися
+                      </a>
+                    </p>
+                  </div>
+                </Card.Body>
+              </Card>
+
+              <div className="text-center mt-4">
+                <a href="/" className="text-decoration-none">
+                  <i className="bi bi-arrow-left me-2"></i>
+                  Повернутися на головну
+                </a>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
-    </div>
+    </>
   );
 }
+

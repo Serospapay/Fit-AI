@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Кишеньковий тренер - Ваш фітнес-помічник з AI",
-  description: "Персональний додаток для тренувань, харчування та здорового способу життя",
+  title: "Кишеньковий тренер - Персональний фітнес-помічник",
+  description: "Освітній проект: відстеження тренувань, харчування, статистика та AI-рекомендації для здорового способу життя",
 };
 
 export default function RootLayout({
@@ -23,10 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="uk">
+      <body className={`${inter.variable}`}>
         {children}
       </body>
     </html>

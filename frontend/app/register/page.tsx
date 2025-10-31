@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
+import BootstrapClient from '../components/BootstrapClient';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -39,7 +41,7 @@ export default function RegisterPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       
-      router.push('/');
+      router.push('/dashboard');
       router.refresh();
     } catch (err) {
       setError('Помилка підключення до сервера');
@@ -49,82 +51,94 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-16 px-6">
-      <div className="w-full max-w-md">
-        <div className="mb-12">
-          <a href="/" className="text-2xl font-bold text-gray-900 inline-block mb-4">Кишеньковий тренер</a>
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Реєстрація</h1>
-          <p className="text-xl text-gray-600">Створіть новий обліковий запис</p>
-        </div>
+    <>
+      <BootstrapClient />
+      <div className="min-h-screen d-flex align-items-center bg-light">
+        <Container>
+          <Row className="justify-content-center">
+            <Col md={6} lg={5}>
+              <Card className="border-0 shadow-lg">
+                <Card.Body className="p-5">
+                  <div className="text-center mb-4">
+                    <h2 className="fw-bold mb-2">Створити профіль</h2>
+                    <p className="text-muted">Розпочніть свій шлях до здорового способу життя</p>
+                  </div>
 
-        {error && (
-          <div className="mb-8 p-4 bg-red-50 border-2 border-red-200 text-red-700 rounded-xl">
-            {error}
-          </div>
-        )}
+                  {error && (
+                    <div className="alert alert-danger" role="alert">
+                      {error}
+                    </div>
+                  )}
 
-        <form onSubmit={handleRegister} className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Ім'я
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
-              placeholder="Ваше ім'я"
-            />
-          </div>
+                  <Form onSubmit={handleRegister}>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Ім'я</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Ваше ім'я"
+                        required
+                      />
+                    </Form.Group>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
-              placeholder="your@email.com"
-            />
-          </div>
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="your@email.com"
+                        required
+                      />
+                    </Form.Group>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Пароль
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              minLength={6}
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
-              placeholder="Мінімум 6 символів"
-            />
-          </div>
+                    <Form.Group className="mb-4">
+                      <Form.Label className="fw-semibold">Пароль</Form.Label>
+                      <Form.Control
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Мінімум 6 символів"
+                        minLength={6}
+                        required
+                      />
+                    </Form.Group>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg transition-all hover:shadow-xl"
-          >
-            {loading ? 'Реєстрація...' : 'Зареєструватися'}
-          </button>
-        </form>
+                    <Button 
+                      type="submit" 
+                      disabled={loading} 
+                      className="w-100 bg-gradient-primary border-0 rounded-pill py-3 fw-bold"
+                    >
+                      {loading ? 'Створення профілю...' : 'Зареєструватися'}
+                    </Button>
+                  </Form>
 
-        <div className="mt-8 text-center text-gray-600">
-          <p>Вже маєте аккаунт?</p>
-          <a href="/login" className="text-gray-900 hover:underline font-semibold">
-            Увійти
-          </a>
-        </div>
+                  <div className="text-center mt-4">
+                    <p className="text-muted mb-0">
+                      Вже маєте профіль?{' '}
+                      <a href="/login" className="text-decoration-none fw-bold">
+                        Увійти
+                      </a>
+                    </p>
+                  </div>
+                </Card.Body>
+              </Card>
+
+              <div className="text-center mt-4">
+                <a href="/" className="text-decoration-none">
+                  <i className="bi bi-arrow-left me-2"></i>
+                  Повернутися на головну
+                </a>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
-    </div>
+    </>
   );
 }
+

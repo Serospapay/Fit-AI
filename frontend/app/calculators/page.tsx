@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
+import BootstrapClient from '../components/BootstrapClient';
 
 export default function CalculatorsPage() {
   const [formData, setFormData] = useState({
@@ -68,7 +70,6 @@ export default function CalculatorsPage() {
     }
 
     const tdee = calculateTDEE(bmr);
-
     setResults({ bmr, tdee, bmi });
   };
 
@@ -78,146 +79,173 @@ export default function CalculatorsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      <nav className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="/" className="text-2xl font-bold text-green-600">💪 Кишеньковий тренер</a>
-          <div className="flex gap-4">
-            <a href="/" className="hover:text-green-600">Головна</a>
-            <a href="/exercises" className="hover:text-green-600">Вправи</a>
-            <a href="/calculators" className="hover:text-green-600 font-semibold">Калькулятори</a>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-          🧮 Калькулятори
-        </h1>
-
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-6">Фізіологічні показники</h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Вік (років)
-              </label>
-              <input
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
+    <>
+      <BootstrapClient />
+      <div className="min-h-screen bg-light">
+        {/* Navigation */}
+        <nav className="bg-white shadow-sm border-bottom">
+          <Container>
+            <div className="d-flex justify-content-between align-items-center py-3">
+              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
+                💪 Кишеньковий тренер
+              </a>
+              <div className="d-flex align-items-center gap-3">
+                <a href="/dashboard" className="text-decoration-none text-dark">Dashboard</a>
+                <a href="/exercises" className="text-decoration-none text-dark">Вправи</a>
+                <a href="/workouts" className="text-decoration-none text-dark">Тренування</a>
+                <a href="/calculators" className="text-decoration-none fw-bold">Калькулятори</a>
+              </div>
             </div>
+          </Container>
+        </nav>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Стать
-              </label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="male">Чоловік</option>
-                <option value="female">Жінка</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Вага (кг)
-              </label>
-              <input
-                type="number"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Зріст (см)
-              </label>
-              <input
-                type="number"
-                name="height"
-                value={formData.height}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Рівень активності
-              </label>
-              <select
-                name="activityLevel"
-                value={formData.activityLevel}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="sedentary">Сидячий (мало або без фізичних навантажень)</option>
-                <option value="light">Легка активність (1-3 дні на тиждень)</option>
-                <option value="moderate">Помірна активність (3-5 днів на тиждень)</option>
-                <option value="active">Висока активність (6-7 днів на тиждень)</option>
-                <option value="very_active">Дуже висока активність (2 рази на день)</option>
-              </select>
-            </div>
+        <Container className="py-5">
+          <div className="text-center mb-5">
+            <h1 className="display-4 fw-bold mb-3">Калькулятори</h1>
+            <p className="lead text-muted">Розрахуйте ваші фізіологічні показники</p>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold text-lg"
-          >
-            Розрахувати
-          </button>
-        </div>
+          <Row className="justify-content-center">
+            <Col lg={8}>
+              <Card className="border-0 shadow-sm mb-4">
+                <Card.Body className="p-4">
+                  <h5 className="fw-bold mb-4">Фізіологічні показники</h5>
+                  
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-semibold">Вік (років)</Form.Label>
+                        <Form.Control
+                          type="number"
+                          name="age"
+                          value={formData.age}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
 
-        {results && (
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-              <div className="text-3xl mb-2">🔥</div>
-              <h3 className="text-lg font-semibold mb-2">BMR</h3>
-              <p className="text-3xl font-bold">{results.bmr}</p>
-              <p className="text-sm opacity-90 mt-1">ккал/день</p>
-              <p className="text-xs mt-3 opacity-80">Базальний метаболізм</p>
-            </div>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-semibold">Стать</Form.Label>
+                        <Form.Select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                        >
+                          <option value="male">Чоловік</option>
+                          <option value="female">Жінка</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
 
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-              <div className="text-3xl mb-2">⚡</div>
-              <h3 className="text-lg font-semibold mb-2">TDEE</h3>
-              <p className="text-3xl font-bold">{results.tdee}</p>
-              <p className="text-sm opacity-90 mt-1">ккал/день</p>
-              <p className="text-xs mt-3 opacity-80">Денні витрати енергії</p>
-            </div>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-semibold">Вага (кг)</Form.Label>
+                        <Form.Control
+                          type="number"
+                          name="weight"
+                          value={formData.weight}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
 
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-              <div className="text-3xl mb-2">📊</div>
-              <h3 className="text-lg font-semibold mb-2">ІМТ</h3>
-              <p className="text-3xl font-bold">{results.bmi.value}</p>
-              <p className="text-sm opacity-90 mt-1">{results.bmi.category}</p>
-              <p className="text-xs mt-3 opacity-80">Індекс маси тіла</p>
-            </div>
-          </div>
-        )}
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-semibold">Зріст (см)</Form.Label>
+                        <Form.Control
+                          type="number"
+                          name="height"
+                          value={formData.height}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
 
-        <div className="mt-8 bg-blue-50 rounded-xl p-6">
-          <h3 className="font-semibold mb-3">💡 Примітки:</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li><strong>BMR</strong> - це мінімальна кількість калорій, яка потрібна вашому організму для підтримки життєво важливих функцій в стані спокою.</li>
-            <li><strong>TDEE</strong> - це загальна кількість калорій, які ви спалюєте за день, враховуючи вашу активність.</li>
-            <li><strong>ІМТ</strong> - індекс маси тіла допомагає оцінити чи ваші вага та зріст знаходяться в здоровому діапазоні.</li>
-          </ul>
-        </div>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="fw-semibold">Рівень активності</Form.Label>
+                        <Form.Select
+                          name="activityLevel"
+                          value={formData.activityLevel}
+                          onChange={handleChange}
+                        >
+                          <option value="sedentary">Сидячий (мало або без фізичних навантажень)</option>
+                          <option value="light">Легка активність (1-3 дні на тиждень)</option>
+                          <option value="moderate">Помірна активність (3-5 днів на тиждень)</option>
+                          <option value="active">Висока активність (6-7 днів на тиждень)</option>
+                          <option value="very_active">Дуже висока активність (2 рази на день)</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-100 mt-4"
+                    onClick={handleCalculate}
+                  >
+                    Розрахувати
+                  </Button>
+                </Card.Body>
+              </Card>
+
+              {results && (
+                <Row className="g-4 mb-4">
+                  <Col md={4}>
+                    <Card className="border-0 text-white bg-gradient" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                      <Card.Body className="text-center p-4">
+                        <div className="display-4 mb-2">🔥</div>
+                        <h5 className="fw-bold mb-2">BMR</h5>
+                        <div className="display-5 fw-bold mb-1">{results.bmr}</div>
+                        <small className="opacity-90">ккал/день</small>
+                        <p className="small mt-3 mb-0 opacity-75">Базальний метаболізм</p>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+
+                  <Col md={4}>
+                    <Card className="border-0 text-white bg-gradient" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+                      <Card.Body className="text-center p-4">
+                        <div className="display-4 mb-2">⚡</div>
+                        <h5 className="fw-bold mb-2">TDEE</h5>
+                        <div className="display-5 fw-bold mb-1">{results.tdee}</div>
+                        <small className="opacity-90">ккал/день</small>
+                        <p className="small mt-3 mb-0 opacity-75">Денні витрати енергії</p>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+
+                  <Col md={4}>
+                    <Card className="border-0 text-white bg-gradient" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+                      <Card.Body className="text-center p-4">
+                        <div className="display-4 mb-2">📊</div>
+                        <h5 className="fw-bold mb-2">ІМТ</h5>
+                        <div className="display-5 fw-bold mb-1">{results.bmi.value}</div>
+                        <small className="opacity-90">{results.bmi.category}</small>
+                        <p className="small mt-3 mb-0 opacity-75">Індекс маси тіла</p>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              )}
+
+              <Card className="border-0 shadow-sm">
+                <Card.Body className="p-4">
+                  <h5 className="fw-bold mb-3">💡 Примітки</h5>
+                  <ul className="mb-0 small text-muted">
+                    <li><strong>BMR</strong> - це мінімальна кількість калорій, яка потрібна вашому організму для підтримки життєво важливих функцій в стані спокою.</li>
+                    <li><strong>TDEE</strong> - це загальна кількість калорій, які ви спалюєте за день, враховуючи вашу активність.</li>
+                    <li><strong>ІМТ</strong> - індекс маси тіла допомагає оцінити чи ваші вага та зріст знаходяться в здоровому діапазоні.</li>
+                  </ul>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </div>
-    </div>
+    </>
   );
 }
 
