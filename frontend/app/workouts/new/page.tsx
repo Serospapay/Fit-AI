@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
+import GymPostersBackground from '../../components/GymPostersBackground';
 
 interface Exercise {
   id: string;
@@ -90,7 +91,7 @@ export default function NewWorkoutPage() {
         return;
       }
 
-      router.push('/workouts');
+      window.location.href = '/workouts';
     } catch (err) {
       setError('Помилка підключення до сервера');
     } finally {
@@ -101,16 +102,22 @@ export default function NewWorkoutPage() {
   return (
     <>
       <BootstrapClient />
-      <div className="min-h-screen bg-light">
+      <div className="min-h-screen bg-dark">
+        {/* Background Grid */}
+        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
+        
+        {/* Gym Posters Background */}
+        <GymPostersBackground />
+        
         {/* Navigation */}
-        <nav className="bg-white shadow-sm border-bottom">
+        <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
               <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
                 Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
-                <a href="/workouts" className="text-decoration-none text-dark">
+                <a href="/workouts" className="nav-link">
                   <i className="bi bi-arrow-left me-1"></i>
                   Назад
                 </a>
@@ -119,10 +126,10 @@ export default function NewWorkoutPage() {
           </Container>
         </nav>
 
-        <Container className="py-5">
+        <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
           <div className="mb-4">
-            <h1 className="display-4 fw-bold mb-2">Новий тренування</h1>
-            <p className="lead text-muted">Записати нове тренування</p>
+            <h1 className="mb-2">Новий тренування</h1>
+            <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Записати нове тренування</p>
           </div>
 
           {error && (
@@ -132,7 +139,7 @@ export default function NewWorkoutPage() {
           )}
 
           <Form onSubmit={handleSubmit}>
-            <Card className="border-0 shadow-sm mb-4">
+            <Card className="card-hover-lift mb-4">
               <Card.Body>
                 <Row className="g-3">
                   <Col md={4}>
@@ -185,9 +192,9 @@ export default function NewWorkoutPage() {
             </Card>
 
             {/* Exercises */}
-            <Card className="border-0 shadow-sm mb-4">
+            <Card className="card-hover-lift mb-4">
               <Card.Body>
-                <h5 className="fw-bold mb-4">Вправи</h5>
+                <h5 className="mb-4">Вправи</h5>
                 
                 <Form.Select
                   className="mb-4"
@@ -207,10 +214,10 @@ export default function NewWorkoutPage() {
                 {selectedExercises.length > 0 && (
                   <div className="space-y-3">
                     {selectedExercises.map((ex, idx) => (
-                      <Card key={idx} className="border mb-3">
+                      <Card key={idx} className="mb-3">
                         <Card.Body>
                           <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h6 className="fw-bold mb-0">
+                            <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }} className="mb-0">
                               {ex.exercise.nameUk || ex.exercise.name}
                             </h6>
                             <Button

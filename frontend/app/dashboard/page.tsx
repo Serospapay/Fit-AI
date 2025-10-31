@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import ParallaxWrapper from '../components/ParallaxWrapper';
+import GymPostersBackground from '../components/GymPostersBackground';
 
 interface Stats {
   totalWorkouts: number;
@@ -68,6 +69,9 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-dark">
         {/* Background Grid */}
         <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
+        
+        {/* Gym Posters Background */}
+        <GymPostersBackground />
         
         {/* Navigation */}
         <nav className="navbar">
