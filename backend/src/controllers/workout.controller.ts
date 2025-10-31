@@ -225,6 +225,7 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days as string));
 
+    // Get overall stats for the period
     const stats = await prisma.workout.aggregate({
       where: {
         userId,
@@ -234,7 +235,47 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       _avg: { duration: true, rating: true }
     });
 
-    // Get most exercised muscle groups
+    // Get weekly stats
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - 7);
+    const weekStats = await prisma.workout.aggregate({
+      where: {
+        userId,
+        date: { gte: weekStart }
+      },
+      _count: { id: true },
+      _avg: { duration: true }
+    });
+
+    // Get monthly stats
+    const monthStart = new Date();
+    monthStart.setDate(monthStart.getDate() - 30);
+    const monthStats = await prisma.workout.aggregate({
+      where: {
+        userId,
+        date: { gte: monthStart }
+      },
+      _count: { id: true },
+      _avg: { duration: true }
+    });
+
+    // Get workouts by day of week for trend
+    const recentWorkouts = await prisma.workout.findMany({
+      where: {
+        userId,
+        date: { gte: startDate }
+      },
+      select: { date: true, duration: true, rating: true }
+    });
+
+    // Calculate weekly progress (days with workouts)
+    const workoutsPerWeek: { [key: string]: number } = {};
+    recentWorkouts.forEach(workout => {
+      const weekKey = getWeekKey(workout.date);
+      workoutsPerWeek[weekKey] = (workoutsPerWeek[weekKey] || 0) + 1;
+    });
+
+    // Get most exercised exercises
     const muscleGroups = await prisma.workoutExercise.groupBy({
       by: ['exerciseId'],
       where: {
@@ -256,19 +297,85 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       return {
         exerciseId: mg.exerciseId,
         exerciseName: exercise?.name,
+        exerciseNameUk: exercise?.nameUk,
         count: mg._count
       };
+    }).sort((a, b) => b.count - a.count).slice(0, 5);
+
+    // Get recent workouts count by type
+    const exerciseTypes = await prisma.workoutExercise.findMany({
+      where: {
+        workout: {
+          userId,
+          date: { gte: startDate }
+        }
+      },
+      include: {
+        exercise: {
+          select: { type: true }
+        }
+      }
     });
+
+    const typeStats = exerciseTypes.reduce((acc: any, we) => {
+      const type = we.exercise.type;
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Calculate streak (consecutive days with workouts)
+    const sortedDates = recentWorkouts.map(w => w.date.toISOString().split('T')[0]).sort().reverse();
+    let streak = 0;
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 30; i++) {
+      const dateKey = currentDate.toISOString().split('T')[0];
+      if (sortedDates.includes(dateKey)) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
 
     res.json({
       totalWorkouts: stats._count.id,
       avgDuration: stats._avg.duration || 0,
       avgRating: stats._avg.rating || 0,
-      mostExercised: muscleGroupStats.slice(0, 5)
+      mostExercised: muscleGroupStats,
+      
+      // Weekly stats
+      weekWorkouts: weekStats._count.id,
+      weekAvgDuration: weekStats._avg.duration || 0,
+      
+      // Monthly stats
+      monthWorkouts: monthStats._count.id,
+      monthAvgDuration: monthStats._avg.duration || 0,
+      
+      // Trends and analysis
+      workoutStreak: streak,
+      workoutsPerWeek,
+      exerciseTypeStats: typeStats,
+      
+      // Recent activity
+      recentWorkouts: recentWorkouts.slice(0, 7).map(w => ({
+        date: w.date,
+        duration: w.duration,
+        rating: w.rating
+      }))
     });
   } catch (error) {
     console.error('Get stats error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// Helper function to get week key
+function getWeekKey(date: Date): string {
+  const d = new Date(date);
+  const weekStart = new Date(d);
+  weekStart.setDate(d.getDate() - d.getDay());
+  return weekStart.toISOString().split('T')[0];
+}
 
