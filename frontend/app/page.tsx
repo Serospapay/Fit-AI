@@ -71,10 +71,10 @@ export default function Home() {
             <div className="flex justify-between items-center">
               <a href="/" className="text-xl font-bold text-gray-900">Кишеньковий тренер</a>
               <div className="flex items-center gap-8">
-                <a href="/exercises" className="text-sm text-gray-700 hover:text-gray-900">Вправи</a>
-                <a href="/calculators" className="text-sm text-gray-700 hover:text-gray-900">Калькулятори</a>
-                <a href="/login" className="text-sm text-gray-700 hover:text-gray-900">Вхід</a>
-                <a href="/register" className="text-sm px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <a href="/exercises" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Вправи</a>
+                <a href="/calculators" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Калькулятори</a>
+                <a href="/login" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Вхід</a>
+                <a href="/register" className="text-sm px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
                   Реєстрація
                 </a>
               </div>
@@ -82,42 +82,57 @@ export default function Home() {
           </div>
         </nav>
 
-        <div className="max-w-7xl mx-auto px-6 pt-20 pb-32">
-          <div className="max-w-3xl">
-            <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Персональний фітнес<br/>помічник з AI
+        <div className="max-w-7xl mx-auto px-6 pt-32 pb-32">
+          <div className="max-w-4xl">
+            <h1 className="text-7xl font-extrabold text-gray-900 mb-8 leading-none tracking-tight">
+              Ваш персональний<br/>
+              фітнес-помічник
             </h1>
-            <p className="text-xl text-gray-600 mb-12 leading-relaxed">
+            <p className="text-2xl text-gray-600 mb-16 leading-relaxed">
               Відстежуйте тренування, аналізуйте прогрес та отримуйте персональні рекомендації
-              для досягнення ваших фітнес-цілей.
             </p>
-            <div className="flex gap-4">
-              <a href="/register" className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
+            <div className="flex gap-4 mb-32">
+              <a href="/register" className="px-8 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all font-semibold text-lg hover:shadow-xl">
                 Почати безкоштовно
               </a>
-              <a href="/exercises" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors font-medium">
+              <a href="/exercises" className="px-8 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:border-gray-300 transition-all font-semibold text-lg hover:shadow-lg">
                 Переглянути вправи
               </a>
             </div>
           </div>
 
-          <div className="mt-32 grid grid-cols-3 gap-12">
+          <div className="grid grid-cols-3 gap-16 max-w-5xl">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Велика база вправ</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Колекція вправ з детальними інструкціями та поясненнями для різних груп м'язів.
+              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Велика база вправ</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
+                Колекція вправ з детальними інструкціями та поясненнями
               </p>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Детальна статистика</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Аналізуйте прогрес з візуалізацією та отримуйте прогнози досягнення цілей.
+              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Детальна статистика</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
+                Аналізуйте прогрес з візуалізацією та прогнозами
               </p>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">AI рекомендації</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Персоналізовані програми тренувань під ваші цілі та можливості.
+              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">AI рекомендації</h3>
+              <p className="text-gray-600 leading-relaxed text-lg">
+                Персоналізовані програми під ваші цілі
               </p>
             </div>
           </div>
@@ -133,11 +148,11 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <a href="/" className="text-xl font-bold text-gray-900">Кишеньковий тренер</a>
             <div className="flex items-center gap-8">
-              <a href="/exercises" className="text-sm text-gray-700 hover:text-gray-900">Вправи</a>
-              <a href="/workouts" className="text-sm text-gray-700 hover:text-gray-900">Тренування</a>
-              <a href="/calculators" className="text-sm text-gray-700 hover:text-gray-900">Калькулятори</a>
+              <a href="/exercises" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Вправи</a>
+              <a href="/workouts" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Тренування</a>
+              <a href="/calculators" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">Калькулятори</a>
               <span className="text-sm text-gray-600">{user.name || user.email}</span>
-              <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-700">
+              <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-700 transition-colors">
                 Вийти
               </button>
             </div>
@@ -145,94 +160,79 @@ export default function Home() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-gray-600">Огляд вашої активності та прогресу</p>
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="mb-16">
+          <h1 className="text-5xl font-extrabold text-gray-900 mb-3">Dashboard</h1>
+          <p className="text-xl text-gray-600">Огляд вашої активності та прогресу</p>
         </div>
 
-        {/* Швидкі дії */}
-        <div className="grid grid-cols-3 gap-4 mb-12">
-          <a href="/workouts/new" className="p-6 border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all group">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Додати тренування</h3>
-                <p className="text-sm text-gray-600">Записати нову активність</p>
-              </div>
+        <div className="grid grid-cols-3 gap-6 mb-16">
+          <a href="/workouts/new" className="group p-8 border-2 border-gray-200 rounded-2xl hover:border-gray-900 hover:shadow-xl transition-all">
+            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-gray-900 group-hover:scale-110 transition-all">
+              <svg className="w-6 h-6 text-gray-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Додати тренування</h3>
+            <p className="text-gray-600">Записати нову активність</p>
           </a>
 
-          <a href="/exercises" className="p-6 border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all group">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">База вправ</h3>
-                <p className="text-sm text-gray-600">Переглянути вправи</p>
-              </div>
+          <a href="/exercises" className="group p-8 border-2 border-gray-200 rounded-2xl hover:border-gray-900 hover:shadow-xl transition-all">
+            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-gray-900 group-hover:scale-110 transition-all">
+              <svg className="w-6 h-6 text-gray-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">База вправ</h3>
+            <p className="text-gray-600">Переглянути всі вправи</p>
           </a>
 
-          <a href="/calculators" className="p-6 border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all group">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Калькулятори</h3>
-                <p className="text-sm text-gray-600">BMR, TDEE, ІМТ</p>
-              </div>
+          <a href="/calculators" className="group p-8 border-2 border-gray-200 rounded-2xl hover:border-gray-900 hover:shadow-xl transition-all">
+            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-gray-900 group-hover:scale-110 transition-all">
+              <svg className="w-6 h-6 text-gray-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Калькулятори</h3>
+            <p className="text-gray-600">BMR, TDEE, ІМТ</p>
           </a>
         </div>
 
-        {/* Статистика */}
         {stats && (
-          <div className="grid grid-cols-4 gap-4 mb-12">
-            <div className="p-6 border border-gray-200 rounded-xl">
-              <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalWorkouts || 0}</div>
-              <div className="text-sm text-gray-600">Тренувань за місяць</div>
+          <div className="grid grid-cols-4 gap-6 mb-16">
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="text-4xl font-bold text-gray-900 mb-2">{stats.totalWorkouts || 0}</div>
+              <div className="text-sm font-medium text-gray-600">Тренувань</div>
             </div>
-            <div className="p-6 border border-gray-200 rounded-xl">
-              <div className="text-3xl font-bold text-gray-900 mb-1">{Math.round(stats.avgDuration || 0)}</div>
-              <div className="text-sm text-gray-600">Хвилин середня</div>
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="text-4xl font-bold text-gray-900 mb-2">{Math.round(stats.avgDuration || 0)}</div>
+              <div className="text-sm font-medium text-gray-600">Хвилин</div>
             </div>
-            <div className="p-6 border border-gray-200 rounded-xl">
-              <div className="text-3xl font-bold text-gray-900 mb-1">{stats.avgRating?.toFixed(1) || '0'}</div>
-              <div className="text-sm text-gray-600">Середня оцінка</div>
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="text-4xl font-bold text-gray-900 mb-2">{stats.avgRating?.toFixed(1) || '0'}</div>
+              <div className="text-sm font-medium text-gray-600">Оцінка</div>
             </div>
-            <div className="p-6 border border-gray-200 rounded-xl">
-              <div className="text-3xl font-bold text-gray-900 mb-1">{stats.mostExercised?.length || 0}</div>
-              <div className="text-sm text-gray-600">Унікальних вправ</div>
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="text-4xl font-bold text-gray-900 mb-2">{stats.mostExercised?.length || 0}</div>
+              <div className="text-sm font-medium text-gray-600">Вправ</div>
             </div>
           </div>
         )}
 
-        {/* Останні тренування */}
         {recentWorkouts.length > 0 && (
-          <div className="border border-gray-200 rounded-xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Останні тренування</h2>
-              <a href="/workouts" className="text-sm text-gray-700 hover:text-gray-900">
-                Всі тренування →
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Останні тренування</h2>
+              <a href="/workouts" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                Дивитися всі →
               </a>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className="space-y-4">
               {recentWorkouts.map((workout) => (
-                <div key={workout.id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div key={workout.id} className="p-8 border-2 border-gray-200 rounded-2xl hover:border-gray-900 hover:shadow-xl transition-all">
                   <div className="flex justify-between items-center">
                     <div>
-                      <div className="font-medium text-gray-900 mb-1">
+                      <div className="text-lg font-bold text-gray-900 mb-2">
                         {new Date(workout.date).toLocaleDateString('uk-UA', {
                           year: 'numeric',
                           month: 'long',
@@ -240,18 +240,18 @@ export default function Home() {
                         })}
                       </div>
                       {workout.exercises && workout.exercises.length > 0 && (
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span>{workout.exercises.length} {workout.exercises.length === 1 ? 'вправа' : 'вправ'}</span>
-                          {workout.duration && <span>{workout.duration} хв</span>}
+                        <div className="flex items-center gap-6 text-gray-600">
+                          <span className="font-medium">{workout.exercises.length} вправ</span>
+                          {workout.duration && <span className="font-medium">{workout.duration} хв</span>}
                         </div>
                       )}
                     </div>
                     {workout.rating && (
-                      <div className="flex items-center gap-1 text-sm text-gray-700">
-                        <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                      <div className="flex items-center gap-2 text-gray-900">
+                        <svg className="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        {workout.rating}/5
+                        <span className="text-xl font-bold">{workout.rating}</span>
                       </div>
                     )}
                   </div>
@@ -262,13 +262,13 @@ export default function Home() {
         )}
 
         {!loading && !stats && (
-          <div className="border border-gray-200 rounded-xl p-16 text-center">
-            <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="border-2 border-gray-200 rounded-2xl p-20 text-center">
+            <svg className="w-20 h-20 mx-auto mb-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Вітаємо!</h2>
-            <p className="text-gray-600 mb-8">Додайте перше тренування, щоб почати відстежувати прогрес</p>
-            <a href="/workouts/new" className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Вітаємо!</h2>
+            <p className="text-xl text-gray-600 mb-10">Додайте перше тренування для відстеження прогресу</p>
+            <a href="/workouts/new" className="inline-block px-8 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all font-semibold text-lg hover:shadow-xl">
               Додати тренування
             </a>
           </div>
