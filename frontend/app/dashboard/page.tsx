@@ -267,36 +267,38 @@ export default function DashboardPage() {
 
               {/* Recent Activity */}
               {stats.recentWorkouts && stats.recentWorkouts.length > 0 && (
-                <Card className="border-0 shadow-sm mb-4">
-                  <Card.Body>
-                    <h5 className="fw-bold mb-3">
-                      <i className="bi bi-clock-history me-2"></i>
-                      Останні тренування
-                    </h5>
-                    <div className="row g-3">
-                      {stats.recentWorkouts.map((workout, idx) => (
-                        <Col key={idx} md={4} sm={6}>
-                          <div className="border rounded p-3">
-                            <div className="d-flex justify-content-between align-items-start mb-2">
-                              <small className="text-muted">
-                                {new Date(workout.date).toLocaleDateString('uk-UA')}
-                              </small>
-                              {workout.rating && (
-                                <Badge bg="warning">{workout.rating}</Badge>
+                <ParallaxWrapper speed={0.12}>
+                  <Card className="card-hover-lift mb-4">
+                    <Card.Body>
+                      <h5 className="mb-3">
+                        <i className="bi bi-clock-history me-2" style={{ color: '#d4af37' }}></i>
+                        Останні тренування
+                      </h5>
+                      <div className="row g-3">
+                        {stats.recentWorkouts.map((workout, idx) => (
+                          <Col key={idx} md={4} sm={6}>
+                            <div className="card p-3">
+                              <div className="d-flex justify-content-between align-items-start mb-2">
+                                <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                                  {new Date(workout.date).toLocaleDateString('uk-UA')}
+                                </small>
+                                {workout.rating && (
+                                  <Badge bg="warning">{workout.rating}</Badge>
+                                )}
+                              </div>
+                              {workout.duration && (
+                                <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                                  <i className="bi bi-clock me-1" style={{ color: '#d4af37' }}></i>
+                                  {workout.duration} хв
+                                </div>
                               )}
                             </div>
-                            {workout.duration && (
-                              <div className="text-muted">
-                                <i className="bi bi-clock me-1"></i>
-                                {workout.duration} хв
-                              </div>
-                            )}
-                          </div>
-                        </Col>
-                      ))}
-                    </div>
-                  </Card.Body>
-                </Card>
+                          </Col>
+                        ))}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </ParallaxWrapper>
               )}
 
               {/* Quick Actions */}

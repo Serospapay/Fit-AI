@@ -18,7 +18,7 @@ export default function GymPostersBackground() {
       style={{ 
         pointerEvents: 'none', 
         zIndex: 0,
-        opacity: 0.06,
+        opacity: 0.12,
         overflow: 'hidden'
       }}
     >
@@ -35,12 +35,15 @@ export default function GymPostersBackground() {
             transform: `rotate(${poster.rotation}deg)`,
             lineHeight: '1.1',
             fontWeight: 900,
-            textShadow: '4px 4px 8px rgba(0, 0, 0, 0.5)',
+            textShadow: '6px 6px 12px rgba(0, 0, 0, 0.8)',
             whiteSpace: 'pre-line',
             textAlign: 'center',
-            letterSpacing: '6px',
-            opacity: 0.8,
-            filter: 'blur(0.5px)',
+            letterSpacing: '8px',
+            opacity: 1,
+            filter: 'blur(1px)',
+            border: '4px solid rgba(212, 175, 55, 0.15)',
+            padding: '20px',
+            background: 'rgba(0, 0, 0, 0.3)',
           }}
         >
           {poster.text}
@@ -55,8 +58,9 @@ export default function GymPostersBackground() {
           right: '5%',
           width: '200px',
           height: '300px',
-          border: '3px solid rgba(212, 175, 55, 0.1)',
+          border: '4px solid rgba(212, 175, 55, 0.15)',
           transform: 'rotate(12deg)',
+          background: 'rgba(0, 0, 0, 0.2)',
         }}
       ></div>
       
@@ -67,8 +71,9 @@ export default function GymPostersBackground() {
           right: '15%',
           width: '150px',
           height: '150px',
-          border: '2px dashed rgba(212, 175, 55, 0.1)',
+          border: '3px dashed rgba(212, 175, 55, 0.15)',
           transform: 'rotate(-15deg)',
+          background: 'rgba(0, 0, 0, 0.1)',
         }}
       ></div>
       
@@ -79,10 +84,34 @@ export default function GymPostersBackground() {
           left: '10%',
           width: '250px',
           height: '80px',
-          border: '4px double rgba(212, 175, 55, 0.1)',
+          border: '5px double rgba(212, 175, 55, 0.15)',
           transform: 'rotate(8deg)',
+          background: 'rgba(0, 0, 0, 0.1)',
         }}
       ></div>
+      
+      {/* Additional posters */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '40%',
+          right: '30%',
+          fontSize: '90px',
+          fontFamily: 'var(--font-bebas)',
+          color: 'rgba(212, 175, 55, 0.4)',
+          transform: 'rotate(-2deg)',
+          lineHeight: '1.1',
+          fontWeight: 900,
+          textShadow: '4px 4px 8px rgba(0, 0, 0, 0.5)',
+          whiteSpace: 'pre-line',
+          letterSpacing: '6px',
+          border: '3px solid rgba(212, 175, 55, 0.2)',
+          padding: '15px',
+          background: 'rgba(0, 0, 0, 0.2)',
+        }}
+      >
+        POWER
+      </div>
     </div>
   );
 }
