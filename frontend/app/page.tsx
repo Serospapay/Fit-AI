@@ -27,6 +27,7 @@ export default function Home() {
           <div className="flex gap-4 items-center">
             <a href="/" className="hover:text-green-600">Головна</a>
             <a href="/exercises" className="hover:text-green-600">Вправи</a>
+            <a href="/calculators" className="hover:text-green-600">Калькулятори</a>
             {user ? (
               <>
                 <span className="text-gray-600">Привіт, {user.name || user.email}!</span>
