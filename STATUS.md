@@ -53,8 +53,9 @@
 ## 🔄 Git Commits
 
 ```
-40351de - feat: реалізовано landing page Bootstrap 5, синхронізація frontend і backend
+8a77660 - docs: add project status
 acb6788 - docs: add quick start guide
+40351de - feat: реалізовано landing page Bootstrap 5, синхронізація frontend і backend
 ```
 
 ## 🚀 Готово до використання
