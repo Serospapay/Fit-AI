@@ -29,11 +29,9 @@ export default function LoginPage() {
         return;
       }
 
-      // Зберегти токен
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       
-      // Перенаправити на головну
       router.push('/');
       router.refresh();
     } catch (err) {
@@ -44,21 +42,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-          🔐 Вхід
-        </h2>
+    <div className="min-h-screen bg-white flex items-center justify-center py-16 px-6">
+      <div className="w-full max-w-md">
+        <div className="mb-12">
+          <a href="/" className="text-2xl font-bold text-gray-900 inline-block mb-4">Кишеньковий тренер</a>
+          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">Вхід</h1>
+          <p className="text-xl text-gray-600">Увійдіть до свого облікового запису</p>
+        </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-8 p-4 bg-red-50 border-2 border-red-200 text-red-700 rounded-xl">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               Email
             </label>
             <input
@@ -66,13 +66,13 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
               placeholder="your@email.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-900 mb-3">
               Пароль
             </label>
             <input
@@ -80,7 +80,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 transition-colors"
               placeholder="••••••••"
             />
           </div>
@@ -88,15 +88,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            className="w-full py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg transition-all hover:shadow-xl"
           >
             {loading ? 'Вхід...' : 'Увійти'}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-gray-600">
           <p>Немає аккаунту?</p>
-          <a href="/register" className="text-green-600 hover:text-green-700 font-medium">
+          <a href="/register" className="text-gray-900 hover:underline font-semibold">
             Зареєструватися
           </a>
         </div>
@@ -104,4 +104,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
