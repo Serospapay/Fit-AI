@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import exerciseRoutes from './routes/exercise.routes';
+import workoutRoutes from './routes/workout.routes';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get('/api/health', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);
+app.use('/api/workouts', workoutRoutes);
 
 // 404 handler
 app.use((req, res) => {
