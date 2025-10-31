@@ -1,0 +1,216 @@
+// Prisma schema for Fitness Trainer App
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Користувач
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  age           Int?
+  gender        String?   // male, female, other
+  height        Float?    // см
+  weight        Float?    // кг
+  activityLevel String?   // sedentary, light, moderate, active, very_active
+  goal          String?   // lose_weight, gain_muscle, maintain, endurance, definition
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  workouts      Workout[]
+  nutritionLogs NutritionLog[]
+  programs      Program[]
+  userPrograms  UserProgram[]
+  
+  @@map("users")
+}
+
+// Вправи
+model Exercise {
+  id              String   @id @default(cuid())
+  name            String
+  nameUk          String?  // Українська назва
+  description     String?
+  descriptionUk  String?
+  type            String   // strength, cardio, flexibility, balance
+  muscleGroup     String?  // chest, back, legs, arms, core, full_body
+  equipment       String?  // none, dumbbells, barbell, machine, bodyweight
+  difficulty      String   // beginner, intermediate, advanced
+  instructions    String?  // Інструкції виконання
+  instructionsUk  String?
+  imageUrl        String?
+  videoUrl        String?
+  caloriesPerMin  Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  workoutExercises WorkoutExercise[]
+  programExercises ProgramExercise[]
+  
+  @@map("exercises")
+}
+
+// Тренування
+model Workout {
+  id          String    @id @default(cuid())
+  userId      String
+  date        DateTime  @default(now())
+  duration    Int?      // хвилини
+  notes       String?
+  rating      Int?      // 1-5
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises   WorkoutExercise[]
+
+  @@index([userId, date])
+  @@map("workouts")
+}
+
+// Вправи в тренуванні
+model WorkoutExercise {
+  id          String   @id @default(cuid())
+  workoutId  String
+  exerciseId String
+  sets       Int?
+  reps       Int?
+  weight     Float?    // кг
+  duration   Int?      // секунди (для кардіо)
+  distance   Float?    // км (для бігу)
+  rest       Int?     // секунди відпочинку
+  order      Int       @default(0)
+  notes      String?
+
+  workout    Workout   @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise   Exercise  @relation(fields: [exerciseId], references: [id])
+
+  @@index([workoutId])
+  @@map("workout_exercises")
+}
+
+// Програми тренувань
+model Program {
+  id          String   @id @default(cuid())
+  name        String
+  nameUk      String?
+  description String?
+  descriptionUk String?
+  goal        String   // lose_weight, gain_muscle, maintain, endurance, definition
+  difficulty  String   // beginner, intermediate, advanced
+  duration    Int?     // днів
+  isDefault   Boolean  @default(false)
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  exercises   ProgramExercise[]
+  userPrograms UserProgram[]
+  
+  @@map("programs")
+}
+
+// Вправи в програмі
+model ProgramExercise {
+  id          String   @id @default(cuid())
+  programId  String
+  exerciseId String
+  day        Int      // День тижня (1-7)
+  week        Int?     // Тиждень програми
+  sets        Int?
+  reps        Int?
+  weight      Float?
+  duration    Int?
+  rest        Int?
+  order       Int      @default(0)
+  notes       String?
+
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
+
+  @@index([programId])
+  @@map("program_exercises")
+}
+
+// Призначені програми користувачам
+model UserProgram {
+  id          String    @id @default(cuid())
+  userId      String
+  programId   String
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  isActive    Boolean   @default(true)
+  progress    Int       @default(0) // Відсоток виконання
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program     Program   @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, programId])
+  @@index([userId])
+  @@map("user_programs")
+}
+
+// Щоденник харчування
+model NutritionLog {
+  id          String    @id @default(cuid())
+  userId      String
+  date        DateTime  @default(now())
+  mealType   String    // breakfast, lunch, dinner, snack
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       NutritionItem[]
+
+  @@index([userId, date])
+  @@map("nutrition_logs")
+}
+
+// Продукти в щоденнику
+model NutritionItem {
+  id            String    @id @default(cuid())
+  nutritionLogId String
+  name          String
+  nameUk        String?
+  amount        Float     // грами
+  calories      Float
+  protein       Float     @default(0)
+  carbs         Float     @default(0)
+  fat           Float     @default(0)
+  fiber         Float?    @default(0)
+  createdAt     DateTime  @default(now())
+
+  nutritionLog  NutritionLog @relation(fields: [nutritionLogId], references: [id], onDelete: Cascade)
+
+  @@index([nutritionLogId])
+  @@map("nutrition_items")
+}
+
+// База продуктів
+model Food {
+  id          String   @id @default(cuid())
+  name        String
+  nameUk      String?
+  brand       String?
+  category    String?  // fruit, vegetable, meat, dairy, grain, etc.
+  calories    Float    // на 100г
+  protein     Float    @default(0)
+  carbs       Float    @default(0)
+  fat         Float    @default(0)
+  fiber       Float?   @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@map("foods")
+}
