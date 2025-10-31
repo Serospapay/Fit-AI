@@ -354,7 +354,14 @@ export default function Home() {
                           <p className="text-sm text-gray-600 font-medium">
                             {workout.exercises.length} {workout.exercises.length === 1 ? 'вправа' : 'вправ'}
                           </p>
-                          {workout.duration && <span className="text-sm text-gray-600">⏱️ {workout.duration} хв</span>}
+                          {workout.duration && (
+                            <span className="text-sm text-gray-600 flex items-center gap-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              {workout.duration} хв
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
