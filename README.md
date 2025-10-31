@@ -27,12 +27,11 @@ start.bat
 1. Створити `.env` в `backend/`:
    ```
    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fitness_trainer?schema=public"
-   JWT_SECRET="your-super-secret-jwt-key"
    PORT=5000
    CORS_ORIGIN="http://localhost:3000"
    ```
 
-2. Запустити міграції:
+2. Запустити міграції та seed (створює користувача):
    ```bash
    cd backend
    npm run prisma:migrate
