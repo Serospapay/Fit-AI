@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -24,7 +25,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Routes will be added here
+// Routes
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -35,5 +37,6 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🔐 Auth routes: http://localhost:${PORT}/api/auth`);
 });
 
