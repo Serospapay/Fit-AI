@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { hashPassword, comparePassword, generateToken } from '../utils/auth';
+import logger from '../lib/logger';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -44,8 +45,8 @@ export const register = async (req: Request, res: Response) => {
       user,
       token,
     });
-  } catch (error) {
-    console.error('Registration error:', error);
+  } catch (error: any) {
+    logger.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -86,8 +87,8 @@ export const login = async (req: Request, res: Response) => {
       },
       token,
     });
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch (error: any) {
+    logger.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -118,8 +119,8 @@ export const getProfile = async (req: any, res: Response) => {
     }
 
     res.json(user);
-  } catch (error) {
-    console.error('Get profile error:', error);
+  } catch (error: any) {
+    logger.error('Get profile error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
