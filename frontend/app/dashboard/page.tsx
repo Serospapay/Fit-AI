@@ -84,6 +84,10 @@ export default function DashboardPage() {
                 <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
               <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
+                <a href="/dashboard" className="nav-link fw-bold d-flex align-items-center">
+                  <i className="bi bi-speedometer2 me-2"></i>
+                  <span>Dashboard</span>
+                </a>
                 <a href="/exercises" className="nav-link d-flex align-items-center">
                   <i className="bi bi-dumbbell me-2"></i>
                   <span>Вправи</span>
