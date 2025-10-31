@@ -80,22 +80,22 @@ export default function ExercisesPage() {
   return (
     <>
       <BootstrapClient />
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)', position: 'relative' }}>
+      <div className="min-h-screen bg-dark">
         {/* Background Grid */}
-        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'linear-gradient(cyan 1px, transparent 1px), linear-gradient(90deg, cyan 1px, transparent 1px)', backgroundSize: '50px 50px', opacity: 0.05, pointerEvents: 'none', zIndex: 0 }}></div>
+        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
         
         {/* Navigation */}
-        <nav style={{ position: 'sticky', top: 0, zIndex: 1000, background: 'rgba(10, 10, 15, 0.9)', borderBottom: '3px solid #00d4ff', backdropFilter: 'blur(10px)' }}>
+        <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none animate-glow">
+              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
                 Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
-                <a href="/dashboard" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Dashboard</a>
-                <a href="/exercises" className="text-decoration-none nav-link fw-bold animate-neon-blink" style={{ color: '#ff00aa' }}>Вправи</a>
-                <a href="/workouts" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Тренування</a>
-                <a href="/calculators" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Калькулятори</a>
+                <a href="/dashboard" className="nav-link">Dashboard</a>
+                <a href="/exercises" className="nav-link fw-bold">Вправи</a>
+                <a href="/workouts" className="nav-link">Тренування</a>
+                <a href="/calculators" className="nav-link">Калькулятори</a>
               </div>
             </div>
           </Container>
@@ -104,14 +104,14 @@ export default function ExercisesPage() {
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
           <ParallaxWrapper speed={0.2}>
             <div className="mb-4">
-              <h1 className="display-4 fw-bold mb-2 text-retro-pink">База вправ</h1>
-              <p className="lead" style={{ color: '#00d4ff' }}>Виберіть вправи для свого тренування</p>
+              <h1 className="mb-2">База вправ</h1>
+              <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Виберіть вправи для свого тренування</p>
             </div>
           </ParallaxWrapper>
 
           {/* Filters */}
           <ParallaxWrapper speed={0.15}>
-            <Card className="mb-4">
+            <Card className="card-hover-lift mb-4">
               <Card.Body>
               <Row className="g-3">
                 <Col md={12}>
@@ -184,13 +184,13 @@ export default function ExercisesPage() {
                     <Card className="card-hover-lift h-100">
                       <Card.Body className="p-4">
                       <div className="d-flex justify-content-between align-items-start mb-3">
-                        <h5 className="fw-bold mb-0">{exercise.nameUk || exercise.name}</h5>
+                        <h5 className="mb-0" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.2rem' }}>{exercise.nameUk || exercise.name}</h5>
                         <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
                           {exercise.difficulty}
                         </span>
                       </div>
                       
-                      <p className="text-muted small mb-3">
+                      <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small mb-3">
                         {exercise.descriptionUk || exercise.description}
                       </p>
                       
@@ -207,8 +207,8 @@ export default function ExercisesPage() {
                       </div>
 
                       {exercise.caloriesPerMin && (
-                        <div className="text-muted small">
-                          <i className="bi bi-fire me-1"></i>
+                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small">
+                          <i className="bi bi-fire me-1" style={{ color: '#d4af37' }}></i>
                           {exercise.caloriesPerMin} ккал/хв
                         </div>
                       )}
@@ -221,8 +221,8 @@ export default function ExercisesPage() {
           ) : (
             <Card>
               <Card.Body className="text-center py-5">
-                <i className="bi bi-search display-4 text-retro-blue mb-3"></i>
-                <p style={{ color: '#888' }}>Вправи не знайдено</p>
+                <i className="bi bi-search display-1 mb-3" style={{ color: '#d4af37' }}></i>
+                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Вправи не знайдено</p>
               </Card.Body>
             </Card>
           )}
