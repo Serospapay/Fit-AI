@@ -78,6 +78,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--dark);
   position: relative;
+  padding-top: 76px;
 }
 
 body::before {
@@ -352,6 +353,12 @@ a:hover {
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 4px solid var(--gold);
   box-shadow: var(--shadow-classic);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  width: 100%;
 }
 
 .nav-link {
@@ -688,5 +695,28 @@ html {
   font-size: 3rem;
   transform: rotate(-15deg);
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Footer */
+footer {
+  background: var(--primary-light);
+  border-top: 4px solid var(--gold);
+  margin-top: auto;
+  clear: both;
+}
+
+footer a {
+  color: var(--gray);
+  transition: color var(--transition-fast) ease;
+}
+
+footer a:hover {
+  color: var(--gold);
+  text-shadow: var(--shadow-gold);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+  position: relative;
 }
 

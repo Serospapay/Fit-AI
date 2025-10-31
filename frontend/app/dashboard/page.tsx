@@ -77,13 +77,13 @@ export default function DashboardPage() {
         {/* Navigation */}
         <nav className="navbar">
           <Container>
-            <div className="d-flex justify-content-between align-items-center py-3 flex-wrap">
+            <div className="d-flex justify-content-between align-items-center py-3 w-100">
               <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
                 <GymLogo />
                 <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
                 <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
-              <div className="d-flex align-items-center gap-4 flex-wrap">
+              <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
                 <a href="/exercises" className="nav-link d-flex align-items-center">
                   <i className="bi bi-dumbbell me-2"></i>
                   <span>Вправи</span>
