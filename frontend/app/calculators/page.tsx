@@ -277,46 +277,10 @@ export default function CalculatorsPage() {
         </Container>
 
         {/* Footer */}
-        <footer className="mt-5 py-5" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+        <footer className="py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <Row className="g-4">
-              <Col md={4}>
-                <div className="d-flex align-items-center mb-3">
-                  <GymLogo />
-                  <span className="ms-2" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '3px', fontSize: '1.5rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ ТРЕНЕР</span>
-                </div>
-                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
-                  Персональний фітнес-помічник для відстеження тренувань, аналізу прогресу та досягнення ваших цілей
-                </p>
-              </Col>
-              <Col md={4}>
-                <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>Навігація</h5>
-                <ul style={{ listStyle: 'none', padding: 0, color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
-                  <li className="mb-2">
-                    <a href="/dashboard" style={{ color: '#888', textDecoration: 'none' }}>Dashboard</a>
-                  </li>
-                  <li className="mb-2">
-                    <a href="/exercises" style={{ color: '#888', textDecoration: 'none' }}>База вправ</a>
-                  </li>
-                  <li className="mb-2">
-                    <a href="/workouts" style={{ color: '#888', textDecoration: 'none' }}>Тренування</a>
-                  </li>
-                  <li className="mb-2">
-                    <a href="/calculators" style={{ color: '#888', textDecoration: 'none' }}>Калькулятори</a>
-                  </li>
-                </ul>
-              </Col>
-              <Col md={4}>
-                <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>Розробка</h5>
-                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem' }}>
-                  Освітній проект<br />
-                  2024
-                </p>
-              </Col>
-            </Row>
-            <hr style={{ borderColor: 'rgba(212, 175, 55, 0.2)', margin: '2rem 0 1rem' }} />
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem' }}>
-              © 2024 Кишеньковий тренер. Всі права захищено.
+            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+              © 2024 Кишеньковий тренер
             </div>
           </Container>
         </footer>
