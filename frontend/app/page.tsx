@@ -1,14 +1,45 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 export default function Home() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      setUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    window.location.href = '/';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <nav className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-green-600">💪 Кишеньковий тренер</h1>
-          <div className="flex gap-4">
+          <a href="/" className="text-2xl font-bold text-green-600">💪 Кишеньковий тренер</a>
+          <div className="flex gap-4 items-center">
             <a href="/" className="hover:text-green-600">Головна</a>
             <a href="/exercises" className="hover:text-green-600">Вправи</a>
+            {user ? (
+              <>
+                <span className="text-gray-600">Привіт, {user.name || user.email}!</span>
+                <button onClick={handleLogout} className="text-red-600 hover:text-red-700">
+                  Вийти
+                </button>
+              </>
+            ) : (
+              <>
+                <a href="/login" className="hover:text-green-600">Вхід</a>
+                <a href="/register" className="hover:text-green-600">Реєстрація</a>
+              </>
+            )}
           </div>
         </div>
       </nav>
