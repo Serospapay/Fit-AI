@@ -54,6 +54,7 @@ model Exercise {
   workoutExercises WorkoutExercise[]
   programExercises ProgramExercise[]
   
+  @@unique([name])
   @@map("exercises")
 }
 
