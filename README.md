@@ -31,8 +31,8 @@
 
 ### 1. Клонувати репозиторій
 ```bash
-git clone <your-repo-url>
-cd DPFah/2
+git clone https://github.com/Serospapay/Fit-AI.git
+cd Fit-AI/2
 ```
 
 ### 2. Запустити проект
