@@ -3,6 +3,15 @@
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+      <nav className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-green-600">💪 Кишеньковий тренер</h1>
+          <div className="flex gap-4">
+            <a href="/" className="hover:text-green-600">Головна</a>
+            <a href="/exercises" className="hover:text-green-600">Вправи</a>
+          </div>
+        </div>
+      </nav>
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
