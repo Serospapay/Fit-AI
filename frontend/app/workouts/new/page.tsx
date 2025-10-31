@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 
@@ -13,7 +12,6 @@ interface Exercise {
 }
 
 export default function NewWorkoutPage() {
-  const router = useRouter();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedExercises, setSelectedExercises] = useState<any[]>([]);
   const [workoutData, setWorkoutData] = useState({
@@ -24,13 +22,8 @@ export default function NewWorkoutPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     fetchExercises();
   }, []);
 
@@ -85,8 +78,7 @@ export default function NewWorkoutPage() {
       const res = await fetch('http://localhost:5000/api/workouts', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(workout)
       });

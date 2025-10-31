@@ -15,12 +15,9 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Redirect to dashboard if already logged in
+  // Redirect to dashboard
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      window.location.href = '/dashboard';
-    }
+    window.location.href = '/dashboard';
   }, []);
 
   return (

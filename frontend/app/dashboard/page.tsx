@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 
@@ -20,30 +19,16 @@ interface Stats {
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    if (userStr) {
-      setUser(JSON.parse(userStr));
-      if (token) {
-        fetchDashboardData(token);
-      }
-    } else {
-      router.push('/login');
-    }
+    fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async (token: string) => {
+  const fetchDashboardData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/workouts/stats?days=30', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch('http://localhost:5000/api/workouts/stats?days=30');
 
       if (res.ok) {
         const statsData = await res.json();
@@ -54,12 +39,6 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/');
   };
 
   const getTypeColor = (type: string) => {
@@ -106,15 +85,6 @@ export default function DashboardPage() {
                   <i className="bi bi-calculator me-1"></i>
                   Калькулятори
                 </a>
-                <span className="text-muted">|</span>
-                <span className="text-muted">{user?.name || user?.email}</span>
-                <Button 
-                  variant="outline-secondary" 
-                  size="sm"
-                  onClick={handleLogout}
-                >
-                  Вийти
-                </Button>
               </div>
             </div>
           </Container>

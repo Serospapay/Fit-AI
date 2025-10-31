@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Button, Spinner, Modal } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 
@@ -15,34 +14,17 @@ interface Workout {
 }
 
 export default function WorkoutsPage() {
-  const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem('token');
-    if (!tokenFromStorage) {
-      router.push('/login');
-      return;
-    }
-    setToken(tokenFromStorage);
-    fetchWorkouts(tokenFromStorage);
+    fetchWorkouts();
   }, []);
 
-  const fetchWorkouts = async (authToken: string) => {
+  const fetchWorkouts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/workouts', {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      });
-
-      if (res.status === 401) {
-        localStorage.removeItem('token');
-        router.push('/login');
-        return;
-      }
-
+      const res = await fetch('http://localhost:5000/api/workouts');
       const data = await res.json();
       setWorkouts(data.workouts || []);
     } catch (error) {
@@ -57,8 +39,7 @@ export default function WorkoutsPage() {
 
     try {
       const res = await fetch(`http://localhost:5000/api/workouts/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        method: 'DELETE'
       });
 
       if (res.ok) {

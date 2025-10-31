@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { DEFAULT_USER_ID } from '../src/lib/config';
 
 const prisma = new PrismaClient();
 
@@ -283,6 +285,25 @@ const exercises = [
 async function main() {
   console.log('🌱 Seeding database...');
 
+  // Create default user if not exists
+  const existingUser = await prisma.user.findUnique({
+    where: { id: DEFAULT_USER_ID }
+  });
+
+  if (!existingUser) {
+    const hashedPassword = await bcrypt.hash('default-password', 10);
+    await prisma.user.create({
+      data: {
+        id: DEFAULT_USER_ID,
+        email: 'user@fitness.local',
+        passwordHash: hashedPassword,
+        name: 'Мій Профіль'
+      }
+    });
+    console.log('✅ Created default user');
+  }
+
+  // Seed exercises
   for (const exercise of exercises) {
     const existing = await prisma.exercise.findUnique({
       where: { name: exercise.name }
