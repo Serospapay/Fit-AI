@@ -38,6 +38,10 @@
 - ✅ TypeScript для безпеки типів
 - ✅ ESLint без помилок
 - ✅ Документація
+- ✅ **Winston логування** - всі помилки та події
+- ✅ **Error handling middleware** - автоматична обробка помилок
+- ✅ **Graceful shutdown** - коректне завершення роботи
+- ✅ **DB reconnection logic** - автоматичне перепідключення до БД
 
 ### Сторінки
 1. ✅ `/` - Landing page
