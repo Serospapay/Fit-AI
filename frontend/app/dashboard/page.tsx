@@ -5,6 +5,7 @@ import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstr
 import BootstrapClient from '../components/BootstrapClient';
 import ParallaxWrapper from '../components/ParallaxWrapper';
 import GymPostersBackground from '../components/GymPostersBackground';
+import GymLogo from '../components/GymLogo';
 
 interface Stats {
   totalWorkouts: number;
@@ -77,21 +78,23 @@ export default function DashboardPage() {
         <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3 flex-wrap">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                Кишеньковий тренер
+              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
+                <GymLogo />
+                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
+                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
-              <div className="d-flex align-items-center gap-3 flex-wrap">
-                <a href="/exercises" className="nav-link">
-                  <i className="bi bi-dumbbell me-1"></i>
-                  Вправи
+              <div className="d-flex align-items-center gap-4 flex-wrap">
+                <a href="/exercises" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-dumbbell me-2"></i>
+                  <span>Вправи</span>
                 </a>
-                <a href="/workouts" className="nav-link">
-                  <i className="bi bi-calendar-check me-1"></i>
-                  Тренування
+                <a href="/workouts" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-calendar-check me-2"></i>
+                  <span>Тренування</span>
                 </a>
-                <a href="/calculators" className="nav-link">
-                  <i className="bi bi-calculator me-1"></i>
-                  Калькулятори
+                <a href="/calculators" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-calculator me-2"></i>
+                  <span>Калькулятори</span>
                 </a>
               </div>
             </div>
@@ -307,8 +310,8 @@ export default function DashboardPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3 muscle-icon" style={{ color: '#d4af37' }}>
-                          ➕
+                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
+                          <i className="bi bi-plus-circle-fill"></i>
                         </div>
                         <h5 className="mb-3">Додати тренування</h5>
                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати нове тренування</p>
@@ -321,8 +324,8 @@ export default function DashboardPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3 muscle-icon" style={{ color: '#c0c0c0' }}>
-                          💪
+                        <div className="display-1 mb-3" style={{ color: '#c0c0c0' }}>
+                          <i className="bi bi-dumbbell-fill"></i>
                         </div>
                         <h5 className="mb-3">Перегляд вправ</h5>
                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Бібліотека вправ</p>
@@ -335,8 +338,8 @@ export default function DashboardPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3 muscle-icon" style={{ color: '#cd7f32' }}>
-                          📊
+                        <div className="display-1 mb-3" style={{ color: '#cd7f32' }}>
+                          <i className="bi bi-calculator-fill"></i>
                         </div>
                         <h5 className="mb-3">Калькулятори</h5>
                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Розрахувати показники</p>

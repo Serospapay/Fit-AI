@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
+import GymLogo from '../components/GymLogo';
 
 export default function CalculatorsPage() {
   const [formData, setFormData] = useState({
@@ -93,14 +94,28 @@ export default function CalculatorsPage() {
         <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                Кишеньковий тренер
+              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
+                <GymLogo />
+                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
+                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
-              <div className="d-flex align-items-center gap-3">
-                <a href="/dashboard" className="nav-link">Dashboard</a>
-                <a href="/exercises" className="nav-link">Вправи</a>
-                <a href="/workouts" className="nav-link">Тренування</a>
-                <a href="/calculators" className="nav-link fw-bold">Калькулятори</a>
+              <div className="d-flex align-items-center gap-4 flex-wrap">
+                <a href="/dashboard" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-speedometer2 me-2"></i>
+                  <span>Dashboard</span>
+                </a>
+                <a href="/exercises" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-dumbbell me-2"></i>
+                  <span>Вправи</span>
+                </a>
+                <a href="/workouts" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-calendar-check me-2"></i>
+                  <span>Тренування</span>
+                </a>
+                <a href="/calculators" className="nav-link fw-bold d-flex align-items-center">
+                  <i className="bi bi-calculator me-2"></i>
+                  <span>Калькулятори</span>
+                </a>
               </div>
             </div>
           </Container>
@@ -203,7 +218,9 @@ export default function CalculatorsPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift" style={{ borderTop: '4px solid #d4af37' }}>
                       <Card.Body className="text-center p-4">
-                        <div className="display-4 mb-2" style={{ color: '#d4af37' }}>🔥</div>
+                        <div className="display-1 mb-2" style={{ color: '#d4af37' }}>
+                          <i className="bi bi-fire"></i>
+                        </div>
                         <h5 className="mb-2">BMR</h5>
                         <div className="gold-number mb-1" style={{ fontSize: '4rem' }}>{results.bmr}</div>
                         <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>ккал/день</small>
@@ -215,7 +232,9 @@ export default function CalculatorsPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift" style={{ borderTop: '4px solid #c0c0c0' }}>
                       <Card.Body className="text-center p-4">
-                        <div className="display-4 mb-2" style={{ color: '#c0c0c0' }}>⚡</div>
+                        <div className="display-1 mb-2" style={{ color: '#c0c0c0' }}>
+                          <i className="bi bi-lightning-charge-fill"></i>
+                        </div>
                         <h5 className="mb-2">TDEE</h5>
                         <div className="gold-number mb-1" style={{ fontSize: '4rem', color: '#c0c0c0' }}>{results.tdee}</div>
                         <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>ккал/день</small>
@@ -227,7 +246,9 @@ export default function CalculatorsPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift" style={{ borderTop: '4px solid #cd7f32' }}>
                       <Card.Body className="text-center p-4">
-                        <div className="display-4 mb-2" style={{ color: '#cd7f32' }}>📊</div>
+                        <div className="display-1 mb-2" style={{ color: '#cd7f32' }}>
+                          <i className="bi bi-bar-chart-fill"></i>
+                        </div>
                         <h5 className="mb-2">ІМТ</h5>
                         <div className="gold-number mb-1" style={{ fontSize: '4rem', color: '#cd7f32' }}>{results.bmi.value}</div>
                         <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>{results.bmi.category}</small>
@@ -240,7 +261,10 @@ export default function CalculatorsPage() {
 
               <Card className="card-hover-lift">
                 <Card.Body className="p-4">
-                  <h5 className="mb-3">Примітки</h5>
+                  <h5 className="mb-3">
+                    <i className="bi bi-info-circle me-2" style={{ color: '#d4af37' }}></i>
+                    Примітки
+                  </h5>
                   <ul className="mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
                     <li><strong style={{ color: '#d4af37' }}>BMR</strong> - це мінімальна кількість калорій, яка потрібна вашому організму для підтримки життєво важливих функцій в стані спокою.</li>
                     <li><strong style={{ color: '#d4af37' }}>TDEE</strong> - це загальна кількість калорій, які ви спалюєте за день, враховуючи вашу активність.</li>

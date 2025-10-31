@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 import GymPostersBackground from '../../components/GymPostersBackground';
+import GymLogo from '../../components/GymLogo';
 
 interface Exercise {
   id: string;
@@ -113,13 +114,15 @@ export default function NewWorkoutPage() {
         <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                Кишеньковий тренер
+              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
+                <GymLogo />
+                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
+                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
               <div className="d-flex align-items-center gap-3">
-                <a href="/workouts" className="nav-link">
-                  <i className="bi bi-arrow-left me-1"></i>
-                  Назад
+                <a href="/workouts" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-arrow-left me-2"></i>
+                  <span>Назад</span>
                 </a>
               </div>
             </div>

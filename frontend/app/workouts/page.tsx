@@ -5,6 +5,7 @@ import { Container, Row, Col, Card, Button, Spinner, Modal } from 'react-bootstr
 import BootstrapClient from '../components/BootstrapClient';
 import ParallaxWrapper from '../components/ParallaxWrapper';
 import GymPostersBackground from '../components/GymPostersBackground';
+import GymLogo from '../components/GymLogo';
 
 interface Workout {
   id: string;
@@ -66,14 +67,28 @@ export default function WorkoutsPage() {
         <nav className="navbar">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
-                Кишеньковий тренер
+              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
+                <GymLogo />
+                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
+                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
               </a>
-              <div className="d-flex align-items-center gap-3">
-                <a href="/dashboard" className="nav-link">Dashboard</a>
-                <a href="/exercises" className="nav-link">Вправи</a>
-                <a href="/workouts" className="nav-link fw-bold">Тренування</a>
-                <a href="/calculators" className="nav-link">Калькулятори</a>
+              <div className="d-flex align-items-center gap-4 flex-wrap">
+                <a href="/dashboard" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-speedometer2 me-2"></i>
+                  <span>Dashboard</span>
+                </a>
+                <a href="/exercises" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-dumbbell me-2"></i>
+                  <span>Вправи</span>
+                </a>
+                <a href="/workouts" className="nav-link fw-bold d-flex align-items-center">
+                  <i className="bi bi-calendar-check me-2"></i>
+                  <span>Тренування</span>
+                </a>
+                <a href="/calculators" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-calculator me-2"></i>
+                  <span>Калькулятори</span>
+                </a>
               </div>
             </div>
           </Container>
@@ -177,6 +192,51 @@ export default function WorkoutsPage() {
             </ParallaxWrapper>
           )}
         </Container>
+
+        {/* Footer */}
+        <footer className="mt-5 py-5" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+          <Container>
+            <Row className="g-4">
+              <Col md={4}>
+                <div className="d-flex align-items-center mb-3">
+                  <GymLogo />
+                  <span className="ms-2" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '3px', fontSize: '1.5rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ ТРЕНЕР</span>
+                </div>
+                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                  Персональний фітнес-помічник для відстеження тренувань, аналізу прогресу та досягнення ваших цілей
+                </p>
+              </Col>
+              <Col md={4}>
+                <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>Навігація</h5>
+                <ul style={{ listStyle: 'none', padding: 0, color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                  <li className="mb-2">
+                    <a href="/dashboard" style={{ color: '#888', textDecoration: 'none' }}>Dashboard</a>
+                  </li>
+                  <li className="mb-2">
+                    <a href="/exercises" style={{ color: '#888', textDecoration: 'none' }}>База вправ</a>
+                  </li>
+                  <li className="mb-2">
+                    <a href="/workouts" style={{ color: '#888', textDecoration: 'none' }}>Тренування</a>
+                  </li>
+                  <li className="mb-2">
+                    <a href="/calculators" style={{ color: '#888', textDecoration: 'none' }}>Калькулятори</a>
+                  </li>
+                </ul>
+              </Col>
+              <Col md={4}>
+                <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>Розробка</h5>
+                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem' }}>
+                  Освітній проект<br />
+                  2024
+                </p>
+              </Col>
+            </Row>
+            <hr style={{ borderColor: 'rgba(212, 175, 55, 0.2)', margin: '2rem 0 1rem' }} />
+            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem' }}>
+              © 2024 Кишеньковий тренер. Всі права захищено.
+            </div>
+          </Container>
+        </footer>
       </div>
     </>
   );
