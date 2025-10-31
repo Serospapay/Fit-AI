@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
+import ParallaxWrapper from '../components/ParallaxWrapper';
 
 interface Exercise {
   id: string;
@@ -79,33 +80,39 @@ export default function ExercisesPage() {
   return (
     <>
       <BootstrapClient />
-      <div className="min-h-screen bg-light">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)', position: 'relative' }}>
+        {/* Background Grid */}
+        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'linear-gradient(cyan 1px, transparent 1px), linear-gradient(90deg, cyan 1px, transparent 1px)', backgroundSize: '50px 50px', opacity: 0.05, pointerEvents: 'none', zIndex: 0 }}></div>
+        
         {/* Navigation */}
-        <nav className="bg-white shadow-sm border-bottom">
+        <nav style={{ position: 'sticky', top: 0, zIndex: 1000, background: 'rgba(10, 10, 15, 0.9)', borderBottom: '3px solid #00d4ff', backdropFilter: 'blur(10px)' }}>
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3">
-              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none">
+              <a href="/dashboard" className="fw-bold fs-4 text-gradient text-decoration-none animate-glow">
                 Кишеньковий тренер
               </a>
               <div className="d-flex align-items-center gap-3">
-                <a href="/dashboard" className="text-decoration-none text-dark">Dashboard</a>
-                <a href="/exercises" className="text-decoration-none fw-bold">Вправи</a>
-                <a href="/workouts" className="text-decoration-none text-dark">Тренування</a>
-                <a href="/calculators" className="text-decoration-none text-dark">Калькулятори</a>
+                <a href="/dashboard" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Dashboard</a>
+                <a href="/exercises" className="text-decoration-none nav-link fw-bold animate-neon-blink" style={{ color: '#ff00aa' }}>Вправи</a>
+                <a href="/workouts" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Тренування</a>
+                <a href="/calculators" className="text-decoration-none nav-link" style={{ color: '#00d4ff' }}>Калькулятори</a>
               </div>
             </div>
           </Container>
         </nav>
 
-        <Container className="py-5">
-          <div className="mb-4">
-            <h1 className="display-4 fw-bold mb-2">База вправ</h1>
-            <p className="lead text-muted">Виберіть вправи для свого тренування</p>
-          </div>
+        <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
+          <ParallaxWrapper speed={0.2}>
+            <div className="mb-4">
+              <h1 className="display-4 fw-bold mb-2 text-retro-pink">База вправ</h1>
+              <p className="lead" style={{ color: '#00d4ff' }}>Виберіть вправи для свого тренування</p>
+            </div>
+          </ParallaxWrapper>
 
           {/* Filters */}
-          <Card className="border-0 shadow-sm mb-4">
-            <Card.Body>
+          <ParallaxWrapper speed={0.15}>
+            <Card className="mb-4">
+              <Card.Body>
               <Row className="g-3">
                 <Col md={12}>
                   <Form.Control
@@ -161,7 +168,8 @@ export default function ExercisesPage() {
                 </Col>
               </Row>
             </Card.Body>
-          </Card>
+            </Card>
+          </ParallaxWrapper>
 
           {/* Exercises Grid */}
           {loading ? (
@@ -169,11 +177,12 @@ export default function ExercisesPage() {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : exercises.length > 0 ? (
-            <Row className="g-4">
-              {exercises.map((exercise) => (
-                <Col key={exercise.id} md={6} lg={4}>
-                  <Card className="border-0 shadow-sm h-100 card-hover-lift">
-                    <Card.Body className="p-4">
+            <ParallaxWrapper speed={0.1}>
+              <Row className="g-4">
+                {exercises.map((exercise) => (
+                  <Col key={exercise.id} md={6} lg={4}>
+                    <Card className="card-hover-lift h-100">
+                      <Card.Body className="p-4">
                       <div className="d-flex justify-content-between align-items-start mb-3">
                         <h5 className="fw-bold mb-0">{exercise.nameUk || exercise.name}</h5>
                         <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
@@ -208,11 +217,12 @@ export default function ExercisesPage() {
                 </Col>
               ))}
             </Row>
+            </ParallaxWrapper>
           ) : (
-            <Card className="border-0 shadow-sm">
+            <Card>
               <Card.Body className="text-center py-5">
-                <i className="bi bi-search display-4 text-muted mb-3"></i>
-                <p className="text-muted">Вправи не знайдено</p>
+                <i className="bi bi-search display-4 text-retro-blue mb-3"></i>
+                <p style={{ color: '#888' }}>Вправи не знайдено</p>
               </Card.Body>
             </Card>
           )}
