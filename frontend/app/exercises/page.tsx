@@ -82,7 +82,7 @@ export default function ExercisesPage() {
   return (
     <>
       <BootstrapClient />
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-dark d-flex flex-column">
         {/* Background Grid */}
         <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
         
@@ -90,7 +90,7 @@ export default function ExercisesPage() {
         <GymPostersBackground />
         
         {/* Navigation */}
-        <nav className="navbar">
+        <nav className="navbar flex-shrink-0">
           <Container>
             <div className="d-flex justify-content-between align-items-center py-3 w-100">
               <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
@@ -120,6 +120,7 @@ export default function ExercisesPage() {
           </Container>
         </nav>
 
+        <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
           <ParallaxWrapper speed={0.2}>
             <div className="mb-4">
@@ -246,9 +247,10 @@ export default function ExercisesPage() {
             </Card>
           )}
         </Container>
+        </main>
 
         {/* Footer */}
-        <footer className="py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
             <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
               © 2024 Кишеньковий тренер
