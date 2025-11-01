@@ -44,6 +44,7 @@ model Exercise {
   equipment       String?  // none, dumbbells, barbell, machine, bodyweight
   difficulty      String   // beginner, intermediate, advanced
   location        String?  // home, gym, outdoor
+  goal            String?  // lose_weight, gain_muscle, maintain, endurance, definition
   instructions    String?  // Інструкції виконання
   instructionsUk  String?
   tips            String?  // Корисні поради

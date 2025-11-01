@@ -10,6 +10,7 @@ export const getAllExercises = async (req: Request, res: Response) => {
       equipment,
       difficulty,
       location,
+      goal,
       search,
       page = '1',
       limit = '20'
@@ -26,6 +27,7 @@ export const getAllExercises = async (req: Request, res: Response) => {
     if (equipment) where.equipment = equipment;
     if (difficulty) where.difficulty = difficulty;
     if (location) where.location = location;
+    if (goal) where.goal = goal;
     if (search) {
       where.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -126,12 +128,13 @@ export const deleteExercise = async (req: Request, res: Response) => {
 
 export const getFilterOptions = async (req: Request, res: Response) => {
   try {
-    const [types, muscleGroups, equipments, difficulties, locations] = await Promise.all([
+    const [types, muscleGroups, equipments, difficulties, locations, goals] = await Promise.all([
       prisma.exercise.findMany({ select: { type: true }, distinct: ['type'] }),
       prisma.exercise.findMany({ select: { muscleGroup: true }, distinct: ['muscleGroup'] }),
       prisma.exercise.findMany({ select: { equipment: true }, distinct: ['equipment'] }),
       prisma.exercise.findMany({ select: { difficulty: true }, distinct: ['difficulty'] }),
-      prisma.exercise.findMany({ select: { location: true }, distinct: ['location'] })
+      prisma.exercise.findMany({ select: { location: true }, distinct: ['location'] }),
+      prisma.exercise.findMany({ select: { goal: true }, distinct: ['goal'] })
     ]);
 
     res.json({
@@ -139,7 +142,8 @@ export const getFilterOptions = async (req: Request, res: Response) => {
       muscleGroups: muscleGroups.map(m => m.muscleGroup).filter(Boolean),
       equipments: equipments.map(e => e.equipment).filter(Boolean),
       difficulties: difficulties.map(d => d.difficulty).filter(Boolean),
-      locations: locations.map(l => l.location).filter(Boolean)
+      locations: locations.map(l => l.location).filter(Boolean),
+      goals: goals.map(g => g.goal).filter(Boolean)
     });
   } catch (error: any) {
     logger.error('Get filter options error:', error);

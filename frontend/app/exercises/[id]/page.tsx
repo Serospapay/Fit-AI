@@ -18,6 +18,7 @@ interface Exercise {
   equipment?: string;
   difficulty: string;
   location?: string;
+  goal?: string;
   instructions?: string;
   instructionsUk?: string;
   tips?: string;

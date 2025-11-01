@@ -18,6 +18,7 @@ interface Exercise {
   equipment?: string;
   difficulty: string;
   location?: string;
+  goal?: string;
   instructions?: string;
   instructionsUk?: string;
   tips?: string;
@@ -39,6 +40,7 @@ export default function ExercisesPage() {
     equipment: '',
     difficulty: '',
     location: '',
+    goal: '',
     search: ''
   });
   const [options, setOptions] = useState<any>(null);
@@ -71,6 +73,7 @@ export default function ExercisesPage() {
       if (filters.equipment) params.append('equipment', filters.equipment);
       if (filters.difficulty) params.append('difficulty', filters.difficulty);
       if (filters.location) params.append('location', filters.location);
+      if (filters.goal) params.append('goal', filters.goal);
       if (filters.search) params.append('search', filters.search);
 
       const res = await fetch(`http://localhost:5000/api/exercises?${params.toString()}`);
@@ -144,6 +147,17 @@ export default function ExercisesPage() {
     return locations[location] || location;
   };
 
+  const getGoalLabelUk = (goal: string) => {
+    const goals: { [key: string]: string } = {
+      lose_weight: 'Схуднення',
+      gain_muscle: 'Набір маси',
+      maintain: 'Підтримка',
+      endurance: 'Витривалість',
+      definition: 'Рельєф'
+    };
+    return goals[goal] || goal;
+  };
+
   return (
     <>
       <BootstrapClient />
@@ -201,7 +215,7 @@ export default function ExercisesPage() {
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   />
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <Form.Select
                     value={filters.type}
                     onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -212,7 +226,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <Form.Select
                     value={filters.muscleGroup}
                     onChange={(e) => setFilters({ ...filters, muscleGroup: e.target.value })}
@@ -223,7 +237,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <Form.Select
                     value={filters.equipment}
                     onChange={(e) => setFilters({ ...filters, equipment: e.target.value })}
@@ -234,7 +248,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <Form.Select
                     value={filters.difficulty}
                     onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}
@@ -245,7 +259,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <Form.Select
                     value={filters.location}
                     onChange={(e) => setFilters({ ...filters, location: e.target.value })}
@@ -253,6 +267,17 @@ export default function ExercisesPage() {
                     <option value="">Всі місця</option>
                     {options?.locations?.map((loc: string) => (
                       <option key={loc} value={loc}>{getLocationLabelUk(loc)}</option>
+                    ))}
+                  </Form.Select>
+                </Col>
+                <Col md={3}>
+                  <Form.Select
+                    value={filters.goal}
+                    onChange={(e) => setFilters({ ...filters, goal: e.target.value })}
+                  >
+                    <option value="">Всі цілі</option>
+                    {options?.goals?.map((g: string) => (
+                      <option key={g} value={g}>{getGoalLabelUk(g)}</option>
                     ))}
                   </Form.Select>
                 </Col>
