@@ -100,6 +100,38 @@ export default function ExerciseDetailPage() {
     return groups[muscleGroup] || muscleGroup;
   };
 
+  const getLocationLabelUk = (location: string) => {
+    const locations: { [key: string]: string } = {
+      home: 'Дома',
+      gym: 'В залі',
+      outdoor: 'На вулиці'
+    };
+    return locations[location] || location;
+  };
+
+  const getGoalLabelUk = (goal: string) => {
+    const goals: { [key: string]: string } = {
+      lose_weight: 'Схуднення',
+      gain_muscle: 'Набір маси',
+      maintain: 'Підтримка',
+      endurance: 'Витривалість',
+      definition: 'Рельєф'
+    };
+    return goals[goal] || goal;
+  };
+
+  const getEquipmentLabelUk = (equipment: string) => {
+    const equipments: { [key: string]: string } = {
+      bodyweight: 'Власна вага',
+      dumbbells: 'Гантелі',
+      barbell: 'Штанга',
+      machine: 'Тренажер',
+      resistance_band: 'Резинки',
+      kettlebell: 'Гиря'
+    };
+    return equipments[equipment] || equipment;
+  };
+
   if (loading) {
     return (
       <>
@@ -245,47 +277,65 @@ export default function ExerciseDetailPage() {
                         Детальна інформація
                       </h6>
                       <Row className="g-3">
-                        <Col xs={6}>
+                        <Col xs={6} sm={4}>
                           <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
                             <i className="bi bi-tag fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
                             <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Тип</div>
-                            <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
+                            <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
                               {getTypeLabelUk(exercise.type)}
                             </div>
                           </div>
                         </Col>
                         {exercise.muscleGroup && (
-                          <Col xs={6}>
+                          <Col xs={6} sm={4}>
                             <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
                               <i className="bi bi-controller fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
                               <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Група м'язів</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
                                 {getMuscleGroupLabelUk(exercise.muscleGroup)}
                               </div>
                             </div>
                           </Col>
                         )}
                         {exercise.equipment && (
-                          <Col xs={6}>
+                          <Col xs={6} sm={4}>
                             <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
                               <i className="bi bi-tools fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
                               <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Інвентар</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
-                                {exercise.equipment === 'bodyweight' ? 'Власна вага' :
-                                 exercise.equipment === 'dumbbells' ? 'Гантелі' :
-                                 exercise.equipment === 'barbell' ? 'Штанга' :
-                                 exercise.equipment === 'machine' ? 'Тренажер' :
-                                 'Немає'}
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {getEquipmentLabelUk(exercise.equipment)}
+                              </div>
+                            </div>
+                          </Col>
+                        )}
+                        {exercise.location && (
+                          <Col xs={6} sm={4}>
+                            <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                              <i className="bi bi-geo-alt fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Місце</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {getLocationLabelUk(exercise.location)}
+                              </div>
+                            </div>
+                          </Col>
+                        )}
+                        {exercise.goal && (
+                          <Col xs={6} sm={4}>
+                            <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                              <i className="bi bi-bullseye fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Мета</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {getGoalLabelUk(exercise.goal)}
                               </div>
                             </div>
                           </Col>
                         )}
                         {exercise.caloriesPerMin && (
-                          <Col xs={6}>
+                          <Col xs={6} sm={4}>
                             <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
                               <i className="bi bi-fire fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
                               <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Калорії</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
                                 {exercise.caloriesPerMin} / хв
                               </div>
                             </div>

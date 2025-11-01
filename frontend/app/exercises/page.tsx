@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, Row, Col, Form, Card, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Card, Spinner, Pagination } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
@@ -34,6 +34,9 @@ export default function ExercisesPage() {
   const router = useRouter();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState({
     type: '',
     muscleGroup: '',
@@ -47,12 +50,16 @@ export default function ExercisesPage() {
 
   useEffect(() => {
     fetchOptions();
-    fetchExercises();
   }, []);
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchExercises();
   }, [filters]);
+
+  useEffect(() => {
+    fetchExercises();
+  }, [currentPage]);
 
   const fetchOptions = async () => {
     try {
@@ -75,10 +82,14 @@ export default function ExercisesPage() {
       if (filters.location) params.append('location', filters.location);
       if (filters.goal) params.append('goal', filters.goal);
       if (filters.search) params.append('search', filters.search);
+      params.append('page', currentPage.toString());
+      params.append('limit', '20');
 
       const res = await fetch(`http://localhost:5000/api/exercises?${params.toString()}`);
       const data = await res.json();
       setExercises(data.exercises || []);
+      setTotalPages(data.pagination?.pages || 1);
+      setTotal(data.pagination?.total || 0);
     } catch (error) {
       console.error('Error fetching exercises:', error);
     } finally {
@@ -204,7 +215,14 @@ export default function ExercisesPage() {
         <Container className="py-5" style={{ position: 'relative', zIndex: 1, maxWidth: '1400px' }}>
           <div className="mb-4">
             <h1 className="mb-2" style={{ fontFamily: 'var(--font-bebas)', fontSize: '3rem', color: '#d4af37' }}>База вправ</h1>
-            <p className="lead mb-0" style={{ color: '#aaa', fontFamily: 'var(--font-oswald)', fontSize: '1.2rem' }}>Виберіть вправи для свого тренування</p>
+            <p className="lead mb-0" style={{ color: '#aaa', fontFamily: 'var(--font-oswald)', fontSize: '1.2rem' }}>
+              Виберіть вправи для свого тренування
+              {total > 0 && (
+                <span className="ms-3" style={{ color: '#d4af37', fontSize: '1rem' }}>
+                  ({total} вправ)
+                </span>
+              )}
+            </p>
           </div>
 
           {/* Filters */}
@@ -307,16 +325,26 @@ export default function ExercisesPage() {
                             </h5>
                             <div className="d-flex flex-wrap gap-2 mb-2">
                               {exercise.type && (
-                                <span className="badge" style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', background: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', border: '1px solid #d4af37' }}>
+                                <span className="badge" style={{ fontSize: '0.7rem', padding: '0.3rem 0.6rem', background: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', border: '1px solid #d4af37' }}>
                                   {getTypeLabelUk(exercise.type)}
                                 </span>
                               )}
                               {exercise.muscleGroup && (
-                                <span className="badge" style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', background: 'rgba(13, 110, 253, 0.2)', color: '#0d6efd', border: '1px solid #0d6efd' }}>
+                                <span className="badge" style={{ fontSize: '0.7rem', padding: '0.3rem 0.6rem', background: 'rgba(13, 110, 253, 0.2)', color: '#0d6efd', border: '1px solid #0d6efd' }}>
                                   {getMuscleGroupLabelUk(exercise.muscleGroup)}
                                 </span>
                               )}
-                              <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`} style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem' }}>
+                              {exercise.location && (
+                                <span className="badge" style={{ fontSize: '0.7rem', padding: '0.3rem 0.6rem', background: 'rgba(25, 135, 84, 0.2)', color: '#198754', border: '1px solid #198754' }}>
+                                  {getLocationLabelUk(exercise.location)}
+                                </span>
+                              )}
+                              {exercise.goal && (
+                                <span className="badge" style={{ fontSize: '0.7rem', padding: '0.3rem 0.6rem', background: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', border: '1px solid #ffc107' }}>
+                                  {getGoalLabelUk(exercise.goal)}
+                                </span>
+                              )}
+                              <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`} style={{ fontSize: '0.7rem', padding: '0.3rem 0.6rem' }}>
                                 {getDifficultyLabelUk(exercise.difficulty)}
                               </span>
                             </div>
@@ -355,6 +383,35 @@ export default function ExercisesPage() {
                 <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Вправи не знайдено</p>
               </Card.Body>
             </Card>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <Pagination>
+                <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
+                <Pagination.Prev onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} />
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1;
+                  if (page === 1 || page === totalPages || (page >= currentPage - 2 && page <= currentPage + 2)) {
+                    return (
+                      <Pagination.Item
+                        key={page}
+                        active={page === currentPage}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </Pagination.Item>
+                    );
+                  } else if (page === currentPage - 3 || page === currentPage + 3) {
+                    return <Pagination.Ellipsis key={page} />;
+                  }
+                  return null;
+                })}
+                <Pagination.Next onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} />
+                <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
+              </Pagination>
+            </div>
           )}
         </Container>
         </main>
