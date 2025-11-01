@@ -217,40 +217,43 @@ export default function ExerciseDetailPage() {
                 <div className="d-flex flex-column gap-3">
                   {/* Title */}
                   <div>
-                    <div className="d-flex align-items-center gap-2 mb-2">
-                      <h1 className="mb-0" style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.2rem', color: '#d4af37' }}>
+                    <div className="d-flex align-items-center gap-3 mb-2">
+                      <h1 className="mb-0" style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.5rem', color: '#d4af37', lineHeight: '1' }}>
                         {exercise.nameUk || exercise.name}
                       </h1>
                     </div>
-                    <Badge bg={getDifficultyColor(exercise.difficulty)} className="mb-2">
+                    <Badge bg={getDifficultyColor(exercise.difficulty)} className="mb-3 px-3 py-2" style={{ fontSize: '0.9rem' }}>
                       {getDifficultyLabelUk(exercise.difficulty)}
                     </Badge>
                     {exercise.descriptionUk && (
-                      <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: 0 }}>
+                      <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', fontSize: '1rem', lineHeight: '1.7', marginBottom: 0 }}>
                         {exercise.descriptionUk}
                       </p>
                     )}
                   </div>
 
                   {/* Quick Info */}
-                  <Card className="flex-grow-1">
-                    <Card.Body className="p-3">
+                  <Card className="flex-grow-1 card-hover-lift">
+                    <Card.Body className="p-4">
+                      <h6 className="mb-3 text-center" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem', fontWeight: 600 }}>
+                        Детальна інформація
+                      </h6>
                       <Row className="g-3">
                         <Col xs={6}>
-                          <div className="text-center">
-                            <i className="bi bi-tag fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
-                            <div className="small text-muted mb-1">Тип</div>
-                            <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                          <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                            <i className="bi bi-tag fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                            <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Тип</div>
+                            <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
                               {getTypeLabelUk(exercise.type)}
                             </div>
                           </div>
                         </Col>
                         {exercise.muscleGroup && (
                           <Col xs={6}>
-                            <div className="text-center">
-                              <i className="bi bi-controller fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
-                              <div className="small text-muted mb-1">Група м'язів</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                            <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                              <i className="bi bi-controller fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Група м'язів</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
                                 {getMuscleGroupLabelUk(exercise.muscleGroup)}
                               </div>
                             </div>
@@ -258,10 +261,10 @@ export default function ExerciseDetailPage() {
                         )}
                         {exercise.equipment && (
                           <Col xs={6}>
-                            <div className="text-center">
-                              <i className="bi bi-tools fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
-                              <div className="small text-muted mb-1">Інвентар</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                            <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                              <i className="bi bi-tools fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Інвентар</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
                                 {exercise.equipment === 'bodyweight' ? 'Власна вага' :
                                  exercise.equipment === 'dumbbells' ? 'Гантелі' :
                                  exercise.equipment === 'barbell' ? 'Штанга' :
@@ -273,10 +276,10 @@ export default function ExerciseDetailPage() {
                         )}
                         {exercise.caloriesPerMin && (
                           <Col xs={6}>
-                            <div className="text-center">
-                              <i className="bi bi-fire fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
-                              <div className="small text-muted mb-1">Калорії</div>
-                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                            <div className="text-center p-2 rounded" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+                              <i className="bi bi-fire fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small mb-1" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Калорії</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.95rem' }}>
                                 {exercise.caloriesPerMin} / хв
                               </div>
                             </div>
@@ -291,15 +294,16 @@ export default function ExerciseDetailPage() {
 
             {/* Instructions, Tips, Warnings */}
             {(exercise.instructionsUk || exercise.tipsUk || exercise.warningsUk) && (
-              <Row className="g-3 mt-2">
+              <Row className="g-4 mt-3">
                 {exercise.instructionsUk && (
                   <Col md={4}>
-                    <Card className="h-100" style={{ borderTop: '4px solid #d4af37' }}>
+                    <Card className="h-100 card-hover-lift" style={{ borderLeft: '4px solid #d4af37' }}>
                       <Card.Body className="p-4">
-                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }}>
-                          <i className="bi bi-list-ol me-2"></i>Інструкції
+                        <h5 className="mb-3 d-flex align-items-center" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.2rem', fontWeight: 600 }}>
+                          <i className="bi bi-list-ol me-2 fs-4"></i>
+                          <span>Інструкції</span>
                         </h5>
-                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.95rem', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.instructionsUk}
                         </p>
                       </Card.Body>
@@ -309,12 +313,13 @@ export default function ExerciseDetailPage() {
 
                 {exercise.tipsUk && (
                   <Col md={4}>
-                    <Card className="h-100" style={{ borderTop: '4px solid #d4af37' }}>
+                    <Card className="h-100 card-hover-lift" style={{ borderLeft: '4px solid #d4af37' }}>
                       <Card.Body className="p-4">
-                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }}>
-                          <i className="bi bi-lightbulb me-2"></i>Поради
+                        <h5 className="mb-3 d-flex align-items-center" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.2rem', fontWeight: 600 }}>
+                          <i className="bi bi-lightbulb me-2 fs-4"></i>
+                          <span>Поради</span>
                         </h5>
-                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.95rem', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.tipsUk}
                         </p>
                       </Card.Body>
@@ -324,12 +329,13 @@ export default function ExerciseDetailPage() {
 
                 {exercise.warningsUk && (
                   <Col md={4}>
-                    <Card className="h-100" style={{ borderTop: '4px solid #dc3545' }}>
+                    <Card className="h-100 card-hover-lift" style={{ borderLeft: '4px solid #dc3545' }}>
                       <Card.Body className="p-4">
-                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#dc3545', fontSize: '1.1rem' }}>
-                          <i className="bi bi-exclamation-triangle me-2"></i>Застереження
+                        <h5 className="mb-3 d-flex align-items-center" style={{ fontFamily: 'var(--font-oswald)', color: '#dc3545', fontSize: '1.2rem', fontWeight: 600 }}>
+                          <i className="bi bi-exclamation-triangle me-2 fs-4"></i>
+                          <span>Застереження</span>
                         </h5>
-                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.95rem', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.warningsUk}
                         </p>
                       </Card.Body>
