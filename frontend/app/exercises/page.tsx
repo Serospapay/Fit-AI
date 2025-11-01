@@ -16,6 +16,14 @@ interface Exercise {
   muscleGroup?: string;
   equipment?: string;
   difficulty: string;
+  instructions?: string;
+  instructionsUk?: string;
+  tips?: string;
+  tipsUk?: string;
+  warnings?: string;
+  warningsUk?: string;
+  imageUrl?: string;
+  videoUrl?: string;
   caloriesPerMin?: number;
 }
 
@@ -194,7 +202,7 @@ export default function ExercisesPage() {
                 {exercises.map((exercise) => (
                   <Col key={exercise.id} md={6} lg={4}>
                     <Card className="card-hover-lift h-100">
-                      <Card.Body className="p-4">
+                      <Card.Body className="p-4" style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/exercises/${exercise.id}`}>
                       <div className="d-flex justify-content-between align-items-start mb-3">
                         <h5 className="mb-0" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.2rem' }}>{exercise.nameUk || exercise.name}</h5>
                         <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
@@ -219,11 +227,23 @@ export default function ExercisesPage() {
                       </div>
 
                       {exercise.caloriesPerMin && (
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small">
+                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small mb-3">
                           <i className="bi bi-fire me-1" style={{ color: '#d4af37' }}></i>
                           {exercise.caloriesPerMin} ккал/хв
                         </div>
                       )}
+
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className="small" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>
+                          Детальніше <i className="bi bi-arrow-right ms-1"></i>
+                        </span>
+                        {exercise.imageUrl && (
+                          <i className="bi bi-camera" style={{ color: '#d4af37' }}></i>
+                        )}
+                        {exercise.videoUrl && (
+                          <i className="bi bi-play-circle ms-2" style={{ color: '#d4af37' }}></i>
+                        )}
+                      </div>
                     </Card.Body>
                   </Card>
                 </Col>

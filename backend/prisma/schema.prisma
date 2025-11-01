@@ -45,6 +45,10 @@ model Exercise {
   difficulty      String   // beginner, intermediate, advanced
   instructions    String?  // Інструкції виконання
   instructionsUk  String?
+  tips            String?  // Корисні поради
+  tipsUk          String?
+  warnings        String?  // Застереження та протипоказання
+  warningsUk      String?
   imageUrl        String?
   videoUrl        String?
   caloriesPerMin  Float?
