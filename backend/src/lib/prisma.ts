@@ -16,15 +16,19 @@ const createPrismaClient = () => {
 
 export const prisma = globalForPrisma.prisma || createPrismaClient();
 
-// Test database connection on startup
-prisma.$connect()
-  .then(() => {
-    logger.info('✅ Database connected successfully');
-  })
-  .catch((error) => {
-    logger.error('❌ Database connection failed:', error);
-    process.exit(1);
-  });
+// Test database connection on startup (only if not in script mode)
+if (require.main !== module && !process.env.SKIP_DB_CONNECT) {
+  prisma.$connect()
+    .then(() => {
+      logger.info('✅ Database connected successfully');
+    })
+    .catch((error) => {
+      logger.error('❌ Database connection failed:', error);
+      if (process.env.NODE_ENV === 'production') {
+        process.exit(1);
+      }
+    });
+}
 
 // Handle graceful disconnection
 process.on('beforeExit', async () => {
