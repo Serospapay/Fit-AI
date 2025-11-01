@@ -307,7 +307,8 @@ function getTrainingStrategy(goal: string, daysPerWeek: number): string[][] {
       // Cardio + Full body
       3: [['cardio', 'core'], ['full_body'], ['cardio', 'flexibility']],
       4: [['cardio'], ['full_body', 'core'], ['cardio'], ['flexibility', 'balance']],
-      5: [['cardio'], ['full_body'], ['cardio'], ['full_body'], ['flexibility']]
+      5: [['cardio'], ['full_body'], ['cardio'], ['full_body'], ['flexibility']],
+      6: [['cardio'], ['full_body'], ['cardio'], ['full_body', 'core'], ['cardio'], ['full_body']]
     },
     maintain: {
       // Balanced approach

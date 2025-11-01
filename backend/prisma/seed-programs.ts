@@ -48,21 +48,21 @@ async function main() {
         isDefault: true,
         exercises: {
           create: [
-            // Week 1-4, Day 1 (Monday) - Upper body
+            // Day 1 - Upper body
             { day: 1, week: 1, exerciseId: pushups.id, sets: 3, reps: 10, rest: 60, order: 0, notes: 'Для набору базової сили' },
             { day: 1, week: 1, exerciseId: planks.id, duration: 30, order: 1, notes: 'Утримуй 30 секунд' },
             { day: 1, week: 1, exerciseId: crunches.id, sets: 3, reps: 12, rest: 45, order: 2 },
             { day: 1, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
-            // Day 3 (Wednesday) - Lower body
-            { day: 3, week: 1, exerciseId: squats.id, sets: 3, reps: 12, rest: 60, order: 0 },
-            { day: 3, week: 1, exerciseId: lunges.id, sets: 3, reps: 10, rest: 60, order: 1 },
+            // Day 2 - Lower body
+            { day: 2, week: 1, exerciseId: squats.id, sets: 3, reps: 12, rest: 60, order: 0 },
+            { day: 2, week: 1, exerciseId: lunges.id, sets: 3, reps: 10, rest: 60, order: 1 },
+            { day: 2, week: 1, exerciseId: planks.id, duration: 30, order: 2 },
+            { day: 2, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
+            // Day 3 - Cardio + Core
+            { day: 3, week: 1, exerciseId: running.id, duration: 15, order: 0, notes: 'Помірний темп' },
+            { day: 3, week: 1, exerciseId: crunches.id, sets: 3, reps: 12, rest: 45, order: 1 },
             { day: 3, week: 1, exerciseId: planks.id, duration: 30, order: 2 },
-            { day: 3, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
-            // Day 5 (Friday) - Cardio + Core
-            { day: 5, week: 1, exerciseId: running.id, duration: 15, order: 0, notes: 'Помірний темп' },
-            { day: 5, week: 1, exerciseId: crunches.id, sets: 3, reps: 12, rest: 45, order: 1 },
-            { day: 5, week: 1, exerciseId: planks.id, duration: 30, order: 2 },
-            { day: 5, week: 1, exerciseId: stretching.id, duration: 10, order: 3 }
+            { day: 3, week: 1, exerciseId: stretching.id, duration: 10, order: 3 }
           ]
         }
       }
@@ -140,17 +140,17 @@ async function main() {
             { day: 1, week: 1, exerciseId: benchPress.id, sets: 4, reps: 8, rest: 90, order: 0, notes: 'Для набору м\'язової маси' },
             { day: 1, week: 1, exerciseId: planks.id, duration: 45, order: 1 },
             { day: 1, week: 1, exerciseId: crunches.id, sets: 3, reps: 15, rest: 45, order: 2 },
-            // Day 3 - Back & Biceps
-            { day: 3, week: 1, exerciseId: deadlift.id, sets: 3, reps: 5, rest: 120, order: 0, notes: 'Важливо: правильна техніка!' },
-            { day: 3, week: 1, exerciseId: bicep.id, sets: 3, reps: 12, rest: 60, order: 1 },
-            { day: 3, week: 1, exerciseId: planks.id, duration: 60, order: 2 },
-            // Day 5 - Legs & Shoulders
-            { day: 5, week: 1, exerciseId: barbellSquat.id, sets: 4, reps: 10, rest: 90, order: 0 },
-            { day: 5, week: 1, exerciseId: overhead.id, sets: 3, reps: 8, rest: 90, order: 1 },
-            { day: 5, week: 1, exerciseId: lateral.id, sets: 3, reps: 12, rest: 60, order: 2 },
-            { day: 5, week: 1, exerciseId: stretching.id, duration: 15, order: 3 },
-            // Day 7 - Active Recovery
-            { day: 7, week: 1, exerciseId: stretching.id, duration: 20, order: 0 }
+            // Day 2 - Back & Biceps
+            { day: 2, week: 1, exerciseId: deadlift.id, sets: 3, reps: 5, rest: 120, order: 0, notes: 'Важливо: правильна техніка!' },
+            { day: 2, week: 1, exerciseId: bicep.id, sets: 3, reps: 12, rest: 60, order: 1 },
+            { day: 2, week: 1, exerciseId: planks.id, duration: 60, order: 2 },
+            // Day 3 - Legs & Shoulders
+            { day: 3, week: 1, exerciseId: barbellSquat.id, sets: 4, reps: 10, rest: 90, order: 0 },
+            { day: 3, week: 1, exerciseId: overhead.id, sets: 3, reps: 8, rest: 90, order: 1 },
+            { day: 3, week: 1, exerciseId: lateral.id, sets: 3, reps: 12, rest: 60, order: 2 },
+            { day: 3, week: 1, exerciseId: stretching.id, duration: 15, order: 3 },
+            // Day 4 - Active Recovery
+            { day: 4, week: 1, exerciseId: stretching.id, duration: 20, order: 0 }
           ]
         }
       }
@@ -182,17 +182,15 @@ async function main() {
             { day: 1, week: 1, exerciseId: planks.id, duration: 60, order: 1, notes: '2 підходи' },
             { day: 1, week: 1, exerciseId: crunches.id, sets: 4, reps: 20, rest: 45, order: 2 },
             { day: 1, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
-            // Day 3 - Lower Body
-            { day: 3, week: 1, exerciseId: squats.id, sets: 4, reps: 20, rest: 60, order: 0 },
-            { day: 3, week: 1, exerciseId: lunges.id, sets: 3, reps: 15, rest: 60, order: 1 },
-            { day: 3, week: 1, exerciseId: planks.id, duration: 60, order: 2 },
-            { day: 3, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
-            // Day 5 - Cardio
-            { day: 5, week: 1, exerciseId: jumpRope.id, duration: 25, order: 0, notes: 'Інтервали' },
-            { day: 5, week: 1, exerciseId: crunches.id, sets: 3, reps: 20, rest: 45, order: 1 },
-            { day: 5, week: 1, exerciseId: stretching.id, duration: 15, order: 2 },
-            // Day 7 - Active Recovery
-            { day: 7, week: 1, exerciseId: stretching.id, duration: 30, order: 0 }
+            // Day 2 - Lower Body
+            { day: 2, week: 1, exerciseId: squats.id, sets: 4, reps: 20, rest: 60, order: 0 },
+            { day: 2, week: 1, exerciseId: lunges.id, sets: 3, reps: 15, rest: 60, order: 1 },
+            { day: 2, week: 1, exerciseId: planks.id, duration: 60, order: 2 },
+            { day: 2, week: 1, exerciseId: stretching.id, duration: 10, order: 3 },
+            // Day 3 - Cardio
+            { day: 3, week: 1, exerciseId: jumpRope.id, duration: 25, order: 0, notes: 'Інтервали' },
+            { day: 3, week: 1, exerciseId: crunches.id, sets: 3, reps: 20, rest: 45, order: 1 },
+            { day: 3, week: 1, exerciseId: stretching.id, duration: 15, order: 2 }
           ]
         }
       }
