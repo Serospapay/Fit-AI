@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node prisma/seed.ts"
+    "prisma:seed": "ts-node prisma/seed.ts",
+    "sync:wger": "ts-node src/scripts/sync-wger-exercises.ts"
   },
   "keywords": [
     "fitness",
@@ -21,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "axios": "^1.13.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -30,6 +32,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/axios": "^0.9.36",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
