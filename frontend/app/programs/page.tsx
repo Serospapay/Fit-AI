@@ -181,6 +181,10 @@ export default function ProgramsPage() {
                   <i className="bi bi-calculator me-2"></i>
                   <span>Калькулятори</span>
                 </a>
+                <a href="/about" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-info-circle me-2"></i>
+                  <span>Про проект</span>
+                </a>
               </div>
             </div>
           </Container>

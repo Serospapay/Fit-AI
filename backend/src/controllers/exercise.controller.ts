@@ -128,13 +128,14 @@ export const deleteExercise = async (req: Request, res: Response) => {
 
 export const getFilterOptions = async (req: Request, res: Response) => {
   try {
-    const [types, muscleGroups, equipments, difficulties, locations, goals] = await Promise.all([
+    const [types, muscleGroups, equipments, difficulties, locations, goals, totalCount] = await Promise.all([
       prisma.exercise.findMany({ select: { type: true }, distinct: ['type'] }),
       prisma.exercise.findMany({ select: { muscleGroup: true }, distinct: ['muscleGroup'] }),
       prisma.exercise.findMany({ select: { equipment: true }, distinct: ['equipment'] }),
       prisma.exercise.findMany({ select: { difficulty: true }, distinct: ['difficulty'] }),
       prisma.exercise.findMany({ select: { location: true }, distinct: ['location'] }),
-      prisma.exercise.findMany({ select: { goal: true }, distinct: ['goal'] })
+      prisma.exercise.findMany({ select: { goal: true }, distinct: ['goal'] }),
+      prisma.exercise.count()
     ]);
 
     res.json({
@@ -143,7 +144,8 @@ export const getFilterOptions = async (req: Request, res: Response) => {
       equipments: equipments.map(e => e.equipment).filter(Boolean),
       difficulties: difficulties.map(d => d.difficulty).filter(Boolean),
       locations: locations.map(l => l.location).filter(Boolean),
-      goals: goals.map(g => g.goal).filter(Boolean)
+      goals: goals.map(g => g.goal).filter(Boolean),
+      totalExercises: totalCount
     });
   } catch (error: any) {
     logger.error('Get filter options error:', error);
