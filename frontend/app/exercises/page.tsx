@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Form, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
@@ -28,6 +29,7 @@ interface Exercise {
 }
 
 export default function ExercisesPage() {
+  const router = useRouter();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -202,7 +204,7 @@ export default function ExercisesPage() {
                 {exercises.map((exercise) => (
                   <Col key={exercise.id} md={6} lg={4}>
                     <Card className="card-hover-lift h-100">
-                      <Card.Body className="p-4" style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/exercises/${exercise.id}`}>
+                      <Card.Body className="p-4" style={{ cursor: 'pointer' }} onClick={() => router.push(`/exercises/${exercise.id}`)}>
                       <div className="d-flex justify-content-between align-items-start mb-3">
                         <h5 className="mb-0" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.2rem' }}>{exercise.nameUk || exercise.name}</h5>
                         <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
