@@ -78,6 +78,8 @@ const extendedExercises = [
     tipsUk: 'Не встановлюйте занадто круто - максимум 45 градусів. Трохи вигніть спину для кращого скорочення грудей.',
     warnings: 'Shoulder-friendly alternative to incline barbell press. Start with lighter weight.',
     warningsUk: 'Більш дружній до плечей варіант, ніж жим штанги на похилій лавці. Почніть з легшої ваги.',
+    imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800',
+    videoUrl: 'https://www.youtube.com/watch?v=0G2_XV7slIg',
     caloriesPerMin: 7
   },
   
@@ -135,6 +137,8 @@ const extendedExercises = [
     tipsUk: 'Трохи відхиліться назад, але не розгойдуйтесь. Тягніть спиною, а не руками. Повне розтягнення вгорі.',
     warnings: 'Good for building up to pull-ups. Focus on form over weight.',
     warningsUk: 'Добре для підготовки до підтягувань. Фокус на техніці, а не вазі.',
+    imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
+    videoUrl: 'https://www.youtube.com/watch?v=CAwf7n6Luuc',
     caloriesPerMin: 6
   },
   {
@@ -272,6 +276,8 @@ const extendedExercises = [
     tipsUk: 'Не відхиляйтесь занадто назад. Повний діапазон руху. Напружуйтесь перед витисканням.',
     warnings: 'Lower back issues? Use seated version. Start conservatively.',
     warningsUk: 'Проблеми з нижньою частиною спини? Використовуйте сидячу версію. Почніть консервативно.',
+    imageUrl: 'https://images.unsplash.com/photo-1598974296123-a3dbaeed9d2e?w=800',
+    videoUrl: 'https://www.youtube.com/watch?v=F3QY5vMz_6I',
     caloriesPerMin: 7
   },
   {
@@ -329,6 +335,8 @@ const extendedExercises = [
     tipsUk: 'Видихайте при скручуванні. Шия нейтральна. Якість важливіша за кількість.',
     warnings: 'Neck pain? Support head lightly. Lower back issues? Consider alternatives.',
     warningsUk: 'Біль у шиї? Легко підтримуйте голову. Проблеми з нижньою частиною спини? Розгляньте альтернативи.',
+    imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
+    videoUrl: 'https://www.youtube.com/watch?v=Xyd_fa5zoEU',
     caloriesPerMin: 6
   },
   
@@ -388,6 +396,8 @@ const extendedExercises = [
     tipsUk: 'Спочатку розімніться. Фокус на основних групах м\'язів. Послідовність - ключ.',
     warnings: 'Never stretch cold muscles. Pain means stop. Different from soreness.',
     warningsUk: 'Ніколи не розтягуйте холодні м\'язи. Біль означає зупинку. Це відрізняється від біолі.',
+    imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
+    videoUrl: 'https://www.youtube.com/watch?v=7NXWS3rL3Ck',
     caloriesPerMin: 2
   }
 ];

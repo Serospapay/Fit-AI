@@ -166,27 +166,38 @@ export default function ExerciseDetailPage() {
         </nav>
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
-          <Container className="py-4" style={{ position: 'relative', zIndex: 1, maxWidth: '1200px' }}>
-            {/* Header Section */}
-            <div className="mb-4">
-              <Button 
-                variant="link" 
-                className="p-0 nav-link d-flex align-items-center mb-3" 
-                onClick={() => router.push('/exercises')}
-                style={{ color: '#d4af37', textDecoration: 'none' }}
-              >
-                <i className="bi bi-arrow-left me-2"></i>
-                <span>Назад</span>
-              </Button>
-              
-              <div className="d-flex align-items-start gap-3">
-                {exercise.imageUrl && (
-                  <div style={{ width: '120px', height: '120px', flexShrink: 0, overflow: 'hidden', borderRadius: '8px' }}>
+          <Container className="py-4" style={{ position: 'relative', zIndex: 1, maxWidth: '1400px' }}>
+            {/* Back Button */}
+            <Button 
+              variant="link" 
+              className="p-0 mb-3" 
+              onClick={() => router.push('/exercises')}
+              style={{ color: '#d4af37', textDecoration: 'none' }}
+            >
+              <i className="bi bi-arrow-left me-2"></i>
+              <span>Назад до вправ</span>
+            </Button>
+
+            <Row className="g-4">
+              {/* Left: Media */}
+              <Col lg={8}>
+                {exercise.videoUrl ? (
+                  <div className="ratio ratio-16x9 mb-3" style={{ borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+                    <iframe
+                      src={exercise.videoUrl.replace('/watch?v=', '/embed/')}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={exercise.nameUk || exercise.name}
+                      style={{ border: 'none' }}
+                    ></iframe>
+                  </div>
+                ) : exercise.imageUrl ? (
+                  <div className="mb-3" style={{ borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
                     <img 
                       src={exercise.imageUrl} 
                       alt={exercise.nameUk || exercise.name}
-                      className="w-100 h-100"
-                      style={{ objectFit: 'cover' }}
+                      className="w-100"
+                      style={{ display: 'block' }}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '';
@@ -194,109 +205,101 @@ export default function ExerciseDetailPage() {
                       }}
                     />
                   </div>
-                )}
-                <div className="flex-grow-1">
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <h1 className="mb-0" style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.5rem', color: '#d4af37' }}>
-                      {exercise.nameUk || exercise.name}
-                    </h1>
-                    <Badge bg={getDifficultyColor(exercise.difficulty)} className="px-3 py-2">
-                      {getDifficultyLabelUk(exercise.difficulty)}
-                    </Badge>
+                ) : (
+                  <div className="mb-3 d-flex align-items-center justify-content-center rounded" style={{ minHeight: '300px', background: 'linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05))', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+                    <i className="bi bi-image" style={{ color: '#d4af37', opacity: 0.3, fontSize: '4rem' }}></i>
                   </div>
-                  {exercise.descriptionUk && (
-                    <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '1rem', marginBottom: 0 }}>
-                      {exercise.descriptionUk}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <Row className="g-4">
-              {/* Left Column - Media */}
-              <Col lg={7}>
-                {exercise.videoUrl && (
-                  <Card className="mb-3" style={{ border: '3px solid #d4af37' }}>
-                    <Card.Body className="p-0">
-                      <div className="ratio ratio-16x9">
-                        <iframe
-                          src={exercise.videoUrl.replace('/watch?v=', '/embed/')}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          title={exercise.nameUk || exercise.name}
-                        ></iframe>
-                      </div>
-                    </Card.Body>
-                  </Card>
                 )}
               </Col>
 
-              {/* Right Column - Info */}
-              <Col lg={5}>
-                <Card className="mb-3">
-                  <Card.Body className="p-3">
-                    <Row className="g-3">
-                      <Col xs={6} sm={4}>
-                        <div className="text-center">
-                          <i className="bi bi-tag fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
-                          <div className="small" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600 }}>
-                            {getTypeLabelUk(exercise.type)}
-                          </div>
-                        </div>
-                      </Col>
-                      {exercise.muscleGroup && (
-                        <Col xs={6} sm={4}>
+              {/* Right: Info */}
+              <Col lg={4}>
+                <div className="d-flex flex-column gap-3">
+                  {/* Title */}
+                  <div>
+                    <div className="d-flex align-items-center gap-2 mb-2">
+                      <h1 className="mb-0" style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.2rem', color: '#d4af37' }}>
+                        {exercise.nameUk || exercise.name}
+                      </h1>
+                    </div>
+                    <Badge bg={getDifficultyColor(exercise.difficulty)} className="mb-2">
+                      {getDifficultyLabelUk(exercise.difficulty)}
+                    </Badge>
+                    {exercise.descriptionUk && (
+                      <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: 0 }}>
+                        {exercise.descriptionUk}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Quick Info */}
+                  <Card className="flex-grow-1">
+                    <Card.Body className="p-3">
+                      <Row className="g-3">
+                        <Col xs={6}>
                           <div className="text-center">
-                            <i className="bi bi-controller fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
-                            <div className="small" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600 }}>
-                              {getMuscleGroupLabelUk(exercise.muscleGroup)}
+                            <i className="bi bi-tag fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
+                            <div className="small text-muted mb-1">Тип</div>
+                            <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                              {getTypeLabelUk(exercise.type)}
                             </div>
                           </div>
                         </Col>
-                      )}
-                      {exercise.equipment && (
-                        <Col xs={6} sm={4}>
-                          <div className="text-center">
-                            <i className="bi bi-tools fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
-                            <div className="small" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600 }}>
-                              {exercise.equipment === 'bodyweight' ? 'Власна вага' :
-                               exercise.equipment === 'dumbbells' ? 'Гантелі' :
-                               exercise.equipment === 'barbell' ? 'Штанга' :
-                               exercise.equipment === 'machine' ? 'Тренажер' :
-                               'Немає'}
+                        {exercise.muscleGroup && (
+                          <Col xs={6}>
+                            <div className="text-center">
+                              <i className="bi bi-controller fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small text-muted mb-1">Група м'язів</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {getMuscleGroupLabelUk(exercise.muscleGroup)}
+                              </div>
                             </div>
-                          </div>
-                        </Col>
-                      )}
-                      {exercise.caloriesPerMin && (
-                        <Col xs={6} sm={4}>
-                          <div className="text-center">
-                            <i className="bi bi-fire fs-3 mb-2 d-block" style={{ color: '#d4af37' }}></i>
-                            <div className="small" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600 }}>
-                              {exercise.caloriesPerMin} ккал/хв
+                          </Col>
+                        )}
+                        {exercise.equipment && (
+                          <Col xs={6}>
+                            <div className="text-center">
+                              <i className="bi bi-tools fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small text-muted mb-1">Інвентар</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {exercise.equipment === 'bodyweight' ? 'Власна вага' :
+                                 exercise.equipment === 'dumbbells' ? 'Гантелі' :
+                                 exercise.equipment === 'barbell' ? 'Штанга' :
+                                 exercise.equipment === 'machine' ? 'Тренажер' :
+                                 'Немає'}
+                              </div>
                             </div>
-                          </div>
-                        </Col>
-                      )}
-                    </Row>
-                  </Card.Body>
-                </Card>
+                          </Col>
+                        )}
+                        {exercise.caloriesPerMin && (
+                          <Col xs={6}>
+                            <div className="text-center">
+                              <i className="bi bi-fire fs-4 mb-1 d-block" style={{ color: '#d4af37' }}></i>
+                              <div className="small text-muted mb-1">Калорії</div>
+                              <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontWeight: 600, fontSize: '0.9rem' }}>
+                                {exercise.caloriesPerMin} / хв
+                              </div>
+                            </div>
+                          </Col>
+                        )}
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </div>
               </Col>
             </Row>
 
             {/* Instructions, Tips, Warnings */}
             {(exercise.instructionsUk || exercise.tipsUk || exercise.warningsUk) && (
-              <Row className="g-3">
+              <Row className="g-3 mt-2">
                 {exercise.instructionsUk && (
                   <Col md={4}>
-                    <Card className="h-100" style={{ border: '3px solid #d4af37' }}>
-                      <Card.Body className="p-3">
-                        <h6 className="mb-2" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>
+                    <Card className="h-100" style={{ borderTop: '4px solid #d4af37' }}>
+                      <Card.Body className="p-4">
+                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }}>
                           <i className="bi bi-list-ol me-2"></i>Інструкції
-                        </h6>
-                        <p className="small mb-0" style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+                        </h5>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.instructionsUk}
                         </p>
                       </Card.Body>
@@ -306,12 +309,12 @@ export default function ExerciseDetailPage() {
 
                 {exercise.tipsUk && (
                   <Col md={4}>
-                    <Card className="h-100">
-                      <Card.Body className="p-3">
-                        <h6 className="mb-2" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>
+                    <Card className="h-100" style={{ borderTop: '4px solid #d4af37' }}>
+                      <Card.Body className="p-4">
+                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }}>
                           <i className="bi bi-lightbulb me-2"></i>Поради
-                        </h6>
-                        <p className="small mb-0" style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+                        </h5>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.tipsUk}
                         </p>
                       </Card.Body>
@@ -321,12 +324,12 @@ export default function ExerciseDetailPage() {
 
                 {exercise.warningsUk && (
                   <Col md={4}>
-                    <Card className="h-100" style={{ border: '3px solid #dc3545' }}>
-                      <Card.Body className="p-3">
-                        <h6 className="mb-2" style={{ fontFamily: 'var(--font-oswald)', color: '#dc3545' }}>
-                          <i className="bi bi-exclamation-triangle me-2"></i>Увага!
-                        </h6>
-                        <p className="small mb-0" style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+                    <Card className="h-100" style={{ borderTop: '4px solid #dc3545' }}>
+                      <Card.Body className="p-4">
+                        <h5 className="mb-3" style={{ fontFamily: 'var(--font-oswald)', color: '#dc3545', fontSize: '1.1rem' }}>
+                          <i className="bi bi-exclamation-triangle me-2"></i>Застереження
+                        </h5>
+                        <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom: 0 }}>
                           {exercise.warningsUk}
                         </p>
                       </Card.Body>
