@@ -92,6 +92,10 @@ export default function DashboardPage() {
                   <i className="bi bi-calendar-check me-2"></i>
                   <span>Тренування</span>
                 </a>
+                <a href="/programs" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-journal-text me-2"></i>
+                  <span>Програми</span>
+                </a>
                 <a href="/calculators" className="nav-link d-flex align-items-center">
                   <i className="bi bi-calculator me-2"></i>
                   <span>Калькулятори</span>
@@ -296,8 +300,8 @@ export default function DashboardPage() {
               )}
 
               {/* Quick Actions */}
-              <Row className="g-4">
-                  <Col md={4}>
+              <Row className="g-3">
+                  <Col md={3}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
@@ -311,7 +315,7 @@ export default function DashboardPage() {
                       </Card.Body>
                     </Card>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
@@ -325,7 +329,21 @@ export default function DashboardPage() {
                       </Card.Body>
                     </Card>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
+                    <Card className="card-hover-lift">
+                      <Card.Body className="p-4 text-center">
+                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
+                          <i className="bi bi-journal-text"></i>
+                        </div>
+                        <h5 className="mb-3">Програми</h5>
+                        <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Тренувальні програми</p>
+                        <Button variant="outline-primary" className="w-100" href="/programs">
+                          Обрати
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={3}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import exerciseRoutes from './routes/exercise.routes';
 import workoutRoutes from './routes/workout.routes';
+import programRoutes from './routes/program.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import logger from './lib/logger';
 
@@ -43,6 +44,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/programs', programRoutes);
 
 // 404 handler
 app.use(notFoundHandler);

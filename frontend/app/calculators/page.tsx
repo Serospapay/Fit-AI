@@ -109,6 +109,10 @@ export default function CalculatorsPage() {
                   <i className="bi bi-calendar-check me-2"></i>
                   <span>Тренування</span>
                 </a>
+                <a href="/programs" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-journal-text me-2"></i>
+                  <span>Програми</span>
+                </a>
                 <a href="/calculators" className="nav-link fw-bold d-flex align-items-center">
                   <i className="bi bi-calculator me-2"></i>
                   <span>Калькулятори</span>
