@@ -104,9 +104,6 @@ export default function NewWorkoutPage() {
     <>
       <BootstrapClient />
       <div className="min-h-screen bg-dark d-flex flex-column">
-        {/* Background Grid */}
-        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
-        
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
@@ -278,6 +275,15 @@ export default function NewWorkoutPage() {
           </Form>
         </Container>
         </main>
+
+        {/* Footer */}
+        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+          <Container>
+            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+              © 2024 Кишеньковий тренер
+            </div>
+          </Container>
+        </footer>
       </div>
     </>
   );

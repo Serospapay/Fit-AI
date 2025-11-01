@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
-import ParallaxWrapper from '../components/ParallaxWrapper';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
 
@@ -68,9 +67,6 @@ export default function DashboardPage() {
     <>
       <BootstrapClient />
       <div className="min-h-screen bg-dark d-flex flex-column">
-        {/* Background Grid */}
-        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
-        
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
@@ -107,12 +103,10 @@ export default function DashboardPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
-          <ParallaxWrapper speed={0.2}>
-            <div className="mb-4">
-              <h1 className="mb-2">Dashboard</h1>
-              <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Ваш щоденний огляд та прогрес</p>
-            </div>
-          </ParallaxWrapper>
+          <div className="mb-4">
+            <h1 className="mb-2">Dashboard</h1>
+            <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Ваш щоденний огляд та прогрес</p>
+          </div>
 
           {loading ? (
             <div className="text-center py-5">
@@ -121,8 +115,7 @@ export default function DashboardPage() {
           ) : stats ? (
             <>
               {/* Stats Overview Cards */}
-              <ParallaxWrapper speed={0.1}>
-                <Row className="g-4 mb-4">
+              <Row className="g-4 mb-4">
                   <Col md={3} sm={6}>
                     <Card className="card-hover-lift h-100">
                       <Card.Body className="text-center p-4">
@@ -133,7 +126,7 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                   <Col md={3} sm={6}>
-                    <Card className="card-hover-lift h-100" style={{ borderTop: '4px solid #d4af37' }}>
+                    <Card className="card-hover-lift h-100">
                       <Card.Body className="text-center p-4">
                         <div className="gold-number animate-gold-glow">
                           {stats.workoutStreak || 0}
@@ -144,33 +137,31 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                   <Col md={3} sm={6}>
-                    <Card className="card-hover-lift h-100" style={{ borderTop: '4px solid #c0c0c0' }}>
+                    <Card className="card-hover-lift h-100">
                       <Card.Body className="text-center p-4">
-                        <div className="gold-number" style={{ color: '#c0c0c0' }}>
+                        <div className="gold-number">
                           {stats.avgRating?.toFixed(1) || '0'}
                         </div>
-                        <div className="fw-semibold" style={{ color: '#c0c0c0', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Середня оцінка</div>
+                        <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Середня оцінка</div>
                         <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>З 5.0</small>
                       </Card.Body>
                     </Card>
                   </Col>
                   <Col md={3} sm={6}>
-                    <Card className="card-hover-lift h-100" style={{ borderTop: '4px solid #cd7f32' }}>
+                    <Card className="card-hover-lift h-100">
                       <Card.Body className="text-center p-4">
-                        <div className="gold-number" style={{ color: '#cd7f32' }}>
+                        <div className="gold-number">
                           {Math.round(stats.avgDuration || 0)}
                         </div>
-                        <div className="fw-semibold" style={{ color: '#cd7f32', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Хвилин в середньому</div>
+                        <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Хвилин в середньому</div>
                         <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>На тренування</small>
                       </Card.Body>
                     </Card>
                   </Col>
                 </Row>
-              </ParallaxWrapper>
 
               {/* Weekly and Monthly Comparison */}
-              <ParallaxWrapper speed={0.15}>
-                <Row className="g-4 mb-4">
+              <Row className="g-4 mb-4">
                   <Col md={6}>
                     <Card className="card-hover-lift h-100">
                       <Card.Body className="p-4">
@@ -208,11 +199,9 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                 </Row>
-              </ParallaxWrapper>
 
               {/* Most Exercised & Exercise Types */}
-              <ParallaxWrapper speed={0.12}>
-                <Row className="g-4 mb-4">
+              <Row className="g-4 mb-4">
                   <Col lg={6}>
                     <Card className="card-hover-lift h-100">
                       <Card.Body>
@@ -271,12 +260,10 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                 </Row>
-              </ParallaxWrapper>
 
               {/* Recent Activity */}
               {stats.recentWorkouts && stats.recentWorkouts.length > 0 && (
-                <ParallaxWrapper speed={0.12}>
-                  <Card className="card-hover-lift mb-4">
+                <Card className="card-hover-lift mb-4">
                     <Card.Body>
                       <h5 className="mb-3">
                         <i className="bi bi-clock-history me-2" style={{ color: '#d4af37' }}></i>
@@ -306,12 +293,10 @@ export default function DashboardPage() {
                       </div>
                     </Card.Body>
                   </Card>
-                </ParallaxWrapper>
               )}
 
               {/* Quick Actions */}
-              <ParallaxWrapper speed={0.15}>
-                <Row className="g-4">
+              <Row className="g-4">
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
@@ -320,7 +305,7 @@ export default function DashboardPage() {
                         </div>
                         <h5 className="mb-3">Додати тренування</h5>
                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати нове тренування</p>
-                        <Button variant="primary" className="w-100" href="/workouts/new">
+                        <Button variant="outline-primary" className="w-100" href="/workouts/new">
                           Додати
                         </Button>
                       </Card.Body>
@@ -329,12 +314,12 @@ export default function DashboardPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#c0c0c0' }}>
+                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
                           <i className="bi bi-dumbbell-fill"></i>
                         </div>
                         <h5 className="mb-3">Перегляд вправ</h5>
                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Бібліотека вправ</p>
-                        <Button variant="outline-secondary" className="w-100" href="/exercises">
+                        <Button variant="outline-primary" className="w-100" href="/exercises">
                           Переглянути
                         </Button>
                       </Card.Body>
@@ -343,7 +328,7 @@ export default function DashboardPage() {
                   <Col md={4}>
                     <Card className="card-hover-lift">
                       <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#cd7f32' }}>
+                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
                           <i className="bi bi-calculator-fill"></i>
                         </div>
                         <h5 className="mb-3">Калькулятори</h5>
@@ -355,7 +340,6 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                 </Row>
-              </ParallaxWrapper>
             </>
           ) : (
             <Card>
@@ -375,7 +359,7 @@ export default function DashboardPage() {
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
             <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
               © 2024 Кишеньковий тренер

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Modal } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
-import ParallaxWrapper from '../components/ParallaxWrapper';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
 
@@ -57,9 +56,6 @@ export default function WorkoutsPage() {
     <>
       <BootstrapClient />
       <div className="min-h-screen bg-dark d-flex flex-column">
-        {/* Background Grid */}
-        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
-        
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
@@ -96,18 +92,16 @@ export default function WorkoutsPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
-          <ParallaxWrapper speed={0.2}>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <div>
-                <h1 className="mb-2">Мої тренування</h1>
-                <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Історія ваших тренувань</p>
-              </div>
-              <Button variant="primary" href="/workouts/new">
-                <i className="bi bi-plus-circle me-2"></i>
-                Додати тренування
-              </Button>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h1 className="mb-2">Мої тренування</h1>
+              <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Історія ваших тренувань</p>
             </div>
-          </ParallaxWrapper>
+            <Button variant="primary" href="/workouts/new">
+              <i className="bi bi-plus-circle me-2"></i>
+              Додати тренування
+            </Button>
+          </div>
 
           {loading ? (
             <div className="text-center py-5">
@@ -127,7 +121,6 @@ export default function WorkoutsPage() {
               </Card.Body>
             </Card>
           ) : (
-            <ParallaxWrapper speed={0.1}>
               <Row className="g-4">
                 {workouts.map((workout) => (
                   <Col key={workout.id} md={6} lg={4}>
@@ -190,13 +183,12 @@ export default function WorkoutsPage() {
                 </Col>
               ))}
             </Row>
-            </ParallaxWrapper>
           )}
         </Container>
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
             <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
               © 2024 Кишеньковий тренер

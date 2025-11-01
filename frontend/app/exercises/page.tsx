@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
-import ParallaxWrapper from '../components/ParallaxWrapper';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
 
@@ -12,6 +11,7 @@ interface Exercise {
   name: string;
   nameUk?: string;
   description?: string;
+  descriptionUk?: string;
   type: string;
   muscleGroup?: string;
   equipment?: string;
@@ -83,9 +83,6 @@ export default function ExercisesPage() {
     <>
       <BootstrapClient />
       <div className="min-h-screen bg-dark d-flex flex-column">
-        {/* Background Grid */}
-        <div className="position-fixed w-100 h-100" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px), repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0px, rgba(212,175,55,0.03) 1px, transparent 1px, transparent 50px)', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }}></div>
-        
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
@@ -122,17 +119,14 @@ export default function ExercisesPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
-          <ParallaxWrapper speed={0.2}>
-            <div className="mb-4">
-              <h1 className="mb-2">База вправ</h1>
-              <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Виберіть вправи для свого тренування</p>
-            </div>
-          </ParallaxWrapper>
+          <div className="mb-4">
+            <h1 className="mb-2">База вправ</h1>
+            <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Виберіть вправи для свого тренування</p>
+          </div>
 
           {/* Filters */}
-          <ParallaxWrapper speed={0.15}>
-            <Card className="card-hover-lift mb-4">
-              <Card.Body>
+          <Card className="card-hover-lift mb-4">
+            <Card.Body>
               <Row className="g-3">
                 <Col md={12}>
                   <Form.Control
@@ -188,8 +182,7 @@ export default function ExercisesPage() {
                 </Col>
               </Row>
             </Card.Body>
-            </Card>
-          </ParallaxWrapper>
+          </Card>
 
           {/* Exercises Grid */}
           {loading ? (
@@ -197,7 +190,6 @@ export default function ExercisesPage() {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : exercises.length > 0 ? (
-            <ParallaxWrapper speed={0.1}>
               <Row className="g-4">
                 {exercises.map((exercise) => (
                   <Col key={exercise.id} md={6} lg={4}>
@@ -237,7 +229,6 @@ export default function ExercisesPage() {
                 </Col>
               ))}
             </Row>
-            </ParallaxWrapper>
           ) : (
             <Card>
               <Card.Body className="text-center py-5">
@@ -250,7 +241,7 @@ export default function ExercisesPage() {
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 1, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
+        <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
             <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
               © 2024 Кишеньковий тренер

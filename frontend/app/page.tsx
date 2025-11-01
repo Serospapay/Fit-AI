@@ -60,7 +60,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section 
-        className="vh-100 d-flex align-items-center position-relative overflow-hidden"
+        className="min-vh-100 d-flex align-items-center position-relative overflow-hidden"
         style={{ 
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           marginTop: '76px'
