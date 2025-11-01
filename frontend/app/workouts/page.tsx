@@ -71,7 +71,7 @@ export default function WorkoutsPage() {
               <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
                 <a href="/dashboard" className="nav-link d-flex align-items-center">
                   <i className="bi bi-speedometer2 me-2"></i>
-                  <span>Dashboard</span>
+                  <span>Панель</span>
                 </a>
                 <a href="/exercises" className="nav-link d-flex align-items-center">
                   <i className="bi bi-dumbbell me-2"></i>

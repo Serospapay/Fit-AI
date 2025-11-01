@@ -82,7 +82,7 @@ export default function DashboardPage() {
               <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
                 <a href="/dashboard" className="nav-link fw-bold d-flex align-items-center">
                   <i className="bi bi-speedometer2 me-2"></i>
-                  <span>Dashboard</span>
+                  <span>Панель</span>
                 </a>
                 <a href="/exercises" className="nav-link d-flex align-items-center">
                   <i className="bi bi-dumbbell me-2"></i>
@@ -104,7 +104,7 @@ export default function DashboardPage() {
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
           <div className="mb-4">
-            <h1 className="mb-2">Dashboard</h1>
+            <h1 className="mb-2">Панель керування</h1>
             <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Ваш щоденний огляд та прогрес</p>
           </div>
 

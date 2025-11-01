@@ -89,6 +89,49 @@ export default function ExercisesPage() {
     }
   };
 
+  const getDifficultyLabelUk = (difficulty: string) => {
+    switch (difficulty) {
+      case 'beginner': return 'Початковий';
+      case 'intermediate': return 'Середній';
+      case 'advanced': return 'Продвинутий';
+      default: return difficulty;
+    }
+  };
+
+  const getTypeLabelUk = (type: string) => {
+    const types: { [key: string]: string } = {
+      strength: 'Сила',
+      cardio: 'Кардіо',
+      flexibility: 'Гнучкість',
+      balance: 'Баланс'
+    };
+    return types[type] || type;
+  };
+
+  const getMuscleGroupLabelUk = (muscleGroup: string) => {
+    const groups: { [key: string]: string } = {
+      chest: 'Грудні',
+      back: 'Спина',
+      legs: 'Ноги',
+      arms: 'Руки',
+      shoulders: 'Плечі',
+      core: 'Прес',
+      full_body: 'Все тіло'
+    };
+    return groups[muscleGroup] || muscleGroup;
+  };
+
+  const getEquipmentLabelUk = (equipment: string) => {
+    const equipments: { [key: string]: string } = {
+      bodyweight: 'Власна вага',
+      dumbbells: 'Гантелі',
+      barbell: 'Штанга',
+      machine: 'Тренажер',
+      none: 'Без інвентаря'
+    };
+    return equipments[equipment] || equipment;
+  };
+
   return (
     <>
       <BootstrapClient />
@@ -108,7 +151,7 @@ export default function ExercisesPage() {
               <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
                 <a href="/dashboard" className="nav-link d-flex align-items-center">
                   <i className="bi bi-speedometer2 me-2"></i>
-                  <span>Dashboard</span>
+                  <span>Панель</span>
                 </a>
                 <a href="/exercises" className="nav-link fw-bold d-flex align-items-center">
                   <i className="bi bi-dumbbell me-2"></i>
@@ -128,10 +171,10 @@ export default function ExercisesPage() {
         </nav>
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
-        <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
+        <Container className="py-5" style={{ position: 'relative', zIndex: 1, maxWidth: '1400px' }}>
           <div className="mb-4">
-            <h1 className="mb-2">База вправ</h1>
-            <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Виберіть вправи для свого тренування</p>
+            <h1 className="mb-2" style={{ fontFamily: 'var(--font-bebas)', fontSize: '3rem', color: '#d4af37' }}>База вправ</h1>
+            <p className="lead mb-0" style={{ color: '#aaa', fontFamily: 'var(--font-oswald)', fontSize: '1.2rem' }}>Виберіть вправи для свого тренування</p>
           </div>
 
           {/* Filters */}
@@ -153,7 +196,7 @@ export default function ExercisesPage() {
                   >
                     <option value="">Всі типи</option>
                     {options?.types?.map((type: string) => (
-                      <option key={type} value={type}>{type}</option>
+                      <option key={type} value={type}>{getTypeLabelUk(type)}</option>
                     ))}
                   </Form.Select>
                 </Col>
@@ -164,7 +207,7 @@ export default function ExercisesPage() {
                   >
                     <option value="">Всі групи м'язів</option>
                     {options?.muscleGroups?.map((group: string) => (
-                      <option key={group} value={group}>{group}</option>
+                      <option key={group} value={group}>{getMuscleGroupLabelUk(group)}</option>
                     ))}
                   </Form.Select>
                 </Col>
@@ -175,7 +218,7 @@ export default function ExercisesPage() {
                   >
                     <option value="">Всі пристрої</option>
                     {options?.equipments?.map((eq: string) => (
-                      <option key={eq} value={eq}>{eq}</option>
+                      <option key={eq} value={eq}>{getEquipmentLabelUk(eq)}</option>
                     ))}
                   </Form.Select>
                 </Col>
@@ -186,7 +229,7 @@ export default function ExercisesPage() {
                   >
                     <option value="">Будь-який рівень</option>
                     {options?.difficulties?.map((diff: string) => (
-                      <option key={diff} value={diff}>{diff}</option>
+                      <option key={diff} value={diff}>{getDifficultyLabelUk(diff)}</option>
                     ))}
                   </Form.Select>
                 </Col>
@@ -203,44 +246,49 @@ export default function ExercisesPage() {
             <Row className="g-3">
                 {exercises.map((exercise) => (
                   <Col key={exercise.id} md={6} lg={4}>
-                    <Card className="card-hover-lift h-100" style={{ cursor: 'pointer' }} onClick={() => router.push(`/exercises/${exercise.id}`)}>
-                      <Card.Body className="p-3">
-                        <div className="d-flex align-items-start gap-2 mb-2">
+                    <Card className="card-hover-lift h-100" style={{ cursor: 'pointer', transition: 'all 0.3s ease' }} onClick={() => router.push(`/exercises/${exercise.id}`)}>
+                      <Card.Body className="p-4">
+                        <div className="d-flex align-items-start gap-3 mb-3">
                           <div className="flex-grow-1">
-                            <h6 className="mb-1" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.1rem', lineHeight: '1.3' }}>
+                            <h5 className="mb-2" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.15rem', lineHeight: '1.3', fontWeight: 600 }}>
                               {exercise.nameUk || exercise.name}
-                            </h6>
-                            <div className="d-flex flex-wrap gap-1 mb-2">
+                            </h5>
+                            <div className="d-flex flex-wrap gap-2 mb-2">
                               {exercise.type && (
-                                <span className="badge bg-primary" style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>{exercise.type}</span>
+                                <span className="badge" style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', background: 'rgba(212, 175, 55, 0.2)', color: '#d4af37', border: '1px solid #d4af37' }}>
+                                  {getTypeLabelUk(exercise.type)}
+                                </span>
                               )}
                               {exercise.muscleGroup && (
-                                <span className="badge bg-info" style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>{exercise.muscleGroup}</span>
+                                <span className="badge" style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', background: 'rgba(13, 110, 253, 0.2)', color: '#0d6efd', border: '1px solid #0d6efd' }}>
+                                  {getMuscleGroupLabelUk(exercise.muscleGroup)}
+                                </span>
                               )}
-                              <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`} style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>
-                                {exercise.difficulty}
+                              <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`} style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem' }}>
+                                {getDifficultyLabelUk(exercise.difficulty)}
                               </span>
                             </div>
                           </div>
                           {(exercise.imageUrl || exercise.videoUrl) && (
-                            <div>
+                            <div className="d-flex gap-1">
                               {exercise.imageUrl && (
-                                <i className="bi bi-camera-fill me-1" style={{ color: '#d4af37' }}></i>
+                                <i className="bi bi-camera-fill" style={{ color: '#d4af37', fontSize: '1.1rem' }}></i>
                               )}
                               {exercise.videoUrl && (
-                                <i className="bi bi-play-circle-fill" style={{ color: '#d4af37' }}></i>
+                                <i className="bi bi-play-circle-fill" style={{ color: '#d4af37', fontSize: '1.1rem' }}></i>
                               )}
                             </div>
                           )}
                         </div>
                         {exercise.descriptionUk && (
-                          <p className="small mb-2" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <p className="small mb-3" style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem', lineHeight: '1.6', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {exercise.descriptionUk}
                           </p>
                         )}
                         {exercise.caloriesPerMin && (
-                          <div className="small" style={{ color: '#d4af37', fontFamily: 'var(--font-roboto-condensed)' }}>
-                            <i className="bi bi-fire me-1"></i>{exercise.caloriesPerMin} ккал/хв
+                          <div className="small d-flex align-items-center" style={{ color: '#d4af37', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>
+                            <i className="bi bi-fire me-1"></i>
+                            <span>{exercise.caloriesPerMin} ккал/хв</span>
                           </div>
                         )}
                       </Card.Body>

@@ -129,7 +129,7 @@ export default function NewWorkoutPage() {
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
           <div className="mb-4">
-            <h1 className="mb-2">Новий тренування</h1>
+            <h1 className="mb-2">Нове тренування</h1>
             <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Записати нове тренування</p>
           </div>
 
