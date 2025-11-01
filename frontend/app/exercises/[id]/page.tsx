@@ -17,6 +17,7 @@ interface Exercise {
   muscleGroup?: string;
   equipment?: string;
   difficulty: string;
+  location?: string;
   instructions?: string;
   instructionsUk?: string;
   tips?: string;

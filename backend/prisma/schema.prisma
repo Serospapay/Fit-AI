@@ -43,6 +43,7 @@ model Exercise {
   muscleGroup     String?  // chest, back, legs, arms, core, full_body
   equipment       String?  // none, dumbbells, barbell, machine, bodyweight
   difficulty      String   // beginner, intermediate, advanced
+  location        String?  // home, gym, outdoor
   instructions    String?  // Інструкції виконання
   instructionsUk  String?
   tips            String?  // Корисні поради

@@ -17,6 +17,7 @@ interface Exercise {
   muscleGroup?: string;
   equipment?: string;
   difficulty: string;
+  location?: string;
   instructions?: string;
   instructionsUk?: string;
   tips?: string;
@@ -37,6 +38,7 @@ export default function ExercisesPage() {
     muscleGroup: '',
     equipment: '',
     difficulty: '',
+    location: '',
     search: ''
   });
   const [options, setOptions] = useState<any>(null);
@@ -68,6 +70,7 @@ export default function ExercisesPage() {
       if (filters.muscleGroup) params.append('muscleGroup', filters.muscleGroup);
       if (filters.equipment) params.append('equipment', filters.equipment);
       if (filters.difficulty) params.append('difficulty', filters.difficulty);
+      if (filters.location) params.append('location', filters.location);
       if (filters.search) params.append('search', filters.search);
 
       const res = await fetch(`http://localhost:5000/api/exercises?${params.toString()}`);
@@ -132,6 +135,15 @@ export default function ExercisesPage() {
     return equipments[equipment] || equipment;
   };
 
+  const getLocationLabelUk = (location: string) => {
+    const locations: { [key: string]: string } = {
+      home: 'Дома',
+      gym: 'В залі',
+      outdoor: 'На вулиці'
+    };
+    return locations[location] || location;
+  };
+
   return (
     <>
       <BootstrapClient />
@@ -189,7 +201,7 @@ export default function ExercisesPage() {
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   />
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <Form.Select
                     value={filters.type}
                     onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -200,7 +212,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <Form.Select
                     value={filters.muscleGroup}
                     onChange={(e) => setFilters({ ...filters, muscleGroup: e.target.value })}
@@ -211,7 +223,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <Form.Select
                     value={filters.equipment}
                     onChange={(e) => setFilters({ ...filters, equipment: e.target.value })}
@@ -222,7 +234,7 @@ export default function ExercisesPage() {
                     ))}
                   </Form.Select>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <Form.Select
                     value={filters.difficulty}
                     onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}
@@ -230,6 +242,17 @@ export default function ExercisesPage() {
                     <option value="">Будь-який рівень</option>
                     {options?.difficulties?.map((diff: string) => (
                       <option key={diff} value={diff}>{getDifficultyLabelUk(diff)}</option>
+                    ))}
+                  </Form.Select>
+                </Col>
+                <Col md={4}>
+                  <Form.Select
+                    value={filters.location}
+                    onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                  >
+                    <option value="">Всі місця</option>
+                    {options?.locations?.map((loc: string) => (
+                      <option key={loc} value={loc}>{getLocationLabelUk(loc)}</option>
                     ))}
                   </Form.Select>
                 </Col>

@@ -9,6 +9,7 @@ export const getAllExercises = async (req: Request, res: Response) => {
       muscleGroup,
       equipment,
       difficulty,
+      location,
       search,
       page = '1',
       limit = '20'
@@ -24,6 +25,7 @@ export const getAllExercises = async (req: Request, res: Response) => {
     if (muscleGroup) where.muscleGroup = muscleGroup;
     if (equipment) where.equipment = equipment;
     if (difficulty) where.difficulty = difficulty;
+    if (location) where.location = location;
     if (search) {
       where.OR = [
         { name: { contains: search as string, mode: 'insensitive' } },
@@ -124,18 +126,20 @@ export const deleteExercise = async (req: Request, res: Response) => {
 
 export const getFilterOptions = async (req: Request, res: Response) => {
   try {
-    const [types, muscleGroups, equipments, difficulties] = await Promise.all([
+    const [types, muscleGroups, equipments, difficulties, locations] = await Promise.all([
       prisma.exercise.findMany({ select: { type: true }, distinct: ['type'] }),
       prisma.exercise.findMany({ select: { muscleGroup: true }, distinct: ['muscleGroup'] }),
       prisma.exercise.findMany({ select: { equipment: true }, distinct: ['equipment'] }),
-      prisma.exercise.findMany({ select: { difficulty: true }, distinct: ['difficulty'] })
+      prisma.exercise.findMany({ select: { difficulty: true }, distinct: ['difficulty'] }),
+      prisma.exercise.findMany({ select: { location: true }, distinct: ['location'] })
     ]);
 
     res.json({
       types: types.map(t => t.type).filter(Boolean),
       muscleGroups: muscleGroups.map(m => m.muscleGroup).filter(Boolean),
       equipments: equipments.map(e => e.equipment).filter(Boolean),
-      difficulties: difficulties.map(d => d.difficulty).filter(Boolean)
+      difficulties: difficulties.map(d => d.difficulty).filter(Boolean),
+      locations: locations.map(l => l.location).filter(Boolean)
     });
   } catch (error: any) {
     logger.error('Get filter options error:', error);
