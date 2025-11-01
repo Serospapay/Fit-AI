@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstrap';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
@@ -13,11 +14,29 @@ interface Stats {
   mostExercised: any[];
   weekWorkouts: number;
   weekAvgDuration: number;
+  prevWeekWorkouts?: number;
+  prevWeekAvgDuration?: number;
   monthWorkouts: number;
   monthAvgDuration: number;
+  prevMonthWorkouts?: number;
+  prevMonthAvgDuration?: number;
   workoutStreak: number;
   exerciseTypeStats: { [key: string]: number };
   recentWorkouts: any[];
+  workoutsPerWeek?: { [key: string]: number };
+  achievements?: Achievement[];
+  weeklyChartData?: any[];
+}
+
+interface Achievement {
+  id: string;
+  name: string;
+  nameUk: string;
+  description: string;
+  descriptionUk: string;
+  icon: string;
+  unlocked: boolean;
+  unlockedAt?: string;
 }
 
 export default function DashboardPage() {
@@ -175,11 +194,25 @@ export default function DashboardPage() {
                         </h5>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
-                          <Badge bg="primary" className="fs-4 px-3 py-2">{stats.weekWorkouts || 0}</Badge>
+                          <div className="d-flex align-items-center gap-2">
+                            <Badge bg="primary" className="fs-4 px-3 py-2">{stats.weekWorkouts || 0}</Badge>
+                            {stats.prevWeekWorkouts !== undefined && (
+                              <small style={{ color: stats.weekWorkouts >= stats.prevWeekWorkouts ? '#198754' : '#dc3545', fontFamily: 'var(--font-oswald)', fontWeight: 600 }}>
+                                {stats.weekWorkouts >= stats.prevWeekWorkouts ? '↑' : '↓'} {Math.abs((stats.weekWorkouts || 0) - (stats.prevWeekWorkouts || 0))}
+                              </small>
+                            )}
+                          </div>
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
                           <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
-                          <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.weekAvgDuration || 0)} хв</span>
+                          <div className="d-flex align-items-center gap-2">
+                            <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.weekAvgDuration || 0)} хв</span>
+                            {stats.prevWeekAvgDuration !== undefined && (
+                              <small style={{ color: stats.weekAvgDuration >= stats.prevWeekAvgDuration ? '#198754' : '#dc3545', fontFamily: 'var(--font-oswald)', fontWeight: 600 }}>
+                                {stats.weekAvgDuration >= stats.prevWeekAvgDuration ? '↑' : '↓'} {Math.abs(Math.round((stats.weekAvgDuration || 0) - (stats.prevWeekAvgDuration || 0)))}
+                              </small>
+                            )}
+                          </div>
                         </div>
                       </Card.Body>
                     </Card>
@@ -193,11 +226,25 @@ export default function DashboardPage() {
                         </h5>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
-                          <Badge bg="warning" className="fs-4 px-3 py-2">{stats.monthWorkouts || 0}</Badge>
+                          <div className="d-flex align-items-center gap-2">
+                            <Badge bg="warning" className="fs-4 px-3 py-2">{stats.monthWorkouts || 0}</Badge>
+                            {stats.prevMonthWorkouts !== undefined && (
+                              <small style={{ color: stats.monthWorkouts >= stats.prevMonthWorkouts ? '#198754' : '#dc3545', fontFamily: 'var(--font-oswald)', fontWeight: 600 }}>
+                                {stats.monthWorkouts >= stats.prevMonthWorkouts ? '↑' : '↓'} {Math.abs((stats.monthWorkouts || 0) - (stats.prevMonthWorkouts || 0))}
+                              </small>
+                            )}
+                          </div>
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
                           <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
-                          <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.monthAvgDuration || 0)} хв</span>
+                          <div className="d-flex align-items-center gap-2">
+                            <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.monthAvgDuration || 0)} хв</span>
+                            {stats.prevMonthAvgDuration !== undefined && (
+                              <small style={{ color: stats.monthAvgDuration >= stats.prevMonthAvgDuration ? '#198754' : '#dc3545', fontFamily: 'var(--font-oswald)', fontWeight: 600 }}>
+                                {stats.monthAvgDuration >= stats.prevMonthAvgDuration ? '↑' : '↓'} {Math.abs(Math.round((stats.monthAvgDuration || 0) - (stats.prevMonthAvgDuration || 0)))}
+                              </small>
+                            )}
+                          </div>
                         </div>
                       </Card.Body>
                     </Card>
@@ -264,6 +311,96 @@ export default function DashboardPage() {
                     </Card>
                   </Col>
                 </Row>
+
+              {/* Weekly Progress Chart */}
+              {stats.weeklyChartData && stats.weeklyChartData.length > 0 && (
+                <Card className="card-hover-lift mb-4">
+                  <Card.Body>
+                    <h5 className="mb-3">
+                      <i className="bi bi-graph-up me-2" style={{ color: '#d4af37' }}></i>
+                      Прогрес за тижні
+                    </h5>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={stats.weeklyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                        <XAxis 
+                          dataKey="week" 
+                          stroke="#d4af37"
+                          style={{ fontFamily: 'var(--font-roboto-condensed)' }}
+                        />
+                        <YAxis 
+                          stroke="#d4af37"
+                          style={{ fontFamily: 'var(--font-roboto-condensed)' }}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(20, 20, 20, 0.95)', 
+                            border: '1px solid #d4af37',
+                            borderRadius: '8px'
+                          }}
+                          labelStyle={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="workouts" 
+                          stroke="#d4af37" 
+                          fill="#d4af37" 
+                          fillOpacity={0.3}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card.Body>
+                </Card>
+              )}
+
+              {/* Achievements */}
+              {stats.achievements && stats.achievements.length > 0 && (
+                <Card className="card-hover-lift mb-4">
+                  <Card.Body>
+                    <h5 className="mb-3">
+                      <i className="bi bi-trophy-fill me-2" style={{ color: '#d4af37' }}></i>
+                      Досягнення
+                    </h5>
+                    <div className="row g-2">
+                      {stats.achievements.map((achievement: Achievement) => (
+                        <Col key={achievement.id} md={4} sm={6}>
+                          <div 
+                            className="p-3 rounded"
+                            style={{ 
+                              background: achievement.unlocked 
+                                ? 'rgba(212, 175, 55, 0.15)' 
+                                : 'rgba(128, 128, 128, 0.1)',
+                              border: achievement.unlocked 
+                                ? '2px solid #d4af37' 
+                                : '2px solid #444',
+                              opacity: achievement.unlocked ? 1 : 0.5,
+                              transition: 'all 0.3s'
+                            }}
+                          >
+                            <div className="d-flex align-items-center gap-2 mb-1">
+                              <span style={{ fontSize: '1.5rem', filter: achievement.unlocked ? 'none' : 'grayscale(100%)' }}>
+                                {achievement.icon}
+                              </span>
+                              <h6 className="mb-0" style={{ 
+                                fontFamily: 'var(--font-oswald)', 
+                                color: achievement.unlocked ? '#d4af37' : '#666'
+                              }}>
+                                {achievement.unlocked ? achievement.nameUk : '???'}
+                              </h6>
+                            </div>
+                            <small style={{ 
+                              color: achievement.unlocked ? '#aaa' : '#666',
+                              fontFamily: 'var(--font-roboto-condensed)'
+                            }}>
+                              {achievement.unlocked ? achievement.descriptionUk : 'Ще не розблоковано'}
+                            </small>
+                          </div>
+                        </Col>
+                      ))}
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
 
               {/* Recent Activity */}
               {stats.recentWorkouts && stats.recentWorkouts.length > 0 && (

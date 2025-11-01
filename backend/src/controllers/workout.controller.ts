@@ -250,6 +250,20 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       _avg: { duration: true }
     });
 
+    // Get previous week stats for comparison
+    const prevWeekStart = new Date();
+    prevWeekStart.setDate(prevWeekStart.getDate() - 14);
+    const prevWeekEnd = new Date();
+    prevWeekEnd.setDate(prevWeekEnd.getDate() - 7);
+    const prevWeekStats = await prisma.workout.aggregate({
+      where: {
+        userId,
+        date: { gte: prevWeekStart, lt: weekStart }
+      },
+      _count: { id: true },
+      _avg: { duration: true }
+    });
+
     // Get monthly stats
     const monthStart = new Date();
     monthStart.setDate(monthStart.getDate() - 30);
@@ -257,6 +271,20 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       where: {
         userId,
         date: { gte: monthStart }
+      },
+      _count: { id: true },
+      _avg: { duration: true }
+    });
+
+    // Get previous month stats for comparison
+    const prevMonthStart = new Date();
+    prevMonthStart.setDate(prevMonthStart.getDate() - 60);
+    const prevMonthEnd = new Date();
+    prevMonthEnd.setDate(prevMonthEnd.getDate() - 30);
+    const prevMonthStats = await prisma.workout.aggregate({
+      where: {
+        userId,
+        date: { gte: prevMonthStart, lt: monthStart }
       },
       _count: { id: true },
       _avg: { duration: true }
@@ -342,6 +370,12 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       }
     }
 
+    // Calculate achievements
+    const achievements = await calculateAchievements(userId, stats._count.id, streak, recentWorkouts.length);
+
+    // Prepare weekly progress data for chart
+    const weeklyChartData = prepareWeeklyChartData(workoutsPerWeek);
+
     res.json({
       totalWorkouts: stats._count.id,
       avgDuration: stats._avg.duration || 0,
@@ -352,9 +386,17 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       weekWorkouts: weekStats._count.id,
       weekAvgDuration: weekStats._avg.duration || 0,
       
+      // Previous week comparison
+      prevWeekWorkouts: prevWeekStats._count.id,
+      prevWeekAvgDuration: prevWeekStats._avg.duration || 0,
+      
       // Monthly stats
       monthWorkouts: monthStats._count.id,
       monthAvgDuration: monthStats._avg.duration || 0,
+      
+      // Previous month comparison
+      prevMonthWorkouts: prevMonthStats._count.id,
+      prevMonthAvgDuration: prevMonthStats._avg.duration || 0,
       
       // Trends and analysis
       workoutStreak: streak,
@@ -366,7 +408,13 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
         date: w.date,
         duration: w.duration,
         rating: w.rating
-      }))
+      })),
+      
+      // Achievements
+      achievements,
+      
+      // Chart data
+      weeklyChartData
     });
   } catch (error: any) {
     logger.error('Get stats error:', error);
@@ -380,5 +428,103 @@ function getWeekKey(date: Date): string {
   const weekStart = new Date(d);
   weekStart.setDate(d.getDate() - d.getDay());
   return weekStart.toISOString().split('T')[0];
+}
+
+// Calculate user achievements
+async function calculateAchievements(userId: string, totalWorkouts: number, streak: number, recentCount: number): Promise<any[]> {
+  const allAchievements = [
+    {
+      id: 'first_workout',
+      name: 'First Steps',
+      nameUk: 'Перші кроки',
+      description: 'Complete your first workout',
+      descriptionUk: 'Виконайте своє перше тренування',
+      icon: '🎯',
+      condition: () => totalWorkouts >= 1
+    },
+    {
+      id: 'week_warrior',
+      name: 'Week Warrior',
+      nameUk: 'Війна тижня',
+      description: 'Workout 7 days in a row',
+      descriptionUk: 'Тренуватися 7 днів підряд',
+      icon: '🔥',
+      condition: () => streak >= 7
+    },
+    {
+      id: 'month_warrior',
+      name: 'Month Warrior',
+      nameUk: 'Війна місяця',
+      description: 'Workout 30 days in a row',
+      descriptionUk: 'Тренуватися 30 днів підряд',
+      icon: '💪',
+      condition: () => streak >= 30
+    },
+    {
+      id: 'century',
+      name: 'Century Club',
+      nameUk: 'Клуб сотні',
+      description: 'Complete 100 workouts',
+      descriptionUk: 'Виконайте 100 тренувань',
+      icon: '🏆',
+      condition: () => totalWorkouts >= 100
+    },
+    {
+      id: 'hundred_days',
+      name: 'Hundred Days',
+      nameUk: 'Сто днів',
+      description: 'Complete 100 workouts total',
+      descriptionUk: 'Виконайте 100 тренувань загалом',
+      icon: '🌟',
+      condition: () => totalWorkouts >= 100
+    },
+    {
+      id: 'dedication',
+      name: 'Dedication',
+      nameUk: 'Відданість',
+      description: '30 workouts in 30 days',
+      descriptionUk: '30 тренувань за 30 днів',
+      icon: '⭐',
+      condition: () => recentCount >= 30
+    },
+    {
+      id: 'streak_master',
+      name: 'Streak Master',
+      nameUk: 'Майстер серій',
+      description: 'Maintain a 14-day streak',
+      descriptionUk: 'Зберігайте серію 14 днів',
+      icon: '👑',
+      condition: () => streak >= 14
+    },
+    {
+      id: 'beginner',
+      name: 'Getting Started',
+      nameUk: 'Початок',
+      description: 'Complete 5 workouts',
+      descriptionUk: 'Виконайте 5 тренувань',
+      icon: '🚀',
+      condition: () => totalWorkouts >= 5
+    }
+  ];
+
+  return allAchievements.map(achievement => ({
+    ...achievement,
+    unlocked: achievement.condition()
+  }));
+}
+
+// Prepare weekly chart data
+function prepareWeeklyChartData(workoutsPerWeek: { [key: string]: number }): any[] {
+  const weeks = Object.keys(workoutsPerWeek)
+    .sort()
+    .slice(-8); // Last 8 weeks
+
+  return weeks.map(week => {
+    const date = new Date(week);
+    return {
+      week: `${date.getDate()}/${date.getMonth() + 1}`,
+      workouts: workoutsPerWeek[week]
+    };
+  });
 }
 

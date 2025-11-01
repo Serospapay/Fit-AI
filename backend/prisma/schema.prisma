@@ -69,6 +69,7 @@ model Workout {
   id          String    @id @default(cuid())
   userId      String
   date        DateTime  @default(now())
+  type        String?   // strength, cardio, flexibility, balance, mixed
   duration    Int?      // хвилини
   notes       String?
   rating      Int?      // 1-5
