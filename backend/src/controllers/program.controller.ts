@@ -154,8 +154,8 @@ export const generateSmartProgram = async (req: Request, res: Response) => {
     const durationWeeks = duration || 4;
     const totalDays = durationWeeks * 7;
 
-    // Визначаємо структуру програми залежно від мети
-    const programStructure = generateProgramStructure(
+    // Визначаємо структуру програми залежно від мети (шаблон для 1 тижня)
+    const weeklyTemplate = generateProgramStructure(
       goal || 'maintain',
       daysPerWeekNum,
       exercises
@@ -172,17 +172,7 @@ export const generateSmartProgram = async (req: Request, res: Response) => {
         difficulty: difficulty || 'intermediate',
         duration: totalDays,
         exercises: {
-          create: programStructure.map((dayPlan, dayIndex) => ({
-            day: dayIndex + 1,
-            week: Math.floor(dayIndex / 7) + 1,
-            exerciseId: dayPlan.exerciseId,
-            sets: dayPlan.sets,
-            reps: dayPlan.reps,
-            duration: dayPlan.duration,
-            rest: dayPlan.rest,
-            order: dayPlan.order,
-            notes: dayPlan.notes
-          }))
+          create: weeklyTemplate // Вже має правильну структуру з day та week
         }
       },
       include: {
@@ -213,6 +203,8 @@ function generateProgramStructure(
   exercises: any[]
 ): Array<{
   exerciseId: string;
+  day: number;
+  week: number;
   sets?: number;
   reps?: number;
   duration?: number;
@@ -221,7 +213,6 @@ function generateProgramStructure(
   notes?: string;
 }> {
   const structure: Array<any> = [];
-  let exerciseIndex = 0;
 
   // Розподіл вправ за групами м'язів
   const exercisesByMuscleGroup: { [key: string]: any[] } = {};
@@ -233,75 +224,107 @@ function generateProgramStructure(
     exercisesByMuscleGroup[group].push(ex);
   });
 
-  // Генеруємо план на тиждень
-  for (let day = 1; day <= 7; day++) {
-    // Визначаємо, які дні будуть тренувальними (наприклад, через день)
-    const isTrainingDay = day % Math.ceil(7 / daysPerWeek) === 0 || day === 1;
-    
-    if (isTrainingDay) {
-      // Вибір вправ залежно від мети
-      const dayExercises = selectExercisesForDay(goal, exercisesByMuscleGroup, day);
-      
-      dayExercises.forEach((ex, index) => {
-        const params = getExerciseParams(ex, goal);
-        structure.push({
-          exerciseId: ex.id,
-          sets: params.sets,
-          reps: params.reps,
-          duration: params.duration,
-          rest: params.rest,
-          order: index,
-          notes: params.notes
-        });
+  // Визначаємо план тренувань на тиждень (це ШАБЛОН для 1 тижня)
+  const weeklyPlan = generateWeeklyPlan(goal, daysPerWeek, exercisesByMuscleGroup);
+
+  return weeklyPlan; // Повертаємо готовий план з day та week
+}
+
+// Генерація плану на тиждень залежно від мети та кількості днів
+function generateWeeklyPlan(
+  goal: string,
+  daysPerWeek: number,
+  exercisesByMuscleGroup: { [key: string]: any[] }
+): any[] {
+  const structure: any[] = [];
+
+  // Підбираємо стратегію тренувань залежно від мети
+  const strategy = getTrainingStrategy(goal, daysPerWeek);
+
+  // Генеруємо план для кожної тренувальної сесії
+  strategy.forEach((dayGroups, sessionIndex) => {
+    const dayExercises: any[] = [];
+
+    dayGroups.forEach(group => {
+      const available = exercisesByMuscleGroup[group] || exercisesByMuscleGroup['full_body'];
+      if (available && available.length > 0) {
+        // Беремо до 2-3 вправ з кожної групи залежно від мети
+        const maxPerGroup = goal === 'gain_muscle' ? 3 : 2;
+        dayExercises.push(...available.slice(0, maxPerGroup));
+      }
+    });
+
+    // Якщо мало вправ, додаємо з інших груп
+    if (dayExercises.length < 4) {
+      const allGroups = Object.values(exercisesByMuscleGroup).flat();
+      let added = 0;
+      allGroups.forEach(ex => {
+        if (added >= 4 || dayExercises.length >= 6) return;
+        if (!dayExercises.includes(ex)) {
+          dayExercises.push(ex);
+          added++;
+        }
       });
     }
-  }
+
+    // Додаємо кожну вправу до структури з правильними day та week
+    dayExercises.slice(0, 8).forEach((ex, order) => {
+      const params = getExerciseParams(ex, goal);
+      structure.push({
+        exerciseId: ex.id,
+        day: sessionIndex + 1, // День 1, 2, 3 (тренувальна сесія)
+        week: 1, // Для генерації використовуємо тиждень 1 як шаблон
+        sets: params.sets,
+        reps: params.reps,
+        duration: params.duration,
+        rest: params.rest,
+        order: order,
+        notes: params.notes
+      });
+    });
+  });
 
   return structure;
 }
 
-// Вибір вправ на конкретний день
-function selectExercisesForDay(
-  goal: string,
-  exercisesByMuscleGroup: { [key: string]: any[] },
-  day: number
-): any[] {
-  const selected: any[] = [];
-  
-  // Розподіл груп м'язів по днях для повного body або split
-  const weekPlan: { [key: number]: string[] } = {
-    1: ['chest', 'back', 'legs'],
-    2: ['shoulders', 'arms'],
-    3: ['core'],
-    4: ['chest', 'back', 'legs'],
-    5: ['shoulders', 'arms'],
-    6: ['cardio', 'flexibility'],
-    7: ['flexibility', 'balance']
+// Стратегія тренувань залежно від мети та кількості днів
+function getTrainingStrategy(goal: string, daysPerWeek: number): string[][] {
+  // Базові стратегії для різних мет
+  const strategies: { [key: string]: { [key: number]: string[][] } } = {
+    gain_muscle: {
+      // Push/Pull/Legs split
+      3: [['chest', 'shoulders', 'triceps'], ['back', 'biceps'], ['legs', 'core']],
+      4: [['chest', 'shoulders'], ['back', 'biceps'], ['legs'], ['core', 'arms']],
+      5: [['chest', 'triceps'], ['back', 'biceps'], ['shoulders', 'arms'], ['legs'], ['core']]
+    },
+    lose_weight: {
+      // Full body + Cardio
+      3: [['chest', 'back', 'core'], ['legs', 'shoulders'], ['cardio', 'core']],
+      4: [['full_body'], ['full_body'], ['cardio', 'core'], ['full_body']],
+      5: [['full_body'], ['cardio'], ['full_body'], ['cardio'], ['core']]
+    },
+    endurance: {
+      // Cardio + Full body
+      3: [['cardio', 'core'], ['full_body'], ['cardio', 'flexibility']],
+      4: [['cardio'], ['full_body', 'core'], ['cardio'], ['flexibility', 'balance']],
+      5: [['cardio'], ['full_body'], ['cardio'], ['full_body'], ['flexibility']]
+    },
+    maintain: {
+      // Balanced approach
+      3: [['chest', 'back', 'core'], ['legs', 'shoulders'], ['arms', 'flexibility']],
+      4: [['full_body'], ['full_body'], ['cardio', 'core'], ['flexibility']],
+      5: [['full_body'], ['cardio'], ['full_body'], ['core'], ['flexibility']]
+    },
+    definition: {
+      // High volume, full body
+      3: [['chest', 'core'], ['back', 'legs'], ['shoulders', 'arms']],
+      4: [['chest', 'shoulders'], ['back', 'biceps'], ['legs'], ['core', 'triceps']],
+      5: [['chest'], ['back'], ['legs'], ['shoulders'], ['core', 'arms']]
+    }
   };
 
-  const targetGroups = weekPlan[day] || ['full_body'];
-  
-  targetGroups.forEach(group => {
-    const available = exercisesByMuscleGroup[group] || exercisesByMuscleGroup['full_body'];
-    if (available && available.length > 0) {
-      // Беремо до 3 вправ з кожної групи
-      selected.push(...available.slice(0, 3));
-    }
-  });
-
-  // Якщо мало вправ, додаємо з будь-яких доступних
-  if (selected.length < 4) {
-    Object.values(exercisesByMuscleGroup).forEach(group => {
-      if (selected.length >= 6) return;
-      group.forEach(ex => {
-        if (!selected.includes(ex)) {
-          selected.push(ex);
-        }
-      });
-    });
-  }
-
-  return selected.slice(0, 6); // Макс 6 вправ на тренування
+  const goalStrategy = strategies[goal] || strategies['maintain'];
+  return goalStrategy[daysPerWeek] || goalStrategy[3];
 }
 
 // Параметри вправи залежно від мети

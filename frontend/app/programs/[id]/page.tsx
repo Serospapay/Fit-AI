@@ -107,9 +107,8 @@ export default function ProgramDetailPage() {
     }
   };
 
-  const getWeekDayLabel = (day: number) => {
-    const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
-    return days[day - 1] || '';
+  const getDayLabel = (day: number) => {
+    return `День ${day}`;
   };
 
   const getMuscleGroupLabelUk = (muscleGroup: string) => {
@@ -280,7 +279,7 @@ export default function ProgramDetailPage() {
                       <Card.Body className="p-3">
                         <h5 className="mb-3 d-flex align-items-center" style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.2rem', fontWeight: 600 }}>
                           <i className="bi bi-calendar-day me-2"></i>
-                          {getWeekDayLabel(parseInt(day))}
+                          {getDayLabel(parseInt(day))}
                         </h5>
                         <div className="d-flex flex-column gap-2">
                           {exercises.map((programEx, idx) => (
