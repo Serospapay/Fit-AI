@@ -229,7 +229,8 @@ export async function fetchAllExercisesFromWger(): Promise<WgerExerciseInfo[]> {
     logger.info(`Total exercises fetched from Wger: ${allExercises.length}`);
     return allExercises;
   } catch (error: any) {
-    logger.error('Error fetching from Wger:', error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Error fetching from Wger:', errorMessage);
     throw error;
   }
 }
@@ -260,24 +261,33 @@ export function mapWgerToOurSchema(wgerEx: WgerExerciseInfo): MappedExercise {
     : null;
 
   const name = englishTranslation?.name || 'Unknown Exercise';
-  const nameUk = ukrainianTranslations[categoryName] 
-    ? `${ukrainianTranslations[categoryName]}: ${name}`
-    : name;
+  
+  // Better nameUk: just use the original name without category prefix
+  const nameUk = name;
 
   const descriptionText = htmlToText(description);
-  const descriptionUk = descriptionText;
+  const descriptionUk = descriptionText || 'Опис вправи відсутній';
 
-  // Extract instructions from description
-  const instructions = descriptionText.split(/\.(?=\s*[A-Z])/)[0] || descriptionText.substring(0, 200);
+  // Extract instructions from description - use full description or first sentence
+  const instructions = descriptionText || 'Виконуйте вправу з правильною технікою та контролюйте дихання.';
   const instructionsUk = instructions;
 
-  // Simple tips extraction
-  const tips = 'Слідкуйте за технікою виконання.';
-  const tipsUk = 'Слідкуйте за технікою виконання.';
-
-  // Simple warnings
-  const warnings = 'При незручностях або болі зупиніть вправу.';
-  const warningsUk = 'При незручностях або болі зупиніть вправу.';
+  // Better tips based on exercise type and equipment
+  let tipsUk = 'Зберігайте правильну форму протягом всього виконання.';
+  let warningsUk = 'При виникненні болю або незручностей зупиніть вправу та зверніться до спеціаліста.';
+  
+  if (type === 'cardio') {
+    tipsUk = 'Стежте за пульсом та диханням. Поступово збільшуйте навантаження.';
+    warningsUk = 'Контролюйте частоту серцевого ритму. При запамороченні зупиніться.';
+  } else if (equipmentMapped === 'bodyweight') {
+    tipsUk = 'Контролюйте амплітуду рухів. Намагайтеся не пришвидшувати темп.';
+  } else if (equipmentMapped === 'barbell' || equipmentMapped === 'dumbbells') {
+    tipsUk = 'Почніть з невеликої ваги. Контролюйте траєкторію руху.';
+    warningsUk = 'Використовуйте страхування при роботі з великими вагами.';
+  }
+  
+  const tips = tipsUk;
+  const warnings = warningsUk;
 
   const caloriesPerMin = estimateCaloriesPerMin(type, categoryName);
 
