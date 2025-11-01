@@ -4,7 +4,7 @@ import { DEFAULT_USER_ID } from '../src/lib/config';
 
 const prisma = new PrismaClient();
 
-const exercises = [
+const exercises: any[] = [
   // Chest exercises
   {
     name: 'Push-ups',

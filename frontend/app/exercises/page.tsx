@@ -200,56 +200,53 @@ export default function ExercisesPage() {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : exercises.length > 0 ? (
-              <Row className="g-4">
+            <Row className="g-3">
                 {exercises.map((exercise) => (
                   <Col key={exercise.id} md={6} lg={4}>
-                    <Card className="card-hover-lift h-100">
-                      <Card.Body className="p-4" style={{ cursor: 'pointer' }} onClick={() => router.push(`/exercises/${exercise.id}`)}>
-                      <div className="d-flex justify-content-between align-items-start mb-3">
-                        <h5 className="mb-0" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.2rem' }}>{exercise.nameUk || exercise.name}</h5>
-                        <span className={`badge bg-${getDifficultyColor(exercise.difficulty)} px-3 py-2`}>
-                          {exercise.difficulty}
-                        </span>
-                      </div>
-                      
-                      <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small mb-3">
-                        {exercise.descriptionUk || exercise.description}
-                      </p>
-                      
-                      <div className="d-flex flex-wrap gap-2 mb-3">
-                        {exercise.type && (
-                          <span className="badge bg-primary">{exercise.type}</span>
-                        )}
-                        {exercise.muscleGroup && (
-                          <span className="badge bg-info">{exercise.muscleGroup}</span>
-                        )}
-                        {exercise.equipment && (
-                          <span className="badge bg-secondary">{exercise.equipment}</span>
-                        )}
-                      </div>
-
-                      {exercise.caloriesPerMin && (
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="small mb-3">
-                          <i className="bi bi-fire me-1" style={{ color: '#d4af37' }}></i>
-                          {exercise.caloriesPerMin} ккал/хв
+                    <Card className="card-hover-lift h-100" style={{ cursor: 'pointer' }} onClick={() => router.push(`/exercises/${exercise.id}`)}>
+                      <Card.Body className="p-3">
+                        <div className="d-flex align-items-start gap-2 mb-2">
+                          <div className="flex-grow-1">
+                            <h6 className="mb-1" style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5', fontSize: '1.1rem', lineHeight: '1.3' }}>
+                              {exercise.nameUk || exercise.name}
+                            </h6>
+                            <div className="d-flex flex-wrap gap-1 mb-2">
+                              {exercise.type && (
+                                <span className="badge bg-primary" style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>{exercise.type}</span>
+                              )}
+                              {exercise.muscleGroup && (
+                                <span className="badge bg-info" style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>{exercise.muscleGroup}</span>
+                              )}
+                              <span className={`badge bg-${getDifficultyColor(exercise.difficulty)}`} style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}>
+                                {exercise.difficulty}
+                              </span>
+                            </div>
+                          </div>
+                          {(exercise.imageUrl || exercise.videoUrl) && (
+                            <div>
+                              {exercise.imageUrl && (
+                                <i className="bi bi-camera-fill me-1" style={{ color: '#d4af37' }}></i>
+                              )}
+                              {exercise.videoUrl && (
+                                <i className="bi bi-play-circle-fill" style={{ color: '#d4af37' }}></i>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
-
-                      <div className="d-flex justify-content-between align-items-center">
-                        <span className="small" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>
-                          Детальніше <i className="bi bi-arrow-right ms-1"></i>
-                        </span>
-                        {exercise.imageUrl && (
-                          <i className="bi bi-camera" style={{ color: '#d4af37' }}></i>
+                        {exercise.descriptionUk && (
+                          <p className="small mb-2" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {exercise.descriptionUk}
+                          </p>
                         )}
-                        {exercise.videoUrl && (
-                          <i className="bi bi-play-circle ms-2" style={{ color: '#d4af37' }}></i>
+                        {exercise.caloriesPerMin && (
+                          <div className="small" style={{ color: '#d4af37', fontFamily: 'var(--font-roboto-condensed)' }}>
+                            <i className="bi bi-fire me-1"></i>{exercise.caloriesPerMin} ккал/хв
+                          </div>
                         )}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
             </Row>
           ) : (
             <Card>
