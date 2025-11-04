@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Spinner, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Spinner, Modal, Alert } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
+import { api } from '../lib/api';
 
 interface Workout {
   id: string;
@@ -26,8 +27,7 @@ export default function WorkoutsPage() {
   const fetchWorkouts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/workouts');
-      const data = await res.json();
+      const data = await api.getWorkouts();
       setWorkouts(data.workouts || []);
     } catch (error) {
       console.error('Error fetching workouts:', error);
@@ -40,15 +40,11 @@ export default function WorkoutsPage() {
     if (!confirm('Видалити це тренування?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/workouts/${id}`, {
-        method: 'DELETE'
-      });
-
-      if (res.ok) {
-        setWorkouts(workouts.filter(w => w.id !== id));
-      }
+      await api.deleteWorkout(id);
+      setWorkouts(workouts.filter(w => w.id !== id));
     } catch (error) {
       console.error('Error deleting workout:', error);
+      alert('Не вдалося видалити тренування');
     }
   };
 
@@ -73,21 +69,21 @@ export default function WorkoutsPage() {
                   <i className="bi bi-speedometer2 me-2"></i>
                   <span>Панель</span>
                 </a>
-                <a href="/exercises" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-dumbbell me-2"></i>
-                  <span>Вправи</span>
-                </a>
                 <a href="/workouts" className="nav-link fw-bold d-flex align-items-center">
                   <i className="bi bi-calendar-check me-2"></i>
                   <span>Тренування</span>
                 </a>
-                <a href="/programs" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-journal-text me-2"></i>
-                  <span>Програми</span>
+                <a href="/nutrition" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-apple me-2"></i>
+                  <span>Щоденник харчування</span>
                 </a>
                 <a href="/calculators" className="nav-link d-flex align-items-center">
                   <i className="bi bi-calculator me-2"></i>
                   <span>Калькулятори</span>
+                </a>
+                <a href="/profile" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-person-circle me-2"></i>
+                  <span>Профіль</span>
                 </a>
                 <a href="/about" className="nav-link d-flex align-items-center">
                   <i className="bi bi-info-circle me-2"></i>

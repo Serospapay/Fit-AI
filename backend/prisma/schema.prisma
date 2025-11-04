@@ -26,39 +26,18 @@ model User {
 
   workouts      Workout[]
   nutritionLogs NutritionLog[]
-  programs      Program[]
-  userPrograms  UserProgram[]
   
   @@map("users")
 }
 
-// Вправи
+// Вправи (тільки назви для вибору)
 model Exercise {
   id              String   @id @default(cuid())
   name            String
-  nameUk          String?  // Українська назва
-  description     String?
-  descriptionUk  String?
-  type            String   // strength, cardio, flexibility, balance
-  muscleGroup     String?  // chest, back, legs, arms, core, full_body
-  equipment       String?  // none, dumbbells, barbell, machine, bodyweight
-  difficulty      String   // beginner, intermediate, advanced
-  location        String?  // home, gym, outdoor
-  goal            String?  // lose_weight, gain_muscle, maintain, endurance, definition
-  instructions    String?  // Інструкції виконання
-  instructionsUk  String?
-  tips            String?  // Корисні поради
-  tipsUk          String?
-  warnings        String?  // Застереження та протипоказання
-  warningsUk      String?
-  imageUrl        String?
-  videoUrl        String?
-  caloriesPerMin  Float?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   workoutExercises WorkoutExercise[]
-  programExercises ProgramExercise[]
   
   @@unique([name])
   @@map("exercises")
@@ -88,6 +67,7 @@ model WorkoutExercise {
   id          String   @id @default(cuid())
   workoutId  String
   exerciseId String
+  customName String?   // Користувацька назва вправи (якщо хоче задати сам)
   sets       Int?
   reps       Int?
   weight     Float?    // кг
@@ -102,70 +82,6 @@ model WorkoutExercise {
 
   @@index([workoutId])
   @@map("workout_exercises")
-}
-
-// Програми тренувань
-model Program {
-  id          String   @id @default(cuid())
-  name        String
-  nameUk      String?
-  description String?
-  descriptionUk String?
-  goal        String   // lose_weight, gain_muscle, maintain, endurance, definition
-  difficulty  String   // beginner, intermediate, advanced
-  duration    Int?     // днів
-  isDefault   Boolean  @default(false)
-  createdBy   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
-  exercises   ProgramExercise[]
-  userPrograms UserProgram[]
-  
-  @@map("programs")
-}
-
-// Вправи в програмі
-model ProgramExercise {
-  id          String   @id @default(cuid())
-  programId  String
-  exerciseId String
-  day        Int      // День тижня (1-7)
-  week        Int?     // Тиждень програми
-  sets        Int?
-  reps        Int?
-  weight      Float?
-  duration    Int?
-  rest        Int?
-  order       Int      @default(0)
-  notes       String?
-
-  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
-  exercise    Exercise @relation(fields: [exerciseId], references: [id])
-
-  @@index([programId])
-  @@map("program_exercises")
-}
-
-// Призначені програми користувачам
-model UserProgram {
-  id          String    @id @default(cuid())
-  userId      String
-  programId   String
-  startDate   DateTime  @default(now())
-  endDate     DateTime?
-  isActive    Boolean   @default(true)
-  progress    Int       @default(0) // Відсоток виконання
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  program     Program   @relation(fields: [programId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, programId])
-  @@index([userId])
-  @@map("user_programs")
 }
 
 // Щоденник харчування

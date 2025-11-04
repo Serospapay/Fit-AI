@@ -125,3 +125,90 @@ export const getProfile = async (req: any, res: Response) => {
   }
 };
 
+export const updateProfile = async (req: any, res: Response) => {
+  try {
+    const userId = req.userId;
+    const { name, age, gender, height, weight, activityLevel, goal } = req.body;
+
+    // Валідація даних
+    const updateData: any = {};
+
+    if (name !== undefined) {
+      updateData.name = name || null;
+    }
+
+    if (age !== undefined) {
+      const ageNum = parseInt(age);
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 150) {
+        return res.status(400).json({ error: 'Вік повинен бути від 1 до 150 років' });
+      }
+      updateData.age = ageNum;
+    }
+
+    if (gender !== undefined) {
+      const validGenders = ['male', 'female', 'other'];
+      if (gender && !validGenders.includes(gender)) {
+        return res.status(400).json({ error: 'Стать повинна бути: male, female або other' });
+      }
+      updateData.gender = gender || null;
+    }
+
+    if (height !== undefined) {
+      const heightNum = parseFloat(height);
+      if (isNaN(heightNum) || heightNum < 50 || heightNum > 300) {
+        return res.status(400).json({ error: 'Зріст повинен бути від 50 до 300 см' });
+      }
+      updateData.height = heightNum;
+    }
+
+    if (weight !== undefined) {
+      const weightNum = parseFloat(weight);
+      if (isNaN(weightNum) || weightNum < 1 || weightNum > 500) {
+        return res.status(400).json({ error: 'Вага повинна бути від 1 до 500 кг' });
+      }
+      updateData.weight = weightNum;
+    }
+
+    if (activityLevel !== undefined) {
+      const validLevels = ['sedentary', 'light', 'moderate', 'active', 'very_active'];
+      if (activityLevel && !validLevels.includes(activityLevel)) {
+        return res.status(400).json({ error: 'Невірний рівень активності' });
+      }
+      updateData.activityLevel = activityLevel || null;
+    }
+
+    if (goal !== undefined) {
+      const validGoals = ['lose_weight', 'gain_muscle', 'maintain', 'endurance', 'definition'];
+      if (goal && !validGoals.includes(goal)) {
+        return res.status(400).json({ error: 'Невірна мета' });
+      }
+      updateData.goal = goal || null;
+    }
+
+    // Оновлення профілю
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        age: true,
+        gender: true,
+        height: true,
+        weight: true,
+        activityLevel: true,
+        goal: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    logger.info('Profile updated successfully', { userId });
+    res.json(updatedUser);
+  } catch (error: any) {
+    logger.error('Update profile error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+

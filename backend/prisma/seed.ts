@@ -5,281 +5,118 @@ import { DEFAULT_USER_ID } from '../src/lib/config';
 const prisma = new PrismaClient();
 
 const exercises: any[] = [
-  // Chest exercises
-  {
-    name: 'Push-ups',
-    nameUk: 'Віджимання від підлоги',
-    description: 'Classic bodyweight chest exercise',
-    descriptionUk: 'Класичне базове вправа для грудної клітки',
-    type: 'strength',
-    muscleGroup: 'chest',
-    equipment: 'bodyweight',
-    difficulty: 'beginner',
-    instructions: 'Keep your body straight, lower until chest almost touches floor, push back up',
-    instructionsUk: 'Тримайте тіло прямо, опускайтеся до кількох сантиметрів від підлоги, виштовхуйтеся вгору',
-    caloriesPerMin: 8
-  },
-  {
-    name: 'Bench Press',
-    nameUk: 'Жим лежачи',
-    description: 'Barbell chest press lying on bench',
-    descriptionUk: 'Жим штанги лежачи на лавці',
-    type: 'strength',
-    muscleGroup: 'chest',
-    equipment: 'barbell',
-    difficulty: 'intermediate',
-    instructions: 'Lie on bench, lower bar to chest, press up to full extension',
-    instructionsUk: 'Лягте на лавку, опустіть штангу до грудей, витисніть до повної руки',
-    caloriesPerMin: 7
-  },
-  {
-    name: 'Dumbbell Flyes',
-    nameUk: 'Розведення гантелей',
-    description: 'Isolation chest exercise with dumbbells',
-    descriptionUk: 'Ізольована вправа для грудної клітки з гантелями',
-    type: 'strength',
-    muscleGroup: 'chest',
-    equipment: 'dumbbells',
-    difficulty: 'intermediate',
-    instructions: 'Lie on bench, arms extended, lower dumbbells in wide arc',
-    instructionsUk: 'Лягте на лавку, руки витягнуті, опускайте гантелі широкою дугою',
-    caloriesPerMin: 6
-  },
+  // Грудні вправи
+  { name: 'Віджимання від підлоги' },
+  { name: 'Жим лежачи' },
+  { name: 'Розведення гантелей' },
+  { name: 'Віджимання на брусах' },
   
-  // Back exercises
-  {
-    name: 'Pull-ups',
-    nameUk: 'Підтягування',
-    description: 'Bodyweight back and bicep exercise',
-    descriptionUk: 'Вправа для спини та біцепсів',
-    type: 'strength',
-    muscleGroup: 'back',
-    equipment: 'bodyweight',
-    difficulty: 'advanced',
-    instructions: 'Hang from bar, pull body up until chin over bar',
-    instructionsUk: 'Повисніть на перекладині, підтягніться до підборіддя над перекладиною',
-    caloriesPerMin: 10
-  },
-  {
-    name: 'Bent-over Row',
-    nameUk: 'Тяга в нахилі',
-    description: 'Barbell row for upper back',
-    descriptionUk: 'Тяга штанги для верхньої частини спини',
-    type: 'strength',
-    muscleGroup: 'back',
-    equipment: 'barbell',
-    difficulty: 'intermediate',
-    instructions: 'Bend forward, pull bar to lower chest',
-    instructionsUk: 'Нахиліться вперед, тягніть штангу до нижньої частини грудей',
-    caloriesPerMin: 7
-  },
-  {
-    name: 'Lat Pulldown',
-    nameUk: 'Тяга верхнього блоку',
-    description: 'Machine exercise for latissimus dorsi',
-    descriptionUk: 'Вправа на тренажері для широчайших м\'язів',
-    type: 'strength',
-    muscleGroup: 'back',
-    equipment: 'machine',
-    difficulty: 'beginner',
-    instructions: 'Pull bar down to upper chest, control release',
-    instructionsUk: 'Тягніть перекладину вниз до грудей, контрольно відпускайте',
-    caloriesPerMin: 6
-  },
+  // Вправи для спини
+  { name: 'Підтягування' },
+  { name: 'Підтягування зворотним хватом' },
+  { name: 'Тяга штанги в нахилі' },
+  { name: 'Тяга верхнього блоку' },
+  { name: 'Тяга Т-штанги' },
   
-  // Leg exercises
-  {
-    name: 'Squats',
-    nameUk: 'Присідання',
-    description: 'Fundamental leg exercise',
-    descriptionUk: 'Фундаментальна вправа для ніг',
-    type: 'strength',
-    muscleGroup: 'legs',
-    equipment: 'bodyweight',
-    difficulty: 'beginner',
-    instructions: 'Lower hips until thighs parallel to floor, stand back up',
-    instructionsUk: 'Опускайте бедра до паралелі з підлогою, піднімайтеся',
-    caloriesPerMin: 9
-  },
-  {
-    name: 'Barbell Squat',
-    nameUk: 'Присідання зі штангою',
-    description: 'Weighted squat with barbell',
-    descriptionUk: 'Присідання зі штангою',
-    type: 'strength',
-    muscleGroup: 'legs',
-    equipment: 'barbell',
-    difficulty: 'intermediate',
-    instructions: 'Bar on shoulders, squat down deep',
-    instructionsUk: 'Штанга на плечах, присядайте глибоко',
-    caloriesPerMin: 8
-  },
-  {
-    name: 'Deadlift',
-    nameUk: 'Станова тяга',
-    description: 'Full body compound lift',
-    descriptionUk: 'Базове багатосуглобне вправа',
-    type: 'strength',
-    muscleGroup: 'legs',
-    equipment: 'barbell',
-    difficulty: 'advanced',
-    instructions: 'Lift bar from floor to standing, keep back straight',
-    instructionsUk: 'Піднімайте штангу з підлоги до повного випрямлення, тримайте спину прямою',
-    caloriesPerMin: 9
-  },
-  {
-    name: 'Lunges',
-    nameUk: 'Випади',
-    description: 'Unilateral leg exercise',
-    descriptionUk: 'Одностороння вправа для ніг',
-    type: 'strength',
-    muscleGroup: 'legs',
-    equipment: 'bodyweight',
-    difficulty: 'beginner',
-    instructions: 'Step forward into lunge, both knees at 90 degrees',
-    instructionsUk: 'Крок вперед у випаді, обидва коліна під кутом 90 градусів',
-    caloriesPerMin: 7
-  },
+  // Вправи для ніг
+  { name: 'Присідання' },
+  { name: 'Присідання зі штангою' },
+  { name: 'Фронтальні присідання' },
+  { name: 'Станова тяга' },
+  { name: 'Румунська тяга' },
+  { name: 'Випади' },
+  { name: 'Жим ногами' },
+  { name: 'Згинання ніг' },
+  { name: 'Підйоми на носки' },
   
-  // Arms exercises
-  {
-    name: 'Bicep Curls',
-    nameUk: 'Підйоми на біцепс',
-    description: 'Dumbbell bicep isolation',
-    descriptionUk: 'Ізоляція біцепсів з гантелями',
-    type: 'strength',
-    muscleGroup: 'arms',
-    equipment: 'dumbbells',
-    difficulty: 'beginner',
-    instructions: 'Curl dumbbells to shoulders',
-    instructionsUk: 'Згинайте гантелі до плечей',
-    caloriesPerMin: 5
-  },
-  {
-    name: 'Tricep Dips',
-    nameUk: 'Віджимання на брусах',
-    description: 'Bodyweight tricep exercise',
-    descriptionUk: 'Вправа на трицепси',
-    type: 'strength',
-    muscleGroup: 'arms',
-    equipment: 'bodyweight',
-    difficulty: 'intermediate',
-    instructions: 'Dip body down between parallel bars',
-    instructionsUk: 'Опускайтеся на брусах',
-    caloriesPerMin: 7
-  },
+  // Вправи для рук
+  { name: 'Підйоми на біцепс' },
+  { name: 'Молотки' },
+  { name: 'Віджимання на тріцепс' },
+  { name: 'Жим лежачи вузьким хватом' },
+  { name: 'Розгинання рук на блоці' },
   
-  // Shoulders exercises
-  {
-    name: 'Overhead Press',
-    nameUk: 'Жим стоячи',
-    description: 'Barbell shoulder press',
-    descriptionUk: 'Жим штанги над головою',
-    type: 'strength',
-    muscleGroup: 'shoulders',
-    equipment: 'barbell',
-    difficulty: 'intermediate',
-    instructions: 'Press bar from shoulders to overhead',
-    instructionsUk: 'Витискайте штангу з плечей над головою',
-    caloriesPerMin: 7
-  },
-  {
-    name: 'Lateral Raises',
-    nameUk: 'Підйоми в сторони',
-    description: 'Dumbbell shoulder isolation',
-    descriptionUk: 'Ізоляція плечей з гантелями',
-    type: 'strength',
-    muscleGroup: 'shoulders',
-    equipment: 'dumbbells',
-    difficulty: 'beginner',
-    instructions: 'Raise dumbbells to shoulder height',
-    instructionsUk: 'Піднімайте гантелі до рівня плечей',
-    caloriesPerMin: 5
-  },
+  // Вправи для плечей
+  { name: 'Жим сидячи/стоячи' },
+  { name: 'Підйоми в сторони' },
+  { name: 'Передні підйоми' },
+  { name: 'Зворотні розведення' },
+  { name: 'Тяга до підборіддя' },
   
-  // Core exercises
-  {
-    name: 'Plank',
-    nameUk: 'Планка',
-    description: 'Core strength isometric hold',
-    descriptionUk: 'Ізометрична вправа для кору',
-    type: 'strength',
-    muscleGroup: 'core',
-    equipment: 'bodyweight',
-    difficulty: 'beginner',
-    instructions: 'Hold straight body position on forearms',
-    instructionsUk: 'Тримайте прямое тіло на передпліччях',
-    caloriesPerMin: 4
-  },
-  {
-    name: 'Crunches',
-    nameUk: 'Скручування',
-    description: 'Abdominal muscle exercise',
-    descriptionUk: 'Вправа для м\'язів живота',
-    type: 'strength',
-    muscleGroup: 'core',
-    equipment: 'bodyweight',
-    difficulty: 'beginner',
-    instructions: 'Lift shoulders off floor, crunch abs',
-    instructionsUk: 'Піднімайте плечі з підлоги, скручуйте прес',
-    caloriesPerMin: 6
-  },
+  // Вправи для кору
+  { name: 'Планка' },
+  { name: 'Скручування' },
+  { name: 'Підйоми корпусу' },
+  { name: 'Російські скручування' },
+  { name: 'Підйоми ніг' },
+  { name: 'Альпініст' },
   
-  // Cardio exercises
-  {
-    name: 'Running',
-    nameUk: 'Біг',
-    description: 'Cardiovascular endurance exercise',
-    descriptionUk: 'Кардіо вправа для витривалості',
-    type: 'cardio',
-    muscleGroup: 'full_body',
-    equipment: 'none',
-    difficulty: 'beginner',
-    instructions: 'Run at steady pace',
-    instructionsUk: 'Біжіть у стабільному темпі',
-    caloriesPerMin: 10
-  },
-  {
-    name: 'Cycling',
-    nameUk: 'Велосипед',
-    description: 'Low impact cardio',
-    descriptionUk: 'Низькоударне кардіо',
-    type: 'cardio',
-    muscleGroup: 'legs',
-    equipment: 'none',
-    difficulty: 'beginner',
-    instructions: 'Pedal at consistent pace',
-    instructionsUk: 'Крутіть педалі в стабільному темпі',
-    caloriesPerMin: 8
-  },
-  {
-    name: 'Jump Rope',
-    nameUk: 'Стрибки на скакалці',
-    description: 'High intensity cardio',
-    descriptionUk: 'Високоінтенсивне кардіо',
-    type: 'cardio',
-    muscleGroup: 'full_body',
-    equipment: 'none',
-    difficulty: 'intermediate',
-    instructions: 'Jump rope continuously',
-    instructionsUk: 'Стрибайте на скакалці безперервно',
-    caloriesPerMin: 12
-  },
+  // Кардіо вправи
+  { name: 'Біг' },
+  { name: 'Їзда на велосипеді' },
+  { name: 'Стрибки на скакалці' },
+  { name: 'Бурпі' },
+  { name: 'Гребля' },
   
-  // Flexibility exercises
-  {
-    name: 'Stretching',
-    nameUk: 'Розтяжка',
-    description: 'General flexibility routine',
-    descriptionUk: 'Загальна розтяжка',
-    type: 'flexibility',
-    muscleGroup: 'full_body',
-    equipment: 'none',
-    difficulty: 'beginner',
-    instructions: 'Hold stretches for 30 seconds',
-    instructionsUk: 'Тримайте розтяжки по 30 секунд',
-    caloriesPerMin: 2
-  }
+  // Вправи на гнучкість
+  { name: 'Розтяжка' },
+  { name: 'Йога' }
+];
+
+const foods: any[] = [
+  // Мʼясо та птиця
+  { name: 'Куряча грудка', calories: 165, protein: 31, carbs: 0, fat: 3.6, category: 'meat' },
+  { name: 'Яловичина', calories: 250, protein: 26, carbs: 0, fat: 17, category: 'meat' },
+  { name: 'Свинина', calories: 242, protein: 27, carbs: 0, fat: 14, category: 'meat' },
+  { name: 'Індичка', calories: 189, protein: 29, carbs: 0, fat: 7, category: 'meat' },
+  { name: 'Риба (лосось)', calories: 208, protein: 20, carbs: 0, fat: 12, category: 'fish' },
+  
+  // Яйця та молочні
+  { name: 'Яйце', calories: 155, protein: 13, carbs: 1.1, fat: 11, category: 'dairy' },
+  { name: 'Молоко', calories: 61, protein: 3.2, carbs: 4.8, fat: 3.3, category: 'dairy' },
+  { name: 'Сир білий', calories: 98, protein: 11, carbs: 3.5, fat: 4.4, category: 'dairy' },
+  { name: 'Йогурт', calories: 59, protein: 10, carbs: 3.6, fat: 0.4, category: 'dairy' },
+  { name: 'Творог', calories: 98, protein: 11, carbs: 3.4, fat: 4.3, category: 'dairy' },
+  
+  // Крупи та зернові
+  { name: 'Рис', calories: 130, protein: 2.7, carbs: 28, fat: 0.3, category: 'grain' },
+  { name: 'Гречка', calories: 343, protein: 13, carbs: 62, fat: 3.4, category: 'grain' },
+  { name: 'Вівсянка', calories: 389, protein: 17, carbs: 66, fat: 7, category: 'grain' },
+  { name: 'Макарони', calories: 131, protein: 5, carbs: 25, fat: 1.1, category: 'grain' },
+  { name: 'Хліб', calories: 265, protein: 9, carbs: 49, fat: 3.2, category: 'grain' },
+  
+  // Овочі
+  { name: 'Картопля', calories: 77, protein: 2, carbs: 17, fat: 0.1, category: 'vegetable' },
+  { name: 'Броколі', calories: 34, protein: 2.8, carbs: 7, fat: 0.4, category: 'vegetable' },
+  { name: 'Морква', calories: 41, protein: 0.9, carbs: 10, fat: 0.2, category: 'vegetable' },
+  { name: 'Огірок', calories: 16, protein: 0.7, carbs: 4, fat: 0.1, category: 'vegetable' },
+  { name: 'Помідор', calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, category: 'vegetable' },
+  { name: 'Капуста', calories: 25, protein: 1.3, carbs: 6, fat: 0.1, category: 'vegetable' },
+  
+  // Фрукти
+  { name: 'Банан', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, category: 'fruit' },
+  { name: 'Яблуко', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, category: 'fruit' },
+  { name: 'Апельсин', calories: 47, protein: 0.9, carbs: 12, fat: 0.1, category: 'fruit' },
+  { name: 'Виноград', calories: 69, protein: 0.7, carbs: 18, fat: 0.2, category: 'fruit' },
+  { name: 'Ягоди', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, category: 'fruit' },
+  
+  // Горіхи та насіння
+  { name: 'Горіхи волоські', calories: 654, protein: 15, carbs: 14, fat: 65, category: 'nuts' },
+  { name: 'Мігдаль', calories: 579, protein: 21, carbs: 22, fat: 50, category: 'nuts' },
+  { name: 'Насіння соняшника', calories: 584, protein: 21, carbs: 20, fat: 51, category: 'nuts' },
+  
+  // Жири та масло
+  { name: 'Оливкова олія', calories: 884, protein: 0, carbs: 0, fat: 100, category: 'fats' },
+  { name: 'Вершкове масло', calories: 717, protein: 0.9, carbs: 0.1, fat: 81, category: 'fats' },
+  
+  // Напої
+  { name: 'Вода', calories: 0, protein: 0, carbs: 0, fat: 0, category: 'beverages' },
+  { name: 'Сік', calories: 45, protein: 0.5, carbs: 11, fat: 0.1, category: 'beverages' },
+  { name: 'Кава', calories: 2, protein: 0.3, carbs: 0.2, fat: 0, category: 'beverages' },
+  
+  // Снеки
+  { name: 'Шоколад', calories: 546, protein: 7.8, carbs: 54, fat: 31, category: 'snacks' },
+  { name: 'Печиво', calories: 417, protein: 7, carbs: 75, fat: 9.5, category: 'snacks' }
 ];
 
 async function main() {
@@ -315,6 +152,19 @@ async function main() {
   }
 
   console.log(`✅ Seeded ${exercises.length} exercises`);
+
+  // Seed foods
+  for (const food of foods) {
+    const existing = await prisma.food.findFirst({
+      where: { name: food.name }
+    });
+    
+    if (!existing) {
+      await prisma.food.create({ data: food });
+    }
+  }
+
+  console.log(`✅ Seeded ${foods.length} foods`);
 }
 
 main()

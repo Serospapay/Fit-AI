@@ -6,18 +6,33 @@ import logger from '../lib/logger';
 export const createWorkout = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { date, duration, notes, rating, exercises } = req.body;
+    const { date, time, type, duration, notes, rating, exercises } = req.body;
+
+    // Combine date and time into a single DateTime
+    let workoutDate = new Date();
+    if (date) {
+      if (time) {
+        // Combine date and time
+        const [hours, minutes] = time.split(':');
+        workoutDate = new Date(date);
+        workoutDate.setHours(parseInt(hours) || 0, parseInt(minutes) || 0, 0, 0);
+      } else {
+        workoutDate = new Date(date);
+      }
+    }
 
     const workout = await prisma.workout.create({
       data: {
         userId,
-        date: date ? new Date(date) : new Date(),
+        date: workoutDate,
+        type: type || null,
         duration: duration || null,
         notes: notes || null,
         rating: rating || null,
         exercises: {
           create: exercises?.map((ex: any, index: number) => ({
             exerciseId: ex.exerciseId,
+            customName: ex.customName || null,
             sets: ex.sets || null,
             reps: ex.reps || null,
             weight: ex.weight || null,
@@ -328,31 +343,11 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       return {
         exerciseId: mg.exerciseId,
         exerciseName: exercise?.name,
-        exerciseNameUk: exercise?.nameUk,
         count: mg._count
       };
     }).sort((a, b) => b.count - a.count).slice(0, 5);
 
-    // Get recent workouts count by type
-    const exerciseTypes = await prisma.workoutExercise.findMany({
-      where: {
-        workout: {
-          userId,
-          date: { gte: startDate }
-        }
-      },
-      include: {
-        exercise: {
-          select: { type: true }
-        }
-      }
-    });
-
-    const typeStats = exerciseTypes.reduce((acc: any, we) => {
-      const type = we.exercise.type;
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    }, {});
+    // Exercise type stats removed since type field doesn't exist anymore
 
     // Calculate streak (consecutive days with workouts)
     const sortedDates = recentWorkouts.map(w => w.date.toISOString().split('T')[0]).sort().reverse();
@@ -401,7 +396,7 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       // Trends and analysis
       workoutStreak: streak,
       workoutsPerWeek,
-      exerciseTypeStats: typeStats,
+      exerciseTypeStats: {},
       
       // Recent activity
       recentWorkouts: recentWorkouts.slice(0, 7).map(w => ({

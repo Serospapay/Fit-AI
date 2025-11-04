@@ -4,17 +4,7 @@ import logger from '../lib/logger';
 
 export const getAllExercises = async (req: Request, res: Response) => {
   try {
-    const {
-      type,
-      muscleGroup,
-      equipment,
-      difficulty,
-      location,
-      goal,
-      search,
-      page = '1',
-      limit = '20'
-    } = req.query;
+    const { search, page = '1', limit = '100' } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -22,17 +12,8 @@ export const getAllExercises = async (req: Request, res: Response) => {
 
     const where: any = {};
 
-    if (type) where.type = type;
-    if (muscleGroup) where.muscleGroup = muscleGroup;
-    if (equipment) where.equipment = equipment;
-    if (difficulty) where.difficulty = difficulty;
-    if (location) where.location = location;
-    if (goal) where.goal = goal;
     if (search) {
-      where.OR = [
-        { name: { contains: search as string, mode: 'insensitive' } },
-        { nameUk: { contains: search as string, mode: 'insensitive' } }
-      ];
+      where.name = { contains: search as string, mode: 'insensitive' };
     }
 
     const [exercises, total] = await Promise.all([
@@ -128,23 +109,9 @@ export const deleteExercise = async (req: Request, res: Response) => {
 
 export const getFilterOptions = async (req: Request, res: Response) => {
   try {
-    const [types, muscleGroups, equipments, difficulties, locations, goals, totalCount] = await Promise.all([
-      prisma.exercise.findMany({ select: { type: true }, distinct: ['type'] }),
-      prisma.exercise.findMany({ select: { muscleGroup: true }, distinct: ['muscleGroup'] }),
-      prisma.exercise.findMany({ select: { equipment: true }, distinct: ['equipment'] }),
-      prisma.exercise.findMany({ select: { difficulty: true }, distinct: ['difficulty'] }),
-      prisma.exercise.findMany({ select: { location: true }, distinct: ['location'] }),
-      prisma.exercise.findMany({ select: { goal: true }, distinct: ['goal'] }),
-      prisma.exercise.count()
-    ]);
+    const totalCount = await prisma.exercise.count();
 
     res.json({
-      types: types.map(t => t.type).filter(Boolean),
-      muscleGroups: muscleGroups.map(m => m.muscleGroup).filter(Boolean),
-      equipments: equipments.map(e => e.equipment).filter(Boolean),
-      difficulties: difficulties.map(d => d.difficulty).filter(Boolean),
-      locations: locations.map(l => l.location).filter(Boolean),
-      goals: goals.map(g => g.goal).filter(Boolean),
       totalExercises: totalCount
     });
   } catch (error: any) {

@@ -10,8 +10,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node prisma/seed.ts",
-    "sync:wger": "ts-node src/scripts/sync-wger-exercises.ts"
+    "prisma:seed": "ts-node prisma/seed.ts"
   },
   "keywords": [
     "fitness",

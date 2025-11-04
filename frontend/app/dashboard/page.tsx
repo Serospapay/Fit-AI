@@ -6,6 +6,7 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import GymLogo from '../components/GymLogo';
+import { api } from '../lib/api';
 
 interface Stats {
   totalWorkouts: number;
@@ -49,12 +50,8 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/workouts/stats?days=30');
-
-      if (res.ok) {
-        const statsData = await res.json();
-        setStats(statsData);
-      }
+      const statsData = await api.getWorkoutStats(30);
+      setStats(statsData);
     } catch (error) {
       console.error('Error fetching dashboard:', error);
     } finally {
@@ -103,21 +100,21 @@ export default function DashboardPage() {
                   <i className="bi bi-speedometer2 me-2"></i>
                   <span>Панель</span>
                 </a>
-                <a href="/exercises" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-dumbbell me-2"></i>
-                  <span>Вправи</span>
-                </a>
                 <a href="/workouts" className="nav-link d-flex align-items-center">
                   <i className="bi bi-calendar-check me-2"></i>
                   <span>Тренування</span>
                 </a>
-                <a href="/programs" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-journal-text me-2"></i>
-                  <span>Програми</span>
+                <a href="/nutrition" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-apple me-2"></i>
+                  <span>Щоденник харчування</span>
                 </a>
                 <a href="/calculators" className="nav-link d-flex align-items-center">
                   <i className="bi bi-calculator me-2"></i>
                   <span>Калькулятори</span>
+                </a>
+                <a href="/profile" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-person-circle me-2"></i>
+                  <span>Профіль</span>
                 </a>
                 <a href="/about" className="nav-link d-flex align-items-center">
                   <i className="bi bi-info-circle me-2"></i>
@@ -440,65 +437,51 @@ export default function DashboardPage() {
                   </Card>
               )}
 
-              {/* Quick Actions */}
-              <Row className="g-3">
-                  <Col md={3}>
-                    <Card className="card-hover-lift">
-                      <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
-                          <i className="bi bi-plus-circle-fill"></i>
-                        </div>
-                        <h5 className="mb-3">Додати тренування</h5>
-                        <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати нове тренування</p>
-                        <Button variant="outline-primary" className="w-100" href="/workouts/new">
-                          Додати
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3}>
-                    <Card className="card-hover-lift">
-                      <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
-                          <i className="bi bi-dumbbell-fill"></i>
-                        </div>
-                        <h5 className="mb-3">Перегляд вправ</h5>
-                        <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Бібліотека вправ</p>
-                        <Button variant="outline-primary" className="w-100" href="/exercises">
-                          Переглянути
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3}>
-                    <Card className="card-hover-lift">
-                      <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
-                          <i className="bi bi-journal-text"></i>
-                        </div>
-                        <h5 className="mb-3">Програми</h5>
-                        <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Тренувальні програми</p>
-                        <Button variant="outline-primary" className="w-100" href="/programs">
-                          Обрати
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3}>
-                    <Card className="card-hover-lift">
-                      <Card.Body className="p-4 text-center">
-                        <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
-                          <i className="bi bi-calculator-fill"></i>
-                        </div>
-                        <h5 className="mb-3">Калькулятори</h5>
-                        <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Розрахувати показники</p>
-                        <Button variant="outline-primary" className="w-100" href="/calculators">
-                          Розрахувати
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>
+                             {/* Quick Actions */}
+               <Row className="g-3">
+                   <Col md={4}>
+                     <Card className="card-hover-lift">
+                       <Card.Body className="p-4 text-center">
+                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
+                           <i className="bi bi-plus-circle-fill"></i>
+                         </div>
+                         <h5 className="mb-3">Додати тренування</h5>
+                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати нове тренування</p>
+                         <Button variant="outline-primary" className="w-100" href="/workouts/new">
+                           Додати
+                         </Button>
+                       </Card.Body>
+                     </Card>
+                   </Col>
+                   <Col md={4}>
+                     <Card className="card-hover-lift">
+                       <Card.Body className="p-4 text-center">
+                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
+                           <i className="bi bi-apple"></i>
+                         </div>
+                         <h5 className="mb-3">Додати їжу</h5>
+                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати прийом їжі</p>
+                         <Button variant="outline-primary" className="w-100" href="/nutrition/new">
+                           Додати
+                         </Button>
+                       </Card.Body>
+                     </Card>
+                   </Col>
+                   <Col md={4}>
+                     <Card className="card-hover-lift">
+                       <Card.Body className="p-4 text-center">
+                         <div className="display-1 mb-3" style={{ color: '#d4af37' }}>
+                           <i className="bi bi-calculator-fill"></i>
+                         </div>
+                         <h5 className="mb-3">Калькулятори</h5>
+                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Розрахувати показники</p>
+                         <Button variant="outline-primary" className="w-100" href="/calculators">
+                           Розрахувати
+                         </Button>
+                       </Card.Body>
+                     </Card>
+                   </Col>
+                 </Row>
             </>
           ) : (
             <Card>

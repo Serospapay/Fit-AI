@@ -12,7 +12,7 @@ const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    winston.format.errors({ stack: true }),
+    winston.format.errors({ stack: false }),
     winston.format.json()
   ),
   defaultMeta: { service: 'fitness-api' },
@@ -48,7 +48,12 @@ if (process.env.NODE_ENV !== 'production') {
       winston.format.printf(({ timestamp, level, message, ...meta }) => {
         let msg = `${timestamp} [${level}]: ${message}`;
         if (Object.keys(meta).length > 0) {
-          msg += ` ${JSON.stringify(meta)}`;
+          try {
+            msg += ` ${JSON.stringify(meta)}`;
+          } catch (e) {
+            // Handle circular references
+            msg += ` ${JSON.stringify(meta, null, 0)}`;
+          }
         }
         return msg;
       })
