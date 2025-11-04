@@ -1,4 +1,4 @@
-import { AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';

@@ -1,13 +1,14 @@
-import { AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { NutritionLogInput, NutritionItemInput } from '../types';
 
 // Створити новий запис харчування
 export const createNutritionLog = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { date, mealType, items } = req.body;
+    const { date, mealType, items } = req.body as NutritionLogInput;
 
     // Combine date and time if provided
     let logDate = new Date();
@@ -16,7 +17,7 @@ export const createNutritionLog = async (req: AuthRequest, res: Response) => {
     }
 
     // Calculate totals from items
-    const totals = items?.reduce((acc: any, item: any) => ({
+    const totals = items?.reduce((acc, item) => ({
       calories: acc.calories + (item.calories || 0),
       protein: acc.protein + (item.protein || 0),
       carbs: acc.carbs + (item.carbs || 0),
@@ -29,7 +30,7 @@ export const createNutritionLog = async (req: AuthRequest, res: Response) => {
         date: logDate,
         mealType,
         items: {
-          create: items?.map((item: any) => ({
+          create: items?.map((item: NutritionItemInput) => ({
             name: item.name,
             nameUk: item.nameUk || null,
             amount: item.amount,
@@ -48,7 +49,7 @@ export const createNutritionLog = async (req: AuthRequest, res: Response) => {
 
     logger.info('Nutrition log created successfully', { nutritionLogId: nutritionLog.id });
     res.status(201).json({ ...nutritionLog, totals });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Create nutrition log error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -60,12 +61,13 @@ export const getUserNutritionLogs = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate, mealType, limit = '100', offset = '0' } = req.query;
 
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
     
     if (startDate || endDate) {
-      where.date = {};
-      if (startDate) where.date.gte = new Date(startDate as string);
-      if (endDate) where.date.lte = new Date(endDate as string);
+      const dateFilter: Record<string, Date> = {};
+      if (startDate) dateFilter.gte = new Date(startDate as string);
+      if (endDate) dateFilter.lte = new Date(endDate as string);
+      where.date = dateFilter;
     }
 
     if (mealType) {
@@ -100,7 +102,7 @@ export const getUserNutritionLogs = async (req: AuthRequest, res: Response) => {
     });
 
     res.json({ logs: logsWithTotals, total });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get nutrition logs error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -152,7 +154,7 @@ export const getNutritionStats = async (req: AuthRequest, res: Response) => {
     } : { calories: 0, protein: 0, carbs: 0, fat: 0 };
 
     // Meal type distribution
-    const mealTypeStats = logs.reduce((acc: any, log) => {
+    const mealTypeStats = logs.reduce((acc: Record<string, number>, log) => {
       acc[log.mealType] = (acc[log.mealType] || 0) + 1;
       return acc;
     }, {});
@@ -199,7 +201,7 @@ export const getNutritionStats = async (req: AuthRequest, res: Response) => {
       mealTypeStats,
       dailyBreakdown
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get nutrition stats error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -228,7 +230,7 @@ export const deleteNutritionLog = async (req: AuthRequest, res: Response) => {
 
     logger.info('Nutrition log deleted successfully', { nutritionLogId: id });
     res.status(204).send();
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Delete nutrition log error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

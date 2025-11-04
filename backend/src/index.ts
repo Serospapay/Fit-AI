@@ -7,6 +7,7 @@ import workoutRoutes from './routes/workout.routes';
 import nutritionRoutes from './routes/nutrition.routes';
 import foodRoutes from './routes/food.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { setupSwagger } from './lib/swagger';
 import logger from './lib/logger';
 
 dotenv.config();
@@ -40,6 +41,9 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Swagger API Documentation
+setupSwagger(app);
 
 // Routes
 app.use('/api/auth', authRoutes);

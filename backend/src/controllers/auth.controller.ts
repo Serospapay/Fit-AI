@@ -1,8 +1,61 @@
-import { Request, Response } from 'express';
+import { Response, Request } from 'express';
 import { prisma } from '../lib/prisma';
 import { hashPassword, comparePassword, generateToken } from '../utils/auth';
 import logger from '../lib/logger';
+import { AuthRequest, ProfileUpdate } from '../types';
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Реєстрація нового користувача
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 example: password123
+ *               name:
+ *                 type: string
+ *                 example: Іван Іванов
+ *     responses:
+ *       201:
+ *         description: Користувач успішно зареєстрований
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Помилка валідації або користувач вже існує
+ */
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
@@ -45,12 +98,50 @@ export const register = async (req: Request, res: Response) => {
       user,
       token,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Вхід користувача
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: Успішний вхід
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Невірний email або пароль
+ */
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -87,13 +178,53 @@ export const login = async (req: Request, res: Response) => {
       },
       token,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-export const getProfile = async (req: any, res: Response) => {
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   get:
+ *     summary: Отримати профіль користувача
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Профіль користувача
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 age:
+ *                   type: number
+ *                 gender:
+ *                   type: string
+ *                   enum: [male, female, other]
+ *                 height:
+ *                   type: number
+ *                 weight:
+ *                   type: number
+ *                 activityLevel:
+ *                   type: string
+ *                   enum: [sedentary, light, moderate, active, very_active]
+ *                 goal:
+ *                   type: string
+ *                   enum: [lose_weight, gain_muscle, maintain, endurance, definition]
+ *       404:
+ *         description: Користувач не знайдений
+ */
+export const getProfile = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
 
@@ -119,27 +250,71 @@ export const getProfile = async (req: any, res: Response) => {
     }
 
     res.json(user);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get profile error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-export const updateProfile = async (req: any, res: Response) => {
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   put:
+ *     summary: Оновити профіль користувача
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               age:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 150
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *               height:
+ *                 type: number
+ *                 minimum: 50
+ *                 maximum: 300
+ *               weight:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 500
+ *               activityLevel:
+ *                 type: string
+ *                 enum: [sedentary, light, moderate, active, very_active]
+ *               goal:
+ *                 type: string
+ *                 enum: [lose_weight, gain_muscle, maintain, endurance, definition]
+ *     responses:
+ *       200:
+ *         description: Профіль успішно оновлено
+ *       400:
+ *         description: Помилка валідації даних
+ */
+export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId;
-    const { name, age, gender, height, weight, activityLevel, goal } = req.body;
+    const userId = req.userId!;
+    const { name, age, gender, height, weight, activityLevel, goal } = req.body as ProfileUpdate;
 
     // Валідація даних
-    const updateData: any = {};
+    const updateData: Partial<ProfileUpdate> = {};
 
     if (name !== undefined) {
       updateData.name = name || null;
     }
 
     if (age !== undefined) {
-      const ageNum = parseInt(age);
-      if (isNaN(ageNum) || ageNum < 1 || ageNum > 150) {
+      const ageNum = age ? parseInt(String(age)) : null;
+      if (ageNum !== null && (isNaN(ageNum) || ageNum < 1 || ageNum > 150)) {
         return res.status(400).json({ error: 'Вік повинен бути від 1 до 150 років' });
       }
       updateData.age = ageNum;
@@ -154,16 +329,16 @@ export const updateProfile = async (req: any, res: Response) => {
     }
 
     if (height !== undefined) {
-      const heightNum = parseFloat(height);
-      if (isNaN(heightNum) || heightNum < 50 || heightNum > 300) {
+      const heightNum = height ? parseFloat(String(height)) : null;
+      if (heightNum !== null && (isNaN(heightNum) || heightNum < 50 || heightNum > 300)) {
         return res.status(400).json({ error: 'Зріст повинен бути від 50 до 300 см' });
       }
       updateData.height = heightNum;
     }
 
     if (weight !== undefined) {
-      const weightNum = parseFloat(weight);
-      if (isNaN(weightNum) || weightNum < 1 || weightNum > 500) {
+      const weightNum = weight ? parseFloat(String(weight)) : null;
+      if (weightNum !== null && (isNaN(weightNum) || weightNum < 1 || weightNum > 500)) {
         return res.status(400).json({ error: 'Вага повинна бути від 1 до 500 кг' });
       }
       updateData.weight = weightNum;
@@ -206,7 +381,7 @@ export const updateProfile = async (req: any, res: Response) => {
 
     logger.info('Profile updated successfully', { userId });
     res.json(updatedUser);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Update profile error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
