@@ -83,15 +83,59 @@ export default function NutritionPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
-          <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
               <h1 className="mb-2">Мій харчування</h1>
               <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Історія вашого харчування</p>
             </div>
-            <Button variant="primary" href="/nutrition/new" style={{ fontFamily: 'var(--font-oswald)' }}>
-              <i className="bi bi-plus-circle me-2"></i>
-              Додати запис
-            </Button>
+            <div className="d-flex gap-2 flex-wrap">
+              <Button 
+                variant="outline-warning" 
+                onClick={async () => {
+                  const token = localStorage.getItem('token');
+                  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/nutrition/excel`;
+                  const response = await fetch(url, {
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  });
+                  const blob = await response.blob();
+                  const downloadUrl = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = downloadUrl;
+                  link.download = `kharchuvannya_${new Date().toISOString().split('T')[0]}.xlsx`;
+                  link.click();
+                }}
+              >
+                <i className="bi bi-file-earmark-spreadsheet me-2"></i>
+                Excel
+              </Button>
+              <Button 
+                variant="outline-danger" 
+                onClick={async () => {
+                  const token = localStorage.getItem('token');
+                  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/nutrition/pdf`;
+                  const response = await fetch(url, {
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  });
+                  const blob = await response.blob();
+                  const downloadUrl = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = downloadUrl;
+                  link.download = `kharchuvannya_${new Date().toISOString().split('T')[0]}.pdf`;
+                  link.click();
+                }}
+              >
+                <i className="bi bi-file-pdf me-2"></i>
+                PDF
+              </Button>
+              <Button variant="primary" href="/nutrition/new" style={{ background: '#d4af37', border: 'none' }}>
+                <i className="bi bi-plus-circle me-2"></i>
+                Додати запис
+              </Button>
+            </div>
           </div>
 
           {error && (

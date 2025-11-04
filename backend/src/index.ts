@@ -11,6 +11,7 @@ import goalRoutes from './routes/goal.routes';
 import workoutTemplateRoutes from './routes/workoutTemplate.routes';
 import reminderRoutes from './routes/reminder.routes';
 import recommendationRoutes from './routes/recommendation.routes';
+import exportRoutes from './routes/export.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { setupSwagger } from './lib/swagger';
 import logger from './lib/logger';
@@ -61,6 +62,7 @@ app.use('/api/goals', goalRoutes);
 app.use('/api/workout-templates', workoutTemplateRoutes);
 app.use('/api/reminders', reminderRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/export', exportRoutes);
 
 // 404 handler
 app.use(notFoundHandler);
