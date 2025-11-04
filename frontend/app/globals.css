@@ -541,8 +541,9 @@ a:hover {
 }
 
 .form-control::placeholder {
-  color: #cccccc;
-  opacity: 0.8;
+  color: #ffffff !important;
+  opacity: 0.7;
+  font-weight: 400;
 }
 
 /* Form Label Improvements */
@@ -556,12 +557,54 @@ a:hover {
 /* Form Select Options */
 .form-select option {
   background: var(--dark-light);
-  color: #ffffff;
+  color: #ffffff !important;
   padding: 0.5rem;
 }
 
 .form-select option:hover {
   background: var(--dark);
+}
+
+/* High contrast text utilities */
+.text-muted {
+  color: #e0e0e0 !important; /* Замість #888 - більш контрастний */
+  font-weight: 500;
+}
+
+small,
+.small {
+  color: #e0e0e0 !important; /* Замість за замовчуванням - більш контрастний */
+  font-weight: 500;
+}
+
+/* Card text improvements */
+.card-text,
+.card-body p {
+  color: #f5f5f5 !important;
+}
+
+.card-body small {
+  color: #d4af37 !important; /* Золотий для важливих малих текстів */
+  font-weight: 600;
+}
+
+/* Bootstrap text utilities override */
+.text-secondary {
+  color: #d4af37 !important; /* Золотий замість сірого */
+}
+
+.text-dark {
+  color: #f5f5f5 !important; /* Світлий на темному фоні */
+}
+
+/* Alert improvements */
+.alert {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.alert .text-muted {
+  color: #e0e0e0 !important;
 }
 
 /* Progress Bar Improvements */

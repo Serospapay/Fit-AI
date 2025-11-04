@@ -155,7 +155,7 @@ export default function NutritionPage() {
                   <i className="bi bi-apple text-muted"></i>
                 </div>
                 <h3 className="mb-3">Поки що немає записів</h3>
-                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-4">
+                <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-4">
                   Почніть відстежувати своє харчування
                 </p>
                 <Button variant="primary" size="lg" href="/nutrition/new">
@@ -211,19 +211,19 @@ export default function NutritionPage() {
                       {log.totals && (
                         <div className="border-top pt-3">
                           <div className="d-flex justify-content-between mb-1">
-                            <small style={{ color: '#888' }}>Калорії:</small>
+                            <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Калорії:</small>
                             <small className="fw-bold">{Math.round(log.totals.calories)} ккал</small>
                           </div>
                           <div className="d-flex justify-content-between mb-1">
-                            <small style={{ color: '#888' }}>Білки:</small>
+                            <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Білки:</small>
                             <small className="fw-bold">{Math.round(log.totals.protein)} г</small>
                           </div>
                           <div className="d-flex justify-content-between mb-1">
-                            <small style={{ color: '#888' }}>Вуглеводи:</small>
+                            <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Вуглеводи:</small>
                             <small className="fw-bold">{Math.round(log.totals.carbs)} г</small>
                           </div>
                           <div className="d-flex justify-content-between">
-                            <small style={{ color: '#888' }}>Жири:</small>
+                            <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Жири:</small>
                             <small className="fw-bold">{Math.round(log.totals.fat)} г</small>
                           </div>
                         </div>
@@ -240,7 +240,7 @@ export default function NutritionPage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

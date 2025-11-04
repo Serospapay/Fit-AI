@@ -265,7 +265,7 @@ export default function RemindersPage() {
                 {/* Неактивні нагадування */}
                 {disabledReminders.length > 0 && (
                   <div>
-                    <h3 className="mb-3" style={{ color: '#888' }}>Неактивні нагадування</h3>
+                    <h3 className="mb-3" style={{ color: '#e0e0e0', fontWeight: 600 }}>Неактивні нагадування</h3>
                     <Row className="g-4">
                       {disabledReminders.map((reminder) => (
                         <Col md={6} key={reminder.id}>
@@ -273,7 +273,7 @@ export default function RemindersPage() {
                             <Card.Body>
                               <div className="d-flex justify-content-between align-items-start mb-3">
                                 <div className="flex-grow-1">
-                                  <h5 className="mb-2" style={{ color: '#888' }}>{reminder.title}</h5>
+                                  <h5 className="mb-2" style={{ color: '#f5f5f5', fontWeight: 600 }}>{reminder.title}</h5>
                                   <Badge bg="secondary">Неактивне</Badge>
                                 </div>
                                 <div className="d-flex gap-2">
@@ -304,7 +304,7 @@ export default function RemindersPage() {
                 {reminders.length === 0 && (
                   <Card className="text-center py-5">
                     <Card.Body>
-                      <i className="bi bi-bell" style={{ fontSize: '4rem', color: '#888' }}></i>
+                      <i className="bi bi-bell" style={{ fontSize: '4rem', color: '#e0e0e0' }}></i>
                       <h4 className="mt-3 mb-3" style={{ color: '#d4af37' }}>Ще немає нагадувань</h4>
                       <p className="text-muted mb-4">Створіть нагадування, щоб не забувати про тренування!</p>
                       <Button onClick={handleCreate} style={{ background: '#d4af37', border: 'none' }}>

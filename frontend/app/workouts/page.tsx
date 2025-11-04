@@ -240,7 +240,7 @@ export default function WorkoutsPage() {
                         <i className="bi bi-calendar-x" style={{ color: '#d4af37' }}></i>
                       </div>
                       <h4 className="mb-3" style={{ color: '#d4af37' }}>Немає тренувань</h4>
-                      <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-4">Додайте перше тренування для відстеження прогресу</p>
+                      <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-4">Додайте перше тренування для відстеження прогресу</p>
                       <Button variant="primary" href="/workouts/new" style={{ background: '#d4af37', border: 'none' }}>
                         Додати тренування
                       </Button>
@@ -290,7 +290,7 @@ export default function WorkoutsPage() {
                                 <h6 className="fw-bold mb-2" style={{ color: '#f5f5f5' }}>Вправи ({workout.exercises.length}):</h6>
                                 <div className="small">
                                   {workout.exercises.slice(0, 3).map((we: any, idx: number) => (
-                                    <div key={idx} className="mb-1" style={{ color: '#ccc' }}>
+                                    <div key={idx} className="mb-1" style={{ color: '#f5f5f5', fontWeight: 500 }}>
                                       • {we.exercise?.nameUk || we.exercise?.name || we.customName || 'Вправа'}
                                       {we.sets && we.reps && ` - ${we.sets}x${we.reps}`}
                                       {we.weight && ` @ ${we.weight}кг`}
@@ -396,7 +396,7 @@ export default function WorkoutsPage() {
 
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

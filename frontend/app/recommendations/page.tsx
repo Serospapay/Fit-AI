@@ -212,9 +212,9 @@ export default function RecommendationsPage() {
                             <Card.Body>
                               <div className="d-flex justify-content-between align-items-start mb-2">
                                 <div className="d-flex align-items-center gap-2">
-                                  <i className={`bi ${getTypeIcon(rec.type)}`} style={{ fontSize: '1.5rem', color: '#888' }}></i>
+                                  <i className={`bi ${getTypeIcon(rec.type)}`} style={{ fontSize: '1.5rem', color: '#e0e0e0' }}></i>
                                   <div>
-                                    <h5 className="mb-0" style={{ color: '#888' }}>{rec.title}</h5>
+                                    <h5 className="mb-0" style={{ color: '#f5f5f5', fontWeight: 600 }}>{rec.title}</h5>
                                     <Badge bg="secondary" className="me-2 mt-1">
                                       {rec.type}
                                     </Badge>
@@ -228,7 +228,7 @@ export default function RecommendationsPage() {
                                   <i className="bi bi-x"></i>
                                 </Button>
                               </div>
-                              <p className="mt-3 mb-2" style={{ color: '#888' }}>{rec.message}</p>
+                              <p className="mt-3 mb-2" style={{ color: '#e0e0e0', fontWeight: 500 }}>{rec.message}</p>
                               <small className="text-muted">
                                 {new Date(rec.createdAt).toLocaleDateString('uk-UA')}
                               </small>
@@ -243,7 +243,7 @@ export default function RecommendationsPage() {
                 {recommendations.length === 0 && (
                   <Card className="text-center py-5">
                     <Card.Body>
-                      <i className="bi bi-lightbulb" style={{ fontSize: '4rem', color: '#888' }}></i>
+                      <i className="bi bi-lightbulb" style={{ fontSize: '4rem', color: '#e0e0e0' }}></i>
                       <h4 className="mt-3 mb-3" style={{ color: '#d4af37' }}>Поки немає рекомендацій</h4>
                       <p className="text-muted mb-4">
                         Натисніть "Згенерувати нові", щоб отримати персоналізовані рекомендації на основі вашої статистики!

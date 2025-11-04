@@ -114,7 +114,7 @@ export default function ModernNavbar() {
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive(item.href)) {
-                    e.currentTarget.style.color = '#ccc';
+                    e.currentTarget.style.color = '#e0e0e0';
                     e.currentTarget.style.background = 'transparent';
                   }
                 }}

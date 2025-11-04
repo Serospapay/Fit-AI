@@ -197,7 +197,7 @@ export default function ProfilePage() {
                               type="email"
                               value={profile?.email || ''}
                               disabled
-                              style={{ color: '#888', fontWeight: 500 }}
+                              style={{ color: '#e0e0e0', fontWeight: 600 }}
                             />
                             <Form.Text className="text-muted">Email не можна змінити</Form.Text>
                           </Form.Group>
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                       
                       <div className="d-flex flex-column gap-3">
                         <div>
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Email:</small>
+                          <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Email:</small>
                           <div style={{ color: '#ffffff', fontWeight: 500 }}>{profile?.email}</div>
                         </div>
                         
@@ -405,8 +405,8 @@ export default function ProfilePage() {
                         </div>
                         
                         <div className="border-top pt-3 mt-2">
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Дата реєстрації:</small>
-                          <div style={{ color: '#888', fontWeight: 500, fontSize: '0.9rem' }}>
+                          <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Дата реєстрації:</small>
+                          <div style={{ color: '#e0e0e0', fontWeight: 600, fontSize: '0.9rem' }}>
                             {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('uk-UA') : 'Не вказано'}
                           </div>
                         </div>
@@ -423,7 +423,7 @@ export default function ProfilePage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

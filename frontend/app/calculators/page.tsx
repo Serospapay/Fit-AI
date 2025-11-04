@@ -425,8 +425,8 @@ export default function CalculatorsPage() {
                           </div>
                           <h5 className="mb-2">BMR</h5>
                           <div className="gold-number mb-1" style={{ fontSize: '4rem' }}>{results.bmr}</div>
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>ккал/день</small>
-                          <p className="small mt-3 mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Базальний метаболізм</p>
+                          <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>ккал/день</small>
+                          <p className="small mt-3 mb-0" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Базальний метаболізм</p>
                         </Card.Body>
                       </Card>
                     </Col>
@@ -439,8 +439,8 @@ export default function CalculatorsPage() {
                           </div>
                           <h5 className="mb-2">TDEE</h5>
                           <div className="gold-number mb-1" style={{ fontSize: '4rem', color: '#c0c0c0' }}>{results.tdee}</div>
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>ккал/день</small>
-                          <p className="small mt-3 mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Денні витрати енергії</p>
+                          <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>ккал/день</small>
+                          <p className="small mt-3 mb-0" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Денні витрати енергії</p>
                         </Card.Body>
                       </Card>
                     </Col>
@@ -453,8 +453,8 @@ export default function CalculatorsPage() {
                           </div>
                           <h5 className="mb-2">ІМТ</h5>
                           <div className="gold-number mb-1" style={{ fontSize: '4rem', color: '#cd7f32' }}>{results.bmi.value}</div>
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>{results.bmi.category}</small>
-                          <p className="small mt-3 mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Індекс маси тіла</p>
+                          <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>{results.bmi.category}</small>
+                          <p className="small mt-3 mb-0" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Індекс маси тіла</p>
                         </Card.Body>
                       </Card>
                     </Col>
@@ -488,7 +488,7 @@ export default function CalculatorsPage() {
                                 <i className="bi bi-activity" style={{ color: '#0d6efd', fontSize: '1.8rem' }}></i>
                               </div>
                               <div className="gold-number mb-2" style={{ fontSize: '3rem', color: '#0d6efd' }}>{results.heartRate.max}</div>
-                              <small className="d-block mb-3" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>уд/хв</small>
+                              <small className="d-block mb-3" style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>уд/хв</small>
                               <ul className="list-unstyled small mb-0" style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)' }}>
                                 {results.heartRate.zones.map((zone) => (
                                   <li key={zone.label} className="d-flex justify-content-between">
@@ -511,7 +511,7 @@ export default function CalculatorsPage() {
                               </div>
                               <h5 className="mb-2">Вода на день</h5>
                               <div className="gold-number mb-2" style={{ fontSize: '3.5rem', color: '#20c997' }}>{results.waterIntake.toFixed(2)} л</div>
-                              <p className="small mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Включає поправку на активність</p>
+                              <p className="small mb-0" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Включає поправку на активність</p>
                             </Card.Body>
                           </Card>
                         </Col>
@@ -552,7 +552,7 @@ export default function CalculatorsPage() {
                             <i className="bi bi-nut me-2" style={{ color: '#d4af37' }}></i>
                             Співвідношення БЖУ
                           </h5>
-                          <p className="small" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                          <p className="small" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>
                             Ціль: {formData.goal === 'loss' ? 'Схуднення' : formData.goal === 'gain' ? "Набір м'язів" : 'Підтримка ваги'} • {results.macroBreakdown.calorieTarget} ккал/день
                           </p>
                           <div className="d-flex flex-column gap-2" style={{ fontFamily: 'var(--font-roboto-condensed)' }}>
@@ -582,7 +582,7 @@ export default function CalculatorsPage() {
                     <i className="bi bi-info-circle me-2" style={{ color: '#d4af37' }}></i>
                     Примітки
                   </h5>
-                  <ul className="mb-0" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                  <ul className="mb-0" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>
                     <li><strong style={{ color: '#d4af37' }}>BMR</strong> - це мінімальна кількість калорій, яка потрібна вашому організму для підтримки життєво важливих функцій в стані спокою.</li>
                     <li><strong style={{ color: '#d4af37' }}>TDEE</strong> - це загальна кількість калорій, які ви спалюєте за день, враховуючи вашу активність.</li>
                     <li><strong style={{ color: '#d4af37' }}>ІМТ</strong> - індекс маси тіла допомагає оцінити чи ваші вага та зріст знаходяться в здоровому діапазоні.</li>
@@ -601,7 +601,7 @@ export default function CalculatorsPage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

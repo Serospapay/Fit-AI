@@ -260,7 +260,7 @@ export default function DashboardPage() {
                       <Card.Body className="text-center p-4">
                         <div className="gold-number animate-pulse">{stats.totalWorkouts || 0}</div>
                         <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Всього тренувань</div>
-                        <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>За 30 днів</small>
+                        <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>За 30 днів</small>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                           {stats.workoutStreak || 0}
                         </div>
                         <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Днів підряд</div>
-                        <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Серія</small>
+                        <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Серія</small>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                           {stats.avgRating?.toFixed(1) || '0'}
                         </div>
                         <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Середня оцінка</div>
-                        <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>З 5.0</small>
+                        <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>З 5.0</small>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                           {Math.round(stats.avgDuration || 0)}
                         </div>
                         <div className="fw-semibold" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.1rem' }}>Хвилин в середньому</div>
-                        <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>На тренування</small>
+                        <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>На тренування</small>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                           Статистика за тиждень
                         </h5>
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                          <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
+                          <span style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
                           <div className="d-flex align-items-center gap-2">
                             <Badge bg="primary" className="fs-4 px-3 py-2">{stats.weekWorkouts || 0}</Badge>
                             {stats.prevWeekWorkouts !== undefined && (
@@ -320,7 +320,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
-                          <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
+                          <span style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
                           <div className="d-flex align-items-center gap-2">
                             <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.weekAvgDuration || 0)} хв</span>
                             {stats.prevWeekAvgDuration !== undefined && (
@@ -341,7 +341,7 @@ export default function DashboardPage() {
                           Статистика за місяць
                         </h5>
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                          <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
+                          <span style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Тренувань:</span>
                           <div className="d-flex align-items-center gap-2">
                             <Badge bg="warning" className="fs-4 px-3 py-2">{stats.monthWorkouts || 0}</Badge>
                             {stats.prevMonthWorkouts !== undefined && (
@@ -352,7 +352,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="d-flex justify-content-between align-items-center">
-                          <span style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
+                          <span style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Середня тривалість:</span>
                           <div className="d-flex align-items-center gap-2">
                             <span className="fw-bold" style={{ color: '#d4af37', fontSize: '1.2rem' }}>{Math.round(stats.monthAvgDuration || 0)} хв</span>
                             {stats.prevMonthAvgDuration !== undefined && (
@@ -389,7 +389,7 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         ) : (
-                          <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Додайте тренування для відображення статистики</p>
+                          <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Додайте тренування для відображення статистики</p>
                         )}
                       </Card.Body>
                     </Card>
@@ -421,7 +421,7 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         ) : (
-                          <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Після додавання вправ відобразиться статистика</p>
+                          <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>Після додавання вправ відобразиться статистика</p>
                         )}
                       </Card.Body>
                     </Card>
@@ -531,7 +531,7 @@ export default function DashboardPage() {
                           <Col key={idx} md={4} sm={6}>
                             <div className="card p-3">
                               <div className="d-flex justify-content-between align-items-start mb-2">
-                                <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                                <small style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>
                                   {new Date(workout.date).toLocaleDateString('uk-UA')}
                                 </small>
                                 {workout.rating && (
@@ -539,7 +539,7 @@ export default function DashboardPage() {
                                 )}
                               </div>
                               {workout.duration && (
-                                <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>
+                                <div style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>
                                   <i className="bi bi-clock me-1" style={{ color: '#d4af37' }}></i>
                                   {workout.duration} хв
                                 </div>
@@ -561,7 +561,7 @@ export default function DashboardPage() {
                            <i className="bi bi-plus-circle-fill"></i>
                          </div>
                          <h5 className="mb-3">Додати тренування</h5>
-                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати нове тренування</p>
+                         <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-3">Записати нове тренування</p>
                          <Button variant="outline-primary" className="w-100" href="/workouts/new">
                            Додати
                          </Button>
@@ -575,7 +575,7 @@ export default function DashboardPage() {
                            <i className="bi bi-apple"></i>
                          </div>
                          <h5 className="mb-3">Додати їжу</h5>
-                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Записати прийом їжі</p>
+                         <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-3">Записати прийом їжі</p>
                          <Button variant="outline-primary" className="w-100" href="/nutrition/new">
                            Додати
                          </Button>
@@ -589,7 +589,7 @@ export default function DashboardPage() {
                            <i className="bi bi-calculator-fill"></i>
                          </div>
                          <h5 className="mb-3">Калькулятори</h5>
-                         <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-3">Розрахувати показники</p>
+                         <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-3">Розрахувати показники</p>
                          <Button variant="outline-primary" className="w-100" href="/calculators">
                            Розрахувати
                          </Button>
@@ -605,7 +605,7 @@ export default function DashboardPage() {
                   <i className="bi bi-trophy text-gold animate-lifting"></i>
                 </div>
                 <h3 className="mb-3">Вітаємо!</h3>
-                <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }} className="mb-4">Додайте перше тренування та почніть відстежувати свій прогрес</p>
+                <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }} className="mb-4">Додайте перше тренування та почніть відстежувати свій прогрес</p>
                 <Button variant="primary" size="lg" href="/workouts/new">
                   Додати перше тренування
                 </Button>
@@ -618,7 +618,7 @@ export default function DashboardPage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

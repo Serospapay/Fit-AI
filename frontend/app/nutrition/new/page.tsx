@@ -325,7 +325,7 @@ export default function NewNutritionPage() {
                         <div style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.5rem', fontWeight: 'bold' }}>
                           {totals.calories}
                         </div>
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Калорій</div>
+                        <div style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Калорій</div>
                       </div>
                     </Col>
                     <Col md={3}>
@@ -333,7 +333,7 @@ export default function NewNutritionPage() {
                         <div style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.5rem', fontWeight: 'bold' }}>
                           {totals.protein}г
                         </div>
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Білки</div>
+                        <div style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Білки</div>
                       </div>
                     </Col>
                     <Col md={3}>
@@ -341,7 +341,7 @@ export default function NewNutritionPage() {
                         <div style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.5rem', fontWeight: 'bold' }}>
                           {totals.carbs}г
                         </div>
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Вуглеводи</div>
+                        <div style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Вуглеводи</div>
                       </div>
                     </Col>
                     <Col md={3}>
@@ -349,7 +349,7 @@ export default function NewNutritionPage() {
                         <div style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '1.5rem', fontWeight: 'bold' }}>
                           {totals.fat}г
                         </div>
-                        <div style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Жири</div>
+                        <div style={{ color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 600 }}>Жири</div>
                       </div>
                     </Col>
                   </Row>
@@ -383,7 +383,7 @@ export default function NewNutritionPage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер
             </div>
           </Container>

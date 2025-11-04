@@ -42,7 +42,7 @@ export default function AboutPage() {
               <p className="lead" style={{ color: '#aaa', fontFamily: 'var(--font-oswald)', fontSize: '1.3rem' }}>
                 Ваш персональний фітнес-помічник нового покоління
               </p>
-              <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem', marginTop: '1rem' }}>
+              <p style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem', fontWeight: 500, marginTop: '1rem' }}>
                 Версія 1.0.0 • Останнє оновлення: Листопад 2024
               </p>
             </div>
@@ -262,7 +262,7 @@ export default function AboutPage() {
                         <i className={`bi ${tech.icon}`}></i>
                       </div>
                       <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37' }}>{tech.name}</h6>
-                      <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>{tech.desc}</small>
+                      <small style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontWeight: 500 }}>{tech.desc}</small>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -361,7 +361,7 @@ export default function AboutPage() {
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
-            <div className="text-center" style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem' }}>
+            <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
               © 2024 Кишеньковий тренер. Освітній проект
             </div>
           </Container>

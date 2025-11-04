@@ -217,7 +217,7 @@ export default function GoalsPage() {
                               {goal.targetValue && goal.currentValue !== undefined && (
                                 <>
                                   <div className="d-flex justify-content-between mb-2">
-                                    <span style={{ color: '#888', fontSize: '0.9rem' }}>
+                                    <span style={{ color: '#f5f5f5', fontSize: '0.9rem', fontWeight: 600 }}>
                                       {goal.currentValue} {goal.unit || ''} / {goal.targetValue} {goal.unit || ''}
                                     </span>
                                     <span style={{ color: '#d4af37', fontWeight: 'bold' }}>
@@ -279,7 +279,7 @@ export default function GoalsPage() {
                 {goals.length === 0 && (
                   <Card className="text-center py-5">
                     <Card.Body>
-                      <i className="bi bi-bullseye" style={{ fontSize: '4rem', color: '#888' }}></i>
+                      <i className="bi bi-bullseye" style={{ fontSize: '4rem', color: '#e0e0e0' }}></i>
                       <h4 className="mt-3 mb-3" style={{ color: '#d4af37' }}>Ще немає цілей</h4>
                       <p className="text-muted mb-4">Створіть свою першу ціль для відстеження прогресу!</p>
                       <Button onClick={handleCreate} style={{ background: '#d4af37', border: 'none' }}>
