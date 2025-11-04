@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Badge } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
-import GymLogo from '../components/GymLogo';
+import ModernNavbar from '../components/ModernNavbar';
 import { api } from '../lib/api';
 
 export default function AboutPage() {
@@ -29,44 +29,8 @@ export default function AboutPage() {
       <div className="min-h-screen bg-dark d-flex flex-column">
         <GymPostersBackground />
         
-        {/* Navigation */}
-        <nav className="navbar flex-shrink-0">
-          <Container>
-            <div className="d-flex justify-content-between align-items-center py-3 w-100">
-              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
-                <GymLogo />
-                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
-                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
-              </a>
-              <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
-                <a href="/dashboard" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-speedometer2 me-2"></i>
-                  <span>Панель</span>
-                </a>
-                <a href="/workouts" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-calendar-check me-2"></i>
-                  <span>Тренування</span>
-                </a>
-                <a href="/nutrition" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-apple me-2"></i>
-                  <span>Щоденник харчування</span>
-                </a>
-                <a href="/calculators" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-calculator me-2"></i>
-                  <span>Калькулятори</span>
-                </a>
-                <a href="/profile" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-person-circle me-2"></i>
-                  <span>Профіль</span>
-                </a>
-                <a href="/about" className="nav-link fw-bold d-flex align-items-center">
-                  <i className="bi bi-info-circle me-2"></i>
-                  <span>Про проект</span>
-                </a>
-              </div>
-            </div>
-          </Container>
-        </nav>
+        {/* Modern Navigation */}
+        <ModernNavbar />
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
           <Container className="py-5" style={{ position: 'relative', zIndex: 1, maxWidth: '1200px' }}>
@@ -77,6 +41,9 @@ export default function AboutPage() {
               </h1>
               <p className="lead" style={{ color: '#aaa', fontFamily: 'var(--font-oswald)', fontSize: '1.3rem' }}>
                 Ваш персональний фітнес-помічник нового покоління
+              </p>
+              <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem', marginTop: '1rem' }}>
+                Версія 1.0.0 • Останнє оновлення: Листопад 2024
               </p>
             </div>
 
@@ -146,57 +113,78 @@ export default function AboutPage() {
                   <Card.Body className="p-4">
                     <div className="d-flex align-items-start gap-3">
                       <div className="fs-2" style={{ color: '#d4af37' }}>
-                        <i className="bi bi-database"></i>
-                      </div>
-                      <div>
-                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
-                          Велика база вправ
-                        </h4>
-                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
-                          Інтеграція з <strong>Wger API</strong> забезпечує доступ до <strong>700+ вправ</strong> з офіційної бази даних. 
-                          Кожна вправа містить детальні інструкції, фото, відео, поради та застереження.
-                        </p>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col md={6}>
-                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
-                  <Card.Body className="p-4">
-                    <div className="d-flex align-items-start gap-3">
-                      <div className="fs-2" style={{ color: '#d4af37' }}>
-                        <i className="bi bi-funnel"></i>
-                      </div>
-                      <div>
-                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
-                          Інтелектуальний пошук
-                        </h4>
-                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
-                          Потужна система фільтрації за типом, групою м'язів, інвентарем, рівнем складності, 
-                          місцем виконання та метою. Знаходьте ідеальні вправи за секунди.
-                        </p>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col md={6}>
-                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
-                  <Card.Body className="p-4">
-                    <div className="d-flex align-items-start gap-3">
-                      <div className="fs-2" style={{ color: '#d4af37' }}>
                         <i className="bi bi-journal-text"></i>
                       </div>
                       <div>
                         <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
-                          Програми тренувань
+                          Щоденник тренувань
                         </h4>
                         <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
-                          Автоматичне створення персоналізованих програм на основі ваших цілей, рівня підготовки 
-                          та кількості тренувань на тиждень. Розділення по днях для оптимального навантаження.
+                          Відстежуйте свої тренування з детальною інформацією про вправи, підходи, повторення та вагу. 
+                          Зберігайте нотатки та оцінки для аналізу прогресу.
+                        </p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6}>
+                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <Card.Body className="p-4">
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="fs-2" style={{ color: '#d4af37' }}>
+                        <i className="bi bi-apple"></i>
+                      </div>
+                      <div>
+                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
+                          Щоденник харчування
+                        </h4>
+                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
+                          Відстежуйте прийоми їжі та автоматично розраховуйте калорії та макроелементи (білки, вуглеводи, жири). 
+                          Аналізуйте своє харчування за періоди.
+                        </p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6}>
+                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <Card.Body className="p-4">
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="fs-2" style={{ color: '#d4af37' }}>
+                        <i className="bi bi-person-circle"></i>
+                      </div>
+                      <div>
+                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
+                          Профіль користувача
+                        </h4>
+                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
+                          Зберігайте особисті дані: вік, стать, зріст, вагу, рівень активності та цілі. 
+                          Дані використовуються для персоналізації розрахунків та рекомендацій.
+                        </p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6}>
+                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <Card.Body className="p-4">
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="fs-2" style={{ color: '#d4af37' }}>
+                        <i className="bi bi-calculator"></i>
+                      </div>
+                      <div>
+                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
+                          Калькулятори
+                        </h4>
+                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
+                          Розраховуйте ІМТ, BMR, TDEE, WHR, оптимальну калорійність та співвідношення БЖУ. 
+                          Визначайте пульсові зони та необхідну кількість води.
                         </p>
                       </div>
                     </div>
@@ -217,7 +205,28 @@ export default function AboutPage() {
                         </h4>
                         <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
                           Візуалізація прогресу через графіки, порівняння з попередніми періодами, 
-                          система досягнень та ачивок для мотивації.
+                          система досягнень та ачивок для мотивації. Серія днів підряд (streak).
+                        </p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6}>
+                <Card className="card-hover-lift h-100" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <Card.Body className="p-4">
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="fs-2" style={{ color: '#d4af37' }}>
+                        <i className="bi bi-palette"></i>
+                      </div>
+                      <div>
+                        <h4 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>
+                          Сучасний дизайн
+                        </h4>
+                        <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
+                          Адаптивний інтерфейс з темною темою та золотими акцентами. 
+                          Оптимізовано для мобільних пристроїв та планшетів. Плавні анімації та сучасна навігація.
                         </p>
                       </div>
                     </div>
@@ -237,12 +246,14 @@ export default function AboutPage() {
 
             <Row className="g-3 mb-5">
               {[
-                { icon: 'bi-braces', name: 'Next.js 14', desc: 'Frontend фреймворк' },
-                { icon: 'bi-cpu', name: 'Express.js', desc: 'Backend API' },
-                { icon: 'bi-database', name: 'PostgreSQL', desc: 'База даних' },
-                { icon: 'bi-code-slash', name: 'Prisma ORM', desc: 'Управління даними' },
-                { icon: 'bi-cloud-download', name: 'Wger API', desc: 'База вправ' },
-                { icon: 'bi-palette', name: 'Bootstrap 5', desc: 'UI дизайн' }
+                { icon: 'bi-code-slash', name: 'Next.js 14', desc: 'React фреймворк з App Router' },
+                { icon: 'bi-braces', name: 'TypeScript', desc: 'Типобезпечний JavaScript' },
+                { icon: 'bi-cpu', name: 'Express.js', desc: 'Backend API сервер' },
+                { icon: 'bi-database', name: 'PostgreSQL', desc: 'Реляційна база даних' },
+                { icon: 'bi-diagram-3', name: 'Prisma ORM', desc: 'Управління даними' },
+                { icon: 'bi-file-text', name: 'Swagger', desc: 'API документація' },
+                { icon: 'bi-palette', name: 'Bootstrap 5', desc: 'UI компоненти' },
+                { icon: 'bi-graph-up', name: 'Recharts', desc: 'Візуалізація даних' }
               ].map((tech, idx) => (
                 <Col key={idx} md={4} sm={6}>
                   <Card className="card-hover-lift h-100 text-center" style={{ background: 'rgba(212, 175, 55, 0.05)' }}>
@@ -263,41 +274,41 @@ export default function AboutPage() {
               <Col>
                 <Card className="card-hover-lift" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
                   <Card.Body className="p-4">
-                    <h3 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1.5rem', textAlign: 'center' }}>
-                      Джерела даних
-                    </h3>
+            <h3 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1.5rem', textAlign: 'center' }}>
+              Особливості проекту
+            </h3>
                     <Row className="g-4">
                       <Col md={6}>
                         <div className="d-flex align-items-start gap-3">
                           <div className="fs-3" style={{ color: '#d4af37' }}>
-                            <i className="bi bi-cloud-arrow-down"></i>
+                            <i className="bi bi-shield-check"></i>
                           </div>
                           <div>
                             <h5 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '0.5rem' }}>
-                              Wger.de API
+                              Безпека та приватність
                             </h5>
                             <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
-                              Відкритий джерела даних про вправи з офіційної бази Workout Manager. 
-                              Автоматична синхронізація забезпечує актуальність контенту.
+                              Всі дані користувачів зберігаються локально в захищеній базі даних. 
+                              Використовується JWT аутентифікація для безпечного доступу.
                             </p>
-                            <Badge style={{ background: '#198754', color: 'white' }}>Офіційне API</Badge>
+                            <Badge style={{ background: '#198754', color: 'white' }}>Безпечно</Badge>
                           </div>
                         </div>
                       </Col>
                       <Col md={6}>
                         <div className="d-flex align-items-start gap-3">
                           <div className="fs-3" style={{ color: '#d4af37' }}>
-                            <i className="bi bi-check-circle"></i>
+                            <i className="bi bi-github"></i>
                           </div>
                           <div>
                             <h5 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '0.5rem' }}>
-                              Верифіковані дані
+                              Відкритий код
                             </h5>
                             <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.7' }}>
-                              Всі вправи проходять мапування та валідацію для забезпечення якості 
-                              контенту та коректної української локалізації.
+                              Проект має освітній характер та доступний на GitHub. 
+                              Повна документація для розробників включена.
                             </p>
-                            <Badge style={{ background: '#0d6efd', color: 'white' }}>Перевірено</Badge>
+                            <Badge style={{ background: '#0d6efd', color: 'white' }}>Open Source</Badge>
                           </div>
                         </div>
                       </Col>
@@ -318,15 +329,25 @@ export default function AboutPage() {
                     <div style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', maxWidth: '800px', margin: '0 auto' }}>
                       <p className="mb-3">
                         <strong>"Кишеньковий тренер"</strong> - це дипломна робота, присвячена дослідженню 
-                        можливостей інтеграції штучного інтелекту та сучасних веб-технологій у сферу фітнесу 
-                        та здорового способу життя.
+                        можливостей інтеграції сучасних веб-технологій у сферу фітнесу та здорового способу життя.
                       </p>
                       <p className="mb-3">
-                        Проект реалізує комплексний підхід до управління тренуваннями, включаючи автоматичне 
-                        створення програм, відстеження прогресу та персоналізовані рекомендації.
+                        Проект реалізує комплексний підхід до управління тренуваннями та харчуванням, включаючи 
+                        відстеження прогресу, детальну статистику та персоналізовані розрахунки фізіологічних показників.
                       </p>
+                      <p className="mb-3">
+                        <strong>Основні можливості:</strong>
+                      </p>
+                      <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+                        <li>Щоденник тренувань з детальною інформацією про вправи</li>
+                        <li>Щоденник харчування з автоматичним розрахунком калорій та БЖУ</li>
+                        <li>Комплексні калькулятори фізіологічних показників</li>
+                        <li>Візуалізація прогресу через графіки та статистику</li>
+                        <li>Система досягнень для мотивації</li>
+                        <li>Профіль користувача з особистими даними</li>
+                      </ul>
                       <p className="mb-0">
-                        Усі дані користувачів зберігаються локально. Проект має освітній характер та 
+                        Усі дані користувачів зберігаються локально в захищеній базі даних. Проект має освітній характер та 
                         демонструє можливості сучасних технологій у fitness-індустрії.
                       </p>
                     </div>

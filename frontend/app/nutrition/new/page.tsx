@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 import GymPostersBackground from '../../components/GymPostersBackground';
-import GymLogo from '../../components/GymLogo';
+import ModernNavbar from '../../components/ModernNavbar';
 import { api } from '../../lib/api';
 
 interface Food {
@@ -145,24 +145,8 @@ export default function NewNutritionPage() {
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
-        {/* Navigation */}
-        <nav className="navbar flex-shrink-0">
-          <Container>
-            <div className="d-flex justify-content-between align-items-center py-3 w-100">
-              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
-                <GymLogo />
-                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
-                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
-              </a>
-              <div className="d-flex align-items-center gap-3" style={{ marginLeft: 'auto' }}>
-                <a href="/nutrition" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-arrow-left me-2"></i>
-                  <span>Назад</span>
-                </a>
-              </div>
-            </div>
-          </Container>
-        </nav>
+        {/* Modern Navigation */}
+        <ModernNavbar />
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>

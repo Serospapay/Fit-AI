@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Card, Badge, Alert } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
-import GymLogo from '../components/GymLogo';
+import ModernNavbar from '../components/ModernNavbar';
 
 interface BMIResult {
   value: string;
@@ -249,44 +249,8 @@ export default function CalculatorsPage() {
         {/* Gym Posters Background */}
         <GymPostersBackground />
         
-        {/* Navigation */}
-        <nav className="navbar flex-shrink-0">
-          <Container>
-            <div className="d-flex justify-content-between align-items-center py-3 w-100">
-              <a href="/dashboard" className="fw-bold fs-4 text-decoration-none d-flex align-items-center gap-2">
-                <GymLogo />
-                <span className="d-none d-md-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#d4af37' }}>КИШЕНЬКОВИЙ</span>
-                <span className="d-none d-lg-inline" style={{ fontFamily: 'var(--font-oswald)', letterSpacing: '2px', fontSize: '1.8rem', color: '#f5f5f5' }}>ТРЕНЕР</span>
-              </a>
-              <div className="d-flex align-items-center gap-4" style={{ marginLeft: 'auto' }}>
-                <a href="/dashboard" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-speedometer2 me-2"></i>
-                  <span>Панель</span>
-                </a>
-                <a href="/workouts" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-calendar-check me-2"></i>
-                  <span>Тренування</span>
-                </a>
-                <a href="/nutrition" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-apple me-2"></i>
-                  <span>Харчування</span>
-                </a>
-                <a href="/calculators" className="nav-link fw-bold d-flex align-items-center">
-                  <i className="bi bi-calculator me-2"></i>
-                  <span>Калькулятори</span>
-                </a>
-                <a href="/profile" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-person-circle me-2"></i>
-                  <span>Профіль</span>
-                </a>
-                <a href="/about" className="nav-link d-flex align-items-center">
-                  <i className="bi bi-info-circle me-2"></i>
-                  <span>Про проект</span>
-                </a>
-              </div>
-            </div>
-          </Container>
-        </nav>
+        {/* Modern Navigation */}
+        <ModernNavbar />
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
