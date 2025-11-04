@@ -1,9 +1,79 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
+// Types
+interface ApiError {
+  error: string;
+  message?: string;
+}
+
+interface Exercise {
+  id: string;
+  name: string;
+}
+
+interface ExerciseResponse {
+  exercises: Exercise[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
+
+interface WorkoutStats {
+  totalWorkouts: number;
+  avgDuration: number;
+  avgRating: number;
+  weekWorkouts: number;
+  monthWorkouts: number;
+  workoutStreak: number;
+  recentWorkouts: any[];
+  achievements?: any[];
+  weeklyChartData?: any[];
+}
+
+interface NutritionLog {
+  id: string;
+  date: string;
+  mealType: string;
+  items: any[];
+  totals?: any;
+}
+
+interface NutritionResponse {
+  logs: NutritionLog[];
+  total: number;
+}
+
+interface NutritionStats {
+  totalLogs: number;
+  totals: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+}
+
+interface ProfileData {
+  id: string;
+  email: string;
+  name: string | null;
+  age: number | null;
+  gender: string | null;
+  height: number | null;
+  weight: number | null;
+  activityLevel: string | null;
+  goal: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // Helper function to handle API responses
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: 'Network error' }));
+    const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
     throw new Error(error.error || `HTTP error! status: ${res.status}`);
   }
   return res.json();
@@ -11,10 +81,10 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 export const api = {
   // Exercises
-  getExercises: async (filters?: Record<string, string>) => {
+  getExercises: async (filters?: Record<string, string>): Promise<ExerciseResponse> => {
     const params = new URLSearchParams(filters);
     const res = await fetch(`${API_URL}/exercises?${params}`);
-    return handleResponse(res);
+    return handleResponse<ExerciseResponse>(res);
   },
 
   getExerciseOptions: async () => {
@@ -45,23 +115,23 @@ export const api = {
       method: 'DELETE'
     });
     if (!res.ok) {
-      const error = await res.json().catch(() => ({ error: 'Network error' }));
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
       throw new Error(error.error || 'Failed to delete workout');
     }
     return true;
   },
 
-  getWorkoutStats: async (days?: number) => {
+  getWorkoutStats: async (days?: number): Promise<WorkoutStats> => {
     const url = days ? `${API_URL}/workouts/stats?days=${days}` : `${API_URL}/workouts/stats`;
     const res = await fetch(url);
-    return handleResponse(res);
+    return handleResponse<WorkoutStats>(res);
   },
 
   // Nutrition
-  getNutritionLogs: async (filters?: Record<string, string>) => {
+  getNutritionLogs: async (filters?: Record<string, string>): Promise<NutritionResponse> => {
     const params = new URLSearchParams(filters);
     const res = await fetch(`${API_URL}/nutrition?${params}`);
-    return handleResponse(res);
+    return handleResponse<NutritionResponse>(res);
   },
 
   createNutritionLog: async (data: any) => {
@@ -80,16 +150,16 @@ export const api = {
       method: 'DELETE'
     });
     if (!res.ok) {
-      const error = await res.json().catch(() => ({ error: 'Network error' }));
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
       throw new Error(error.error || 'Failed to delete nutrition log');
     }
     return true;
   },
 
-  getNutritionStats: async (days?: number) => {
+  getNutritionStats: async (days?: number): Promise<NutritionStats> => {
     const url = days ? `${API_URL}/nutrition/stats?days=${days}` : `${API_URL}/nutrition/stats`;
     const res = await fetch(url);
-    return handleResponse(res);
+    return handleResponse<NutritionStats>(res);
   },
 
   // Foods
@@ -105,17 +175,17 @@ export const api = {
   },
 
   // Auth / Profile
-  getProfile: async () => {
+  getProfile: async (): Promise<ProfileData> => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/auth/profile`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-    return handleResponse(res);
+    return handleResponse<ProfileData>(res);
   },
 
-  updateProfile: async (data: any) => {
+  updateProfile: async (data: Partial<ProfileData>): Promise<ProfileData> => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/auth/profile`, {
       method: 'PUT',
@@ -125,6 +195,6 @@ export const api = {
       },
       body: JSON.stringify(data)
     });
-    return handleResponse(res);
+    return handleResponse<ProfileData>(res);
   }
 };

@@ -51,7 +51,7 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       const statsData = await api.getWorkoutStats(30);
-      setStats(statsData);
+      setStats(statsData as Stats);
     } catch (error) {
       console.error('Error fetching dashboard:', error);
     } finally {

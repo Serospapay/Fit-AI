@@ -36,9 +36,9 @@ export default function NewNutritionPage() {
     try {
       const data = await api.getFoods();
       setFoods(data.foods || []);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching foods:', error);
-      setError(error.message || 'Помилка завантаження продуктів');
+      setError((error as Error).message || 'Помилка завантаження продуктів');
     }
   };
 

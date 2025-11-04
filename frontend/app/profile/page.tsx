@@ -17,6 +17,8 @@ interface ProfileData {
   weight: number | null;
   activityLevel: string | null;
   goal: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export default function ProfilePage() {
@@ -75,15 +77,21 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
-      const updateData: any = {};
-      
-      if (formData.name !== profile?.name) updateData.name = formData.name || null;
-      if (formData.age !== profile?.age?.toString()) updateData.age = formData.age ? parseInt(formData.age) : null;
-      if (formData.gender !== profile?.gender) updateData.gender = formData.gender || null;
-      if (formData.height !== profile?.height?.toString()) updateData.height = formData.height ? parseFloat(formData.height) : null;
-      if (formData.weight !== profile?.weight?.toString()) updateData.weight = formData.weight ? parseFloat(formData.weight) : null;
-      if (formData.activityLevel !== profile?.activityLevel) updateData.activityLevel = formData.activityLevel || null;
-      if (formData.goal !== profile?.goal) updateData.goal = formData.goal || null;
+    const updateData: Partial<ProfileData> = {};
+    
+    if (formData.name !== profile?.name) updateData.name = formData.name || null;
+    if (formData.age !== profile?.age?.toString()) {
+      updateData.age = formData.age ? parseInt(formData.age) : null;
+    }
+    if (formData.gender !== profile?.gender) updateData.gender = formData.gender || null;
+    if (formData.height !== profile?.height?.toString()) {
+      updateData.height = formData.height ? parseFloat(formData.height) : null;
+    }
+    if (formData.weight !== profile?.weight?.toString()) {
+      updateData.weight = formData.weight ? parseFloat(formData.weight) : null;
+    }
+    if (formData.activityLevel !== profile?.activityLevel) updateData.activityLevel = formData.activityLevel || null;
+    if (formData.goal !== profile?.goal) updateData.goal = formData.goal || null;
 
       const updatedProfile = await api.updateProfile(updateData);
       setProfile(updatedProfile);
@@ -92,13 +100,17 @@ export default function ProfilePage() {
       // Оновити дані в localStorage якщо вони там є
       const userStr = localStorage.getItem('user');
       if (userStr) {
-        const user = JSON.parse(userStr);
-        const updatedUser = { ...user, ...updatedProfile };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        try {
+          const user = JSON.parse(userStr);
+          const updatedUser = { ...user, ...updatedProfile };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (e) {
+          // Ignore parse errors
+        }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating profile:', error);
-      setError(error.message || 'Помилка оновлення профілю');
+      setError((error as Error).message || 'Помилка оновлення профілю');
     } finally {
       setSaving(false);
     }

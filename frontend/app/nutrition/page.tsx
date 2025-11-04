@@ -30,9 +30,9 @@ export default function NutritionPage() {
     try {
       const data = await api.getNutritionLogs();
       setLogs(data.logs || []);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching nutrition logs:', error);
-      setError(error.message || 'Помилка завантаження записів харчування');
+      setError((error as Error).message || 'Помилка завантаження записів харчування');
     } finally {
       setLoading(false);
     }
@@ -45,9 +45,9 @@ export default function NutritionPage() {
       await api.deleteNutritionLog(id);
       setLogs(logs.filter(l => l.id !== id));
       setError(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting nutrition log:', error);
-      setError(error.message || 'Помилка видалення запису');
+      setError((error as Error).message || 'Помилка видалення запису');
     }
   };
 
