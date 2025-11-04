@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Spinner, Modal } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 import GymPostersBackground from '../../components/GymPostersBackground';
 import ModernNavbar from '../../components/ModernNavbar';
@@ -14,7 +14,11 @@ interface Exercise {
 
 export default function NewWorkoutPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [templates, setTemplates] = useState<any[]>([]);
   const [selectedExercises, setSelectedExercises] = useState<any[]>([]);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [previousWorkoutData, setPreviousWorkoutData] = useState<any>(null);
   const [workoutData, setWorkoutData] = useState({
     date: new Date().toISOString().split('T')[0],
     duration: '',
@@ -26,6 +30,7 @@ export default function NewWorkoutPage() {
 
   useEffect(() => {
     fetchExercises();
+    fetchTemplates();
   }, []);
 
   const fetchExercises = async () => {
@@ -34,6 +39,68 @@ export default function NewWorkoutPage() {
       setExercises(data.exercises || []);
     } catch (error) {
       console.error('Error fetching exercises:', error);
+    }
+  };
+
+  const fetchTemplates = async () => {
+    try {
+      const data = await api.getWorkoutTemplates();
+      setTemplates(data.templates || []);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    }
+  };
+
+  const loadTemplate = (template: any) => {
+    const templateExercises = Array.isArray(template.exercises) ? template.exercises : [];
+    setSelectedExercises(templateExercises.map((ex: any, idx: number) => ({
+      exerciseId: ex.exerciseId,
+      exercise: exercises.find(e => e.id === ex.exerciseId) || { id: ex.exerciseId, name: ex.customName || 'Вправа' },
+      customName: ex.customName || '',
+      sets: ex.sets?.toString() || '',
+      reps: ex.reps?.toString() || '',
+      weight: ex.weight?.toString() || '',
+      order: idx
+    })));
+    setShowTemplateModal(false);
+  };
+
+  const saveAsTemplate = async () => {
+    const templateName = prompt('Введіть назву шаблону:');
+    if (!templateName) return;
+
+    try {
+      await api.createWorkoutTemplate({
+        name: templateName,
+        description: '',
+        type: null,
+        exercises: selectedExercises.map(ex => ({
+          exerciseId: ex.exerciseId,
+          customName: ex.customName || null,
+          sets: ex.sets ? parseInt(ex.sets) : null,
+          reps: ex.reps ? parseInt(ex.reps) : null,
+          weight: ex.weight ? parseFloat(ex.weight) : null,
+        }))
+      });
+      setShowSaveTemplateModal(false);
+      fetchTemplates();
+      alert('Шаблон збережено!');
+    } catch (error) {
+      console.error('Error saving template:', error);
+      alert('Помилка збереження шаблону');
+    }
+  };
+
+  const fetchPreviousWorkout = async (exerciseId: string) => {
+    try {
+      const workouts = await api.getWorkouts({ limit: '10' });
+      const allExercises = workouts.workouts?.flatMap((w: any) => w.exercises || []) || [];
+      const previousExercise = allExercises.find((e: any) => e.exerciseId === exerciseId);
+      if (previousExercise) {
+        setPreviousWorkoutData(previousExercise);
+      }
+    } catch (error) {
+      console.error('Error fetching previous workout:', error);
     }
   };
 
@@ -47,6 +114,7 @@ export default function NewWorkoutPage() {
       weight: '',
       order: selectedExercises.length
     }]);
+    fetchPreviousWorkout(exercise.id);
   };
 
   const removeExercise = (index: number) => {
@@ -98,9 +166,31 @@ export default function NewWorkoutPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
         <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
-          <div className="mb-4">
-            <h1 className="mb-2">Нове тренування</h1>
-            <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Записати нове тренування</p>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h1 className="mb-2">Нове тренування</h1>
+              <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Записати нове тренування</p>
+            </div>
+            <div className="d-flex gap-2">
+              {templates.length > 0 && (
+                <Button
+                  variant="outline-warning"
+                  onClick={() => setShowTemplateModal(true)}
+                >
+                  <i className="bi bi-file-earmark-text me-2"></i>
+                  Завантажити шаблон
+                </Button>
+              )}
+              {selectedExercises.length > 0 && (
+                <Button
+                  variant="outline-info"
+                  onClick={() => setShowSaveTemplateModal(true)}
+                >
+                  <i className="bi bi-save me-2"></i>
+                  Зберегти як шаблон
+                </Button>
+              )}
+            </div>
           </div>
 
           {error && (
@@ -193,9 +283,17 @@ export default function NewWorkoutPage() {
                       <Card key={idx} className="mb-3">
                         <Card.Body>
                           <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }} className="mb-0">
-                              {ex.exercise.name}
-                            </h6>
+                            <div className="flex-grow-1">
+                              <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', fontSize: '1.1rem' }} className="mb-0">
+                                {ex.exercise.name}
+                              </h6>
+                              {previousWorkoutData && previousWorkoutData.exerciseId === ex.exerciseId && (
+                                <small className="text-info" style={{ fontSize: '0.85rem' }}>
+                                  <i className="bi bi-info-circle me-1"></i>
+                                  Останній раз: {previousWorkoutData.sets}x{previousWorkoutData.reps} з {previousWorkoutData.weight}кг
+                                </small>
+                              )}
+                            </div>
                             <Button
                               variant="link"
                               size="sm"
@@ -263,6 +361,58 @@ export default function NewWorkoutPage() {
           </Form>
         </Container>
         </main>
+
+        {/* Модальне вікно для завантаження шаблону */}
+        <Modal show={showTemplateModal} onHide={() => setShowTemplateModal(false)} centered>
+          <Modal.Header closeButton style={{ background: '#1a1a1a', borderColor: '#d4af37' }}>
+            <Modal.Title style={{ color: '#d4af37' }}>Завантажити шаблон</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ background: '#1a1a1a' }}>
+            {templates.length === 0 ? (
+              <p className="text-muted">У вас немає збережених шаблонів</p>
+            ) : (
+              <div className="d-flex flex-column gap-2">
+                {templates.map((template) => (
+                  <Button
+                    key={template.id}
+                    variant="outline-warning"
+                    onClick={() => loadTemplate(template)}
+                    className="text-start"
+                  >
+                    <i className="bi bi-file-earmark-text me-2"></i>
+                    {template.name}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer style={{ background: '#1a1a1a', borderColor: '#d4af37' }}>
+            <Button variant="secondary" onClick={() => setShowTemplateModal(false)}>
+              Скасувати
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Модальне вікно для збереження шаблону */}
+        <Modal show={showSaveTemplateModal} onHide={() => setShowSaveTemplateModal(false)} centered>
+          <Modal.Header closeButton style={{ background: '#1a1a1a', borderColor: '#d4af37' }}>
+            <Modal.Title style={{ color: '#d4af37' }}>Зберегти як шаблон</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ background: '#1a1a1a' }}>
+            <p className="text-muted">Ви впевнені, що хочете зберегти поточне тренування як шаблон?</p>
+            <p className="small text-muted">
+              Буде збережено {selectedExercises.length} вправ
+            </p>
+          </Modal.Body>
+          <Modal.Footer style={{ background: '#1a1a1a', borderColor: '#d4af37' }}>
+            <Button variant="secondary" onClick={() => setShowSaveTemplateModal(false)}>
+              Скасувати
+            </Button>
+            <Button onClick={saveAsTemplate} style={{ background: '#d4af37', border: 'none' }}>
+              Зберегти
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         {/* Footer */}
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>

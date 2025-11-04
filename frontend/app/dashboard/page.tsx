@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Button, Card, Spinner, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card, Spinner, Badge, ProgressBar } from 'react-bootstrap';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
@@ -44,10 +44,14 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState<{ text: string; author?: string } | null>(null);
+  const [goals, setGoals] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
     fetchQuote();
+    fetchGoals();
+    fetchRecommendations();
   }, []);
 
   const fetchQuote = async () => {
@@ -56,6 +60,26 @@ export default function DashboardPage() {
       setQuote(quoteData);
     } catch (error) {
       console.error('Error fetching quote:', error);
+    }
+  };
+
+  const fetchGoals = async () => {
+    try {
+      const data = await api.getGoals('active');
+      setGoals(data.goals || []);
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+    }
+  };
+
+  const fetchRecommendations = async () => {
+    try {
+      // Генеруємо рекомендації автоматично при відкритті Dashboard
+      await api.generateRecommendations();
+      const data = await api.getRecommendations(false, 3);
+      setRecommendations(data.recommendations || []);
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
     }
   };
 
@@ -132,6 +156,90 @@ export default function DashboardPage() {
                       >
                         <i className="bi bi-arrow-clockwise"></i>
                       </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+
+          {/* Активні цілі */}
+          {goals.length > 0 && (
+            <Row className="mb-4">
+              <Col>
+                <Card className="card-hover-lift">
+                  <Card.Body>
+                    <h5 className="mb-3" style={{ color: '#d4af37' }}>
+                      <i className="bi bi-bullseye me-2"></i>
+                      Активні цілі
+                    </h5>
+                    <Row className="g-3">
+                      {goals.slice(0, 3).map((goal) => {
+                        const progress = goal.targetValue && goal.currentValue !== undefined
+                          ? Math.min((goal.currentValue / goal.targetValue) * 100, 100)
+                          : 0;
+                        return (
+                          <Col md={4} key={goal.id}>
+                            <div className="mb-3">
+                              <div className="d-flex justify-content-between mb-2">
+                                <span style={{ color: '#f5f5f5', fontSize: '0.9rem' }}>{goal.title}</span>
+                                <span style={{ color: '#d4af37', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                  {Math.round(progress)}%
+                                </span>
+                              </div>
+                              <ProgressBar
+                                now={progress}
+                                variant="warning"
+                                style={{ height: '8px' }}
+                              />
+                              {goal.targetValue && goal.currentValue !== undefined && (
+                                <small className="text-muted">
+                                  {goal.currentValue} {goal.unit || ''} / {goal.targetValue} {goal.unit || ''}
+                                </small>
+                              )}
+                            </div>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                    {goals.length > 3 && (
+                      <div className="text-center mt-3">
+                        <Button variant="outline-warning" size="sm" href="/goals">
+                          Переглянути всі цілі ({goals.length})
+                        </Button>
+                      </div>
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+
+          {/* Рекомендації */}
+          {recommendations.length > 0 && (
+            <Row className="mb-4">
+              <Col>
+                <Card className="card-hover-lift" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="mb-0" style={{ color: '#d4af37' }}>
+                        <i className="bi bi-lightbulb me-2"></i>
+                        Рекомендації для вас
+                      </h5>
+                      <Button variant="outline-warning" size="sm" href="/recommendations">
+                        Всі рекомендації
+                      </Button>
+                    </div>
+                    <div className="d-flex flex-column gap-2">
+                      {recommendations.map((rec) => (
+                        <div key={rec.id} className="d-flex align-items-start gap-2">
+                          <i className={`bi bi-${rec.type === 'workout' ? 'dumbbell' : rec.type === 'nutrition' ? 'apple' : 'graph-up'}`} style={{ color: '#d4af37', marginTop: '0.2rem' }}></i>
+                          <div className="flex-grow-1">
+                            <strong style={{ color: '#f5f5f5', fontSize: '0.95rem' }}>{rec.title}</strong>
+                            <p className="mb-0 small text-muted">{rec.message}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </Card.Body>
                 </Card>
