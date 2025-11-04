@@ -78,7 +78,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--dark);
   position: relative;
-  padding-top: 76px;
 }
 
 body::before {
