@@ -43,10 +43,21 @@ interface Achievement {
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [quote, setQuote] = useState<{ text: string; author?: string } | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
+    fetchQuote();
   }, []);
+
+  const fetchQuote = async () => {
+    try {
+      const quoteData = await api.getRandomQuote();
+      setQuote(quoteData);
+    } catch (error) {
+      console.error('Error fetching quote:', error);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -95,6 +106,38 @@ export default function DashboardPage() {
             <h1 className="mb-2">Панель керування</h1>
             <p className="lead" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)' }}>Ваш щоденний огляд та прогрес</p>
           </div>
+
+          {/* Мотиваційна цитата */}
+          {quote && (
+            <Row className="mb-4">
+              <Col>
+                <Card className="card-hover-lift" style={{ background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+                  <Card.Body className="p-4">
+                    <div className="d-flex align-items-start gap-3">
+                      <div className="flex-grow-1">
+                        <p className="mb-2" style={{ fontSize: '1.1rem', fontStyle: 'italic', color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)' }}>
+                          "{quote.text}"
+                        </p>
+                        {quote.author && (
+                          <p className="mb-0 text-end" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '0.9rem' }}>
+                            — {quote.author}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        variant="outline-warning"
+                        size="sm"
+                        onClick={fetchQuote}
+                        style={{ borderColor: '#d4af37', color: '#d4af37' }}
+                      >
+                        <i className="bi bi-arrow-clockwise"></i>
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
 
           {loading ? (
             <div className="text-center py-5">

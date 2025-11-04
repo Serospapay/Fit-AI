@@ -1,24 +1,42 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Container, Navbar, Nav, NavDropdown, Badge } from 'react-bootstrap';
 import GymLogo from './GymLogo';
+import { api } from '../lib/api';
 
 export default function ModernNavbar() {
   const [expanded, setExpanded] = useState(false);
   const [pathname, setPathname] = useState('/dashboard');
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setPathname(window.location.pathname);
+      
+      // Перевірити чи користувач авторизований
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetchUnreadCount();
+      }
     }
   }, []);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const data = await api.getUnreadRecommendationsCount();
+      setUnreadCount(data.count || 0);
+    } catch (error) {
+      // Ігноруємо помилки (можливо користувач не авторизований)
+    }
+  };
 
   const navItems = [
     { href: '/dashboard', label: 'Панель', icon: 'bi-speedometer2' },
     { href: '/workouts', label: 'Тренування', icon: 'bi-calendar-check' },
     { href: '/nutrition', label: 'Харчування', icon: 'bi-apple' },
     { href: '/calculators', label: 'Калькулятори', icon: 'bi-calculator' },
+    { href: '/goals', label: 'Цілі', icon: 'bi-bullseye' },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -108,6 +126,34 @@ export default function ModernNavbar() {
 
             <NavDropdown
               title={
+                <span className="d-flex align-items-center">
+                  <i className="bi bi-bell me-2"></i>
+                  <span>Рекомендації</span>
+                  {unreadCount > 0 && (
+                    <Badge bg="warning" className="ms-2" style={{ fontSize: '0.7rem' }}>
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </span>
+              }
+              id="recommendations-dropdown"
+              className="nav-dropdown-modern"
+              style={{
+                color: '#ccc',
+                fontSize: '0.95rem',
+              }}
+            >
+              <NavDropdown.Item href="/recommendations">
+                <i className="bi bi-list-ul me-2"></i>
+                Всі рекомендації
+                {unreadCount > 0 && (
+                  <Badge bg="warning" className="ms-2">{unreadCount}</Badge>
+                )}
+              </NavDropdown.Item>
+            </NavDropdown>
+
+            <NavDropdown
+              title={
                 <span>
                   <i className="bi bi-person-circle me-2"></i>
                   <span>Профіль</span>
@@ -123,6 +169,10 @@ export default function ModernNavbar() {
               <NavDropdown.Item href="/profile">
                 <i className="bi bi-person me-2"></i>
                 Мій профіль
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/reminders">
+                <i className="bi bi-bell-fill me-2"></i>
+                Нагадування
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/about">

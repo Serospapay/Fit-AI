@@ -196,5 +196,231 @@ export const api = {
       body: JSON.stringify(data)
     });
     return handleResponse<ProfileData>(res);
+  },
+
+  // Quotes
+  getRandomQuote: async () => {
+    const res = await fetch(`${API_URL}/quotes/random`);
+    return handleResponse(res);
+  },
+
+  // Goals
+  getGoals: async (status?: string) => {
+    const token = localStorage.getItem('token');
+    const url = status ? `${API_URL}/goals?status=${status}` : `${API_URL}/goals`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  createGoal: async (data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/goals`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  updateGoal: async (id: string, data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/goals/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  deleteGoal: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/goals/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.error || 'Failed to delete goal');
+    }
+    return true;
+  },
+
+  // Workout Templates
+  getWorkoutTemplates: async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workout-templates`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  createWorkoutTemplate: async (data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workout-templates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  updateWorkoutTemplate: async (id: string, data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workout-templates/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  deleteWorkoutTemplate: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workout-templates/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.error || 'Failed to delete template');
+    }
+    return true;
+  },
+
+  // Reminders
+  getReminders: async (enabled?: boolean) => {
+    const token = localStorage.getItem('token');
+    const url = enabled !== undefined ? `${API_URL}/reminders?enabled=${enabled}` : `${API_URL}/reminders`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  createReminder: async (data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/reminders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  updateReminder: async (id: string, data: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/reminders/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  deleteReminder: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/reminders/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.error || 'Failed to delete reminder');
+    }
+    return true;
+  },
+
+  // Recommendations
+  getRecommendations: async (isRead?: boolean, limit?: number) => {
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams();
+    if (isRead !== undefined) params.append('isRead', String(isRead));
+    if (limit) params.append('limit', String(limit));
+    const url = `${API_URL}/recommendations${params.toString() ? '?' + params.toString() : ''}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  getUnreadRecommendationsCount: async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/recommendations/unread-count`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  generateRecommendations: async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/recommendations/generate`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  markRecommendationAsRead: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/recommendations/${id}/read`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return handleResponse(res);
+  },
+
+  deleteRecommendation: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/recommendations/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.error || 'Failed to delete recommendation');
+    }
+    return true;
   }
 };

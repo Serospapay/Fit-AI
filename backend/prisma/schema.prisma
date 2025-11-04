@@ -26,6 +26,10 @@ model User {
 
   workouts      Workout[]
   nutritionLogs NutritionLog[]
+  goals         Goal[]
+  reminders     Reminder[]
+  recommendations Recommendation[]
+  workoutTemplates WorkoutTemplate[]
   
   @@map("users")
 }
@@ -52,6 +56,7 @@ model Workout {
   duration    Int?      // хвилини
   notes       String?
   rating      Int?      // 1-5
+  status      String?   @default("completed") // completed, planned, cancelled
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -137,4 +142,90 @@ model Food {
 
   @@index([name])
   @@map("foods")
+}
+
+// Мотиваційні цитати
+model Quote {
+  id          String   @id @default(cuid())
+  text        String
+  author      String?
+  category    String?  // motivation, fitness, nutrition, health
+  createdAt   DateTime @default(now())
+
+  @@map("quotes")
+}
+
+// Цілі користувача
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  category    String    // weight, strength, endurance, nutrition, custom
+  targetValue Float?
+  currentValue Float?   @default(0)
+  unit        String?   // кг, кг, км, дні, тощо
+  startDate   DateTime  @default(now())
+  targetDate  DateTime?
+  status      String    @default("active") // active, completed, cancelled, paused
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("goals")
+}
+
+// Нагадування
+model Reminder {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String    // workout, nutrition, water, custom
+  title       String
+  message     String?
+  time        String    // HH:MM формат
+  daysOfWeek  String    // JSON array: [0,1,2,3,4,5,6] де 0=неділя
+  enabled     Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, enabled])
+  @@map("reminders")
+}
+
+// Рекомендації
+model Recommendation {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String    // workout, nutrition, progress, motivation
+  title       String
+  message     String
+  priority    String    @default("normal") // low, normal, high
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("recommendations")
+}
+
+// Шаблони тренувань
+model WorkoutTemplate {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  type        String?   // strength, cardio, flexibility, balance, mixed
+  exercises   Json      // Array of exercise objects
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("workout_templates")
 }

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { DEFAULT_USER_ID } from '../src/lib/config';
+import { seedQuotes } from './seed-quotes';
 
 const prisma = new PrismaClient();
 
@@ -165,9 +166,10 @@ async function main() {
   }
 
   console.log(`✅ Seeded ${foods.length} foods`);
-}
 
-main()
+  // Seed quotes
+  await seedQuotes();
+}
   .catch((e) => {
     console.error('❌ Error seeding:', e);
     process.exit(1);
