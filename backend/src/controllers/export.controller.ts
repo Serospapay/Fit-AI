@@ -11,7 +11,7 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: Record<string, unknown> = { userId };
+    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = new Date(startDate as string);
@@ -80,7 +80,7 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: Record<string, unknown> = { userId };
+    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = new Date(startDate as string);
@@ -158,7 +158,10 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
 
       if (workout.notes) {
         doc.moveDown(0.5);
-        doc.fontSize(12).text(`Нотатки: ${workout.notes}`, { italic: true });
+        doc.fontSize(12);
+        doc.font('Helvetica-Oblique');
+        doc.text(`Нотатки: ${workout.notes}`);
+        doc.font('Helvetica');
       }
     });
 
@@ -175,7 +178,7 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: Record<string, unknown> = { userId };
+    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = new Date(startDate as string);
@@ -243,7 +246,7 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: Record<string, unknown> = { userId };
+    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = new Date(startDate as string);
