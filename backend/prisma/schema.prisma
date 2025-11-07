@@ -187,6 +187,12 @@ model Reminder {
   time        String    // HH:MM формат
   daysOfWeek  String    // JSON array: [0,1,2,3,4,5,6] де 0=неділя
   enabled     Boolean   @default(true)
+  timezone    String?   @default("UTC")
+  startDate   DateTime? @map("start_date")
+  repeatFrequency String? @map("repeat_frequency") // once, daily, weekly, custom
+  repeatInterval  Int? @default(1) @map("repeat_interval")
+  repeatEndsAt DateTime? @map("repeat_ends_at")
+  notificationChannel String? @default("browser") @map("notification_channel")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

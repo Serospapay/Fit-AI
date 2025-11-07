@@ -1,0 +1,9 @@
+ALTER TABLE reminders
+    ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'UTC',
+    ADD COLUMN IF NOT EXISTS start_date TIMESTAMP NULL,
+    ADD COLUMN IF NOT EXISTS repeat_frequency TEXT NULL,
+    ADD COLUMN IF NOT EXISTS repeat_interval INTEGER DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS repeat_ends_at TIMESTAMP NULL,
+    ADD COLUMN IF NOT EXISTS notification_channel TEXT DEFAULT 'browser';
+
+

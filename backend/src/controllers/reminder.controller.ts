@@ -9,6 +9,15 @@ import {
   updateReminderSchema,
 } from '../validation/reminder.schema';
 
+const parseReminderRecord = (reminder: any) => ({
+  ...reminder,
+  daysOfWeek:
+    typeof reminder.daysOfWeek === 'string'
+      ? JSON.parse(reminder.daysOfWeek || '[]')
+      : reminder.daysOfWeek || [],
+  repeatInterval: reminder.repeatInterval ?? 1,
+});
+
 // Створити нагадування
 export const createReminder = async (req: AuthRequest, res: Response) => {
   try {
@@ -24,9 +33,22 @@ export const createReminder = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const { type, title, message, time, daysOfWeek = [], enabled } = parsed.data;
+    const {
+      type,
+      title,
+      message,
+      time,
+      daysOfWeek = [],
+      enabled,
+      startDate,
+      repeatFrequency,
+      repeatInterval,
+      repeatEndsAt,
+      timezone,
+      notificationChannel,
+    } = parsed.data;
 
-    const reminder = await prisma.reminder.create({
+    const reminderRecord = await prisma.reminder.create({
       data: {
         userId,
         type,
@@ -35,10 +57,17 @@ export const createReminder = async (req: AuthRequest, res: Response) => {
         time,
         daysOfWeek: JSON.stringify(daysOfWeek),
         enabled: enabled !== undefined ? enabled : true,
-      },
+        timezone: timezone || 'UTC',
+        startDate: startDate ?? new Date(),
+        repeatFrequency: repeatFrequency ?? 'weekly',
+        repeatInterval: repeatInterval ?? 1,
+        repeatEndsAt: repeatEndsAt ?? null,
+        notificationChannel: notificationChannel ?? 'browser',
+      } as any,
     });
 
-    logger.info('Reminder created successfully', { reminderId: reminder.id });
+    logger.info('Reminder created successfully', { reminderId: reminderRecord.id });
+    const reminder = parseReminderRecord(reminderRecord);
     res.status(201).json(reminder);
   } catch (error: unknown) {
     return handleControllerError(res, error, {
@@ -77,13 +106,9 @@ export const getUserReminders = async (req: AuthRequest, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Parse daysOfWeek JSON
-    const remindersWithParsedDays = reminders.map(reminder => ({
-      ...reminder,
-      daysOfWeek: JSON.parse(reminder.daysOfWeek),
-    }));
+    const remindersWithParsed = reminders.map(parseReminderRecord);
 
-    res.json({ reminders: remindersWithParsedDays });
+    res.json({ reminders: remindersWithParsed });
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'ReminderController',
@@ -119,7 +144,20 @@ export const updateReminder = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Reminder not found' });
     }
 
-    const { title, message, time, daysOfWeek, enabled, type } = parsed.data;
+    const {
+      title,
+      message,
+      time,
+      daysOfWeek,
+      enabled,
+      type,
+      startDate,
+      repeatFrequency,
+      repeatInterval,
+      repeatEndsAt,
+      timezone,
+      notificationChannel,
+    } = parsed.data;
 
     const updateData: Record<string, unknown> = {};
     if (title !== undefined) updateData.title = title;
@@ -128,16 +166,19 @@ export const updateReminder = async (req: AuthRequest, res: Response) => {
     if (time !== undefined) updateData.time = time;
     if (daysOfWeek !== undefined) updateData.daysOfWeek = JSON.stringify(daysOfWeek);
     if (enabled !== undefined) updateData.enabled = enabled;
+    if (timezone !== undefined) updateData.timezone = timezone || 'UTC';
+    if (startDate !== undefined) updateData.startDate = startDate ?? null;
+    if (repeatFrequency !== undefined) updateData.repeatFrequency = repeatFrequency;
+    if (repeatInterval !== undefined) updateData.repeatInterval = repeatInterval ?? 1;
+    if (repeatEndsAt !== undefined) updateData.repeatEndsAt = repeatEndsAt ?? null;
+    if (notificationChannel !== undefined) updateData.notificationChannel = notificationChannel || 'browser';
 
-    const reminder = await prisma.reminder.update({
+    const reminderRecord = await prisma.reminder.update({
       where: { id },
-      data: updateData,
+      data: updateData as any,
     });
 
-    const reminderWithParsedDays = {
-      ...reminder,
-      daysOfWeek: JSON.parse(reminder.daysOfWeek),
-    };
+    const reminderWithParsedDays = parseReminderRecord(reminderRecord);
 
     logger.info('Reminder updated successfully', { reminderId: id });
     res.json(reminderWithParsedDays);

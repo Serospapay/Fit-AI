@@ -70,6 +70,21 @@ interface ProfileData {
   updatedAt?: string;
 }
 
+export interface ReminderPayload {
+  type: string;
+  title: string;
+  message?: string | null;
+  time: string;
+  daysOfWeek?: number[];
+  enabled?: boolean;
+  startDate?: string;
+  repeatFrequency?: 'once' | 'daily' | 'weekly' | 'custom';
+  repeatInterval?: number;
+  repeatEndsAt?: string;
+  timezone?: string;
+  notificationChannel?: 'browser' | 'push' | 'email';
+}
+
 // Helper function to handle API responses
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -321,7 +336,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  createReminder: async (data: any) => {
+  createReminder: async (data: ReminderPayload) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/reminders`, {
       method: 'POST',
@@ -334,7 +349,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  updateReminder: async (id: string, data: any) => {
+  updateReminder: async (id: string, data: Partial<ReminderPayload>) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/reminders/${id}`, {
       method: 'PUT',
