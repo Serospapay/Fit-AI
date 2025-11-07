@@ -5,17 +5,55 @@ import logger from '../lib/logger';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
 
+type DateRangeFilter = { gte?: Date; lte?: Date };
+
+const extractDateString = (value: unknown): string | undefined => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (Array.isArray(value) && value.length > 0) {
+    const candidate = value[0];
+    if (typeof candidate === 'string') {
+      return candidate;
+    }
+  }
+
+  return undefined;
+};
+
+const buildDateRangeFilter = (startValue?: unknown, endValue?: unknown): DateRangeFilter | undefined => {
+  const filter: DateRangeFilter = {};
+
+  const startDateValue = extractDateString(startValue);
+  if (startDateValue) {
+    const startDate = new Date(startDateValue);
+    if (!Number.isNaN(startDate.getTime())) {
+      filter.gte = startDate;
+    }
+  }
+
+  const endDateValue = extractDateString(endValue);
+  if (endDateValue) {
+    const endDate = new Date(endDateValue);
+    if (!Number.isNaN(endDate.getTime())) {
+      filter.lte = endDate;
+    }
+  }
+
+  return Object.keys(filter).length > 0 ? filter : undefined;
+};
+
 // Експорт тренувань у Excel
 export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
-    if (startDate || endDate) {
-      where.date = {};
-      if (startDate) where.date.gte = new Date(startDate as string);
-      if (endDate) where.date.lte = new Date(endDate as string);
+    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
+    if (dateRangeFilter) {
+      where.date = dateRangeFilter;
     }
 
     const workouts = await prisma.workout.findMany({
@@ -80,11 +118,10 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
-    if (startDate || endDate) {
-      where.date = {};
-      if (startDate) where.date.gte = new Date(startDate as string);
-      if (endDate) where.date.lte = new Date(endDate as string);
+    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
+    if (dateRangeFilter) {
+      where.date = dateRangeFilter;
     }
 
     const workouts = await prisma.workout.findMany({
@@ -178,11 +215,10 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
-    if (startDate || endDate) {
-      where.date = {};
-      if (startDate) where.date.gte = new Date(startDate as string);
-      if (endDate) where.date.lte = new Date(endDate as string);
+    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
+    if (dateRangeFilter) {
+      where.date = dateRangeFilter;
     }
 
     const logs = await prisma.nutritionLog.findMany({
@@ -246,11 +282,10 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const { startDate, endDate } = req.query;
 
-    const where: { userId: string; date?: { gte?: Date; lte?: Date } } = { userId };
-    if (startDate || endDate) {
-      where.date = {};
-      if (startDate) where.date.gte = new Date(startDate as string);
-      if (endDate) where.date.lte = new Date(endDate as string);
+    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
+    if (dateRangeFilter) {
+      where.date = dateRangeFilter;
     }
 
     const logs = await prisma.nutritionLog.findMany({
