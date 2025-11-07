@@ -36,6 +36,7 @@ DPFah/2/
 │   │   ├── validation/       # Zod-схеми валідації запитів
 │   │   ├── lib/              # Утиліти (logger, prisma, config)
 │   │   └── index.ts          # Точка входу
+│   ├── tests/                # Jest + Supertest інтеграційні тести
 │   ├── prisma/
 │   │   ├── schema.prisma     # Схема БД
 │   │   └── seed.ts           # Seed дані
@@ -211,6 +212,11 @@ DPFah/2/
 - Централізовані відповіді `sendError/handleControllerError` в `backend/src/utils/apiResponse.ts`
 - TypeScript для типобезпеки
 - Prisma для валідації на рівні БД
+
+### Тестування
+- Jest + ts-jest для виконання TypeScript-тестів (`npm run test`)
+- Supertest для інтеграційних HTTP-перевірок (`tests/goals.int.test.ts`, `tests/export.int.test.ts`)
+- Глобальні моки Prisma/logger/auth для ізоляції залежностей під час тестів
 
 ### Логування
 - Winston для логування всіх операцій
