@@ -4,6 +4,7 @@ import { prisma } from '../lib/prisma';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
 import { handleControllerError } from '../utils/apiResponse';
+import { buildWorkoutSummary, buildNutritionSummary } from '../services/exportSummary';
 
 type DateRangeFilter = { gte?: Date; lte?: Date };
 
@@ -58,15 +59,29 @@ const buildDateRangeFilter = (startValue?: unknown, endValue?: unknown): DateRan
   return Object.keys(filter).length > 0 ? filter : undefined;
 };
 
-const applyWorkoutFilters = (where: Record<string, unknown>, query: Record<string, unknown>) => {
+interface AppliedWorkoutFilters {
+  type?: string;
+  status?: string;
+  minRating?: number;
+  maxRating?: number;
+}
+
+const applyWorkoutFilters = (
+  where: Record<string, unknown>,
+  query: Record<string, unknown>
+): AppliedWorkoutFilters => {
+  const applied: AppliedWorkoutFilters = {};
+
   const typeValue = extractFirstString(query.type);
   if (typeValue) {
     where.type = typeValue;
+    applied.type = typeValue;
   }
 
   const statusValue = extractFirstString(query.status);
   if (statusValue) {
     where.status = statusValue;
+    applied.status = statusValue;
   }
 
   const ratingFilter: { gte?: number; lte?: number } = {};
@@ -75,21 +90,43 @@ const applyWorkoutFilters = (where: Record<string, unknown>, query: Record<strin
 
   if (minRatingValue !== undefined) {
     ratingFilter.gte = minRatingValue;
+    applied.minRating = minRatingValue;
   }
 
   if (maxRatingValue !== undefined) {
     ratingFilter.lte = maxRatingValue;
+    applied.maxRating = maxRatingValue;
   }
 
   if (Object.keys(ratingFilter).length > 0) {
     where.rating = ratingFilter;
   }
+
+  return applied;
 };
 
-const applyNutritionFilters = (where: Record<string, unknown>, query: Record<string, unknown>) => {
+interface AppliedNutritionFilters {
+  mealType?: string;
+  minCalories?: number;
+  maxCalories?: number;
+  minProtein?: number;
+  maxProtein?: number;
+  minCarbs?: number;
+  maxCarbs?: number;
+  minFat?: number;
+  maxFat?: number;
+}
+
+const applyNutritionFilters = (
+  where: Record<string, unknown>,
+  query: Record<string, unknown>
+): AppliedNutritionFilters => {
+  const applied: AppliedNutritionFilters = {};
+
   const mealTypeValue = extractFirstString(query.mealType);
   if (mealTypeValue) {
     where.mealType = mealTypeValue;
+    applied.mealType = mealTypeValue;
   }
 
   const macroFilter: Record<string, { gte?: number; lte?: number }> = {};
@@ -112,21 +149,29 @@ const applyNutritionFilters = (where: Record<string, unknown>, query: Record<str
   const caloriesRange = buildRange(minCaloriesValue, maxCaloriesValue);
   if (caloriesRange) {
     macroFilter.calories = caloriesRange;
+    if (minCaloriesValue !== undefined) applied.minCalories = minCaloriesValue;
+    if (maxCaloriesValue !== undefined) applied.maxCalories = maxCaloriesValue;
   }
 
   const proteinRange = buildRange(minProteinValue, maxProteinValue);
   if (proteinRange) {
     macroFilter.protein = proteinRange;
+    if (minProteinValue !== undefined) applied.minProtein = minProteinValue;
+    if (maxProteinValue !== undefined) applied.maxProtein = maxProteinValue;
   }
 
   const carbsRange = buildRange(minCarbsValue, maxCarbsValue);
   if (carbsRange) {
     macroFilter.carbs = carbsRange;
+    if (minCarbsValue !== undefined) applied.minCarbs = minCarbsValue;
+    if (maxCarbsValue !== undefined) applied.maxCarbs = maxCarbsValue;
   }
 
   const fatRange = buildRange(minFatValue, maxFatValue);
   if (fatRange) {
     macroFilter.fat = fatRange;
+    if (minFatValue !== undefined) applied.minFat = minFatValue;
+    if (maxFatValue !== undefined) applied.maxFat = maxFatValue;
   }
 
   if (Object.keys(macroFilter).length > 0) {
@@ -134,6 +179,80 @@ const applyNutritionFilters = (where: Record<string, unknown>, query: Record<str
       some: macroFilter,
     };
   }
+
+  return applied;
+};
+
+const formatDate = (value?: Date) =>
+  value ? value.toLocaleDateString('uk-UA', { year: 'numeric', month: '2-digit', day: '2-digit' }) : undefined;
+
+const buildWorkoutFilterDescription = (
+  baseFilters: AppliedWorkoutFilters,
+  dateRange: { start?: Date; end?: Date }
+) => {
+  const segments: string[] = [];
+
+  if (dateRange.start) {
+    segments.push(`з ${formatDate(dateRange.start)}`);
+  }
+
+  if (dateRange.end) {
+    segments.push(`до ${formatDate(dateRange.end)}`);
+  }
+
+  if (baseFilters.type) {
+    segments.push(`тип: ${baseFilters.type}`);
+  }
+
+  if (baseFilters.status) {
+    segments.push(`статус: ${baseFilters.status}`);
+  }
+
+  if (baseFilters.minRating !== undefined) {
+    segments.push(`мін. оцінка ≥ ${baseFilters.minRating}`);
+  }
+
+  if (baseFilters.maxRating !== undefined) {
+    segments.push(`макс. оцінка ≤ ${baseFilters.maxRating}`);
+  }
+
+  return segments.join(', ');
+};
+
+const buildNutritionFilterDescription = (
+  baseFilters: AppliedNutritionFilters,
+  dateRange: { start?: Date; end?: Date }
+) => {
+  const segments: string[] = [];
+
+  if (dateRange.start) {
+    segments.push(`з ${formatDate(dateRange.start)}`);
+  }
+
+  if (dateRange.end) {
+    segments.push(`до ${formatDate(dateRange.end)}`);
+  }
+
+  if (baseFilters.mealType) {
+    segments.push(`тип прийому: ${baseFilters.mealType}`);
+  }
+
+  const addMacro = (label: string, min?: number, max?: number) => {
+    if (min !== undefined && max !== undefined) {
+      segments.push(`${label}: ${min}-${max}`);
+    } else if (min !== undefined) {
+      segments.push(`${label} ≥ ${min}`);
+    } else if (max !== undefined) {
+      segments.push(`${label} ≤ ${max}`);
+    }
+  };
+
+  addMacro('калорії', baseFilters.minCalories, baseFilters.maxCalories);
+  addMacro('білки', baseFilters.minProtein, baseFilters.maxProtein);
+  addMacro('вуглеводи', baseFilters.minCarbs, baseFilters.maxCarbs);
+  addMacro('жири', baseFilters.minFat, baseFilters.maxFat);
+
+  return segments.join(', ');
 };
 
 // Експорт тренувань у Excel
@@ -147,7 +266,7 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
-    applyWorkoutFilters(where, restQuery);
+    const appliedFilters = applyWorkoutFilters(where, restQuery);
 
     const workouts = await prisma.workout.findMany({
       where,
@@ -160,6 +279,16 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
       },
       orderBy: { date: 'desc' }
     });
+
+    const summary = buildWorkoutSummary(
+      workouts.map(workout => ({
+        date: new Date(workout.date),
+        duration: workout.duration,
+        rating: workout.rating,
+        exercises: workout.exercises,
+      }))
+    );
+    const filterDescription = buildWorkoutFilterDescription(appliedFilters, summary.dateRange);
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Тренування');
@@ -197,6 +326,29 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=trenuvannya_${new Date().toISOString().split('T')[0]}.xlsx`);
 
+    const summarySheet = workbook.addWorksheet('Підсумки');
+    summarySheet.columns = [
+      { header: 'Метрика', key: 'metric', width: 32 },
+      { header: 'Значення', key: 'value', width: 30 }
+    ];
+    summarySheet.addRow({ metric: 'Кількість тренувань', value: summary.totalWorkouts });
+    summarySheet.addRow({ metric: 'Сумарна тривалість (хв)', value: summary.totalDuration });
+    summarySheet.addRow({ metric: 'Середня тривалість (хв)', value: summary.averageDuration.toFixed(1) });
+    summarySheet.addRow({ metric: 'Загальна кількість вправ', value: summary.totalExercises });
+    summarySheet.addRow({ metric: 'Середня оцінка', value: summary.averageRating.toFixed(2) });
+    summarySheet.addRow({
+      metric: 'Період',
+      value:
+        summary.dateRange.start && summary.dateRange.end
+          ? `${formatDate(summary.dateRange.start)} — ${formatDate(summary.dateRange.end)}`
+          : 'Н/д'
+    });
+    summarySheet.addRow({
+      metric: 'Застосовані фільтри',
+      value: filterDescription || 'Не застосовувались'
+    });
+    summarySheet.getRow(1).font = { bold: true };
+
     await workbook.xlsx.write(res);
     res.end();
   } catch (error: unknown) {
@@ -220,7 +372,7 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
-    applyWorkoutFilters(where, restQuery);
+    const appliedFilters = applyWorkoutFilters(where, restQuery);
 
     const workouts = await prisma.workout.findMany({
       where,
@@ -234,6 +386,16 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
       orderBy: { date: 'desc' }
     });
 
+    const summary = buildWorkoutSummary(
+      workouts.map(workout => ({
+        date: new Date(workout.date),
+        duration: workout.duration,
+        rating: workout.rating,
+        exercises: workout.exercises,
+      }))
+    );
+    const filterDescription = buildWorkoutFilterDescription(appliedFilters, summary.dateRange);
+
     const doc = new PDFDocument({ margin: 50 });
     
     res.setHeader('Content-Type', 'application/pdf');
@@ -243,6 +405,24 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
 
     // Заголовок
     doc.fontSize(20).text('Звіт про тренування', { align: 'center' });
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Кількість тренувань: ${summary.totalWorkouts}`);
+    doc.text(`Сумарна тривалість: ${summary.totalDuration} хв`);
+    doc.text(`Середня тривалість: ${summary.averageDuration.toFixed(1)} хв`);
+    doc.text(`Загальна кількість вправ: ${summary.totalExercises}`);
+    doc.text(`Середня оцінка: ${summary.averageRating.toFixed(2)}`);
+
+    if (summary.dateRange.start && summary.dateRange.end) {
+      doc.text(
+        `Період: ${formatDate(summary.dateRange.start)} — ${formatDate(summary.dateRange.end)}`
+      );
+    }
+
+    if (filterDescription) {
+      doc.text(`Фільтри: ${filterDescription}`);
+    }
+
     doc.moveDown();
 
     if (startDate || endDate) {
@@ -322,7 +502,7 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
-    applyNutritionFilters(where, restQuery);
+    const appliedFilters = applyNutritionFilters(where, restQuery);
 
     const logs = await prisma.nutritionLog.findMany({
       where,
@@ -331,6 +511,20 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
       },
       orderBy: { date: 'desc' }
     });
+
+    const summary = buildNutritionSummary(
+      logs.map(log => ({
+        date: new Date(log.date),
+        mealType: log.mealType,
+        items: log.items.map(item => ({
+          calories: item.calories,
+          protein: item.protein,
+          carbs: item.carbs,
+          fat: item.fat,
+        })),
+      }))
+    );
+    const filterDescription = buildNutritionFilterDescription(appliedFilters, summary.dateRange);
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Харчування');
@@ -371,6 +565,37 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=kharchuvannya_${new Date().toISOString().split('T')[0]}.xlsx`);
 
+    const summarySheet = workbook.addWorksheet('Підсумки');
+    summarySheet.columns = [
+      { header: 'Метрика', key: 'metric', width: 32 },
+      { header: 'Значення', key: 'value', width: 30 }
+    ];
+    summarySheet.addRow({ metric: 'Кількість записів', value: summary.totalLogs });
+    summarySheet.addRow({ metric: 'Сумарні калорії', value: summary.totalCalories.toFixed(1) });
+    summarySheet.addRow({ metric: 'Середні калорії на запис', value: summary.averageCaloriesPerLog.toFixed(1) });
+    summarySheet.addRow({ metric: 'Середні калорії на день', value: summary.averageCaloriesPerDay.toFixed(1) });
+    summarySheet.addRow({ metric: 'Сумарні білки (г)', value: summary.totalProtein.toFixed(1) });
+    summarySheet.addRow({ metric: 'Сумарні вуглеводи (г)', value: summary.totalCarbs.toFixed(1) });
+    summarySheet.addRow({ metric: 'Сумарні жири (г)', value: summary.totalFat.toFixed(1) });
+    summarySheet.addRow({
+      metric: 'Період',
+      value:
+        summary.dateRange.start && summary.dateRange.end
+          ? `${formatDate(summary.dateRange.start)} — ${formatDate(summary.dateRange.end)}`
+          : 'Н/д'
+    });
+    summarySheet.addRow({
+      metric: 'Розподіл за типами',
+      value: Object.entries(summary.mealTypeDistribution)
+        .map(([mealType, count]) => `${mealType}: ${count}`)
+        .join(', ') || 'Н/д'
+    });
+    summarySheet.addRow({
+      metric: 'Застосовані фільтри',
+      value: filterDescription || 'Не застосовувались'
+    });
+    summarySheet.getRow(1).font = { bold: true };
+
     await workbook.xlsx.write(res);
     res.end();
   } catch (error: unknown) {
@@ -394,7 +619,7 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
-    applyNutritionFilters(where, restQuery);
+    const appliedFilters = applyNutritionFilters(where, restQuery);
 
     const logs = await prisma.nutritionLog.findMany({
       where,
@@ -404,6 +629,20 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
       orderBy: { date: 'desc' }
     });
 
+    const summary = buildNutritionSummary(
+      logs.map(log => ({
+        date: new Date(log.date),
+        mealType: log.mealType,
+        items: log.items.map(item => ({
+          calories: item.calories,
+          protein: item.protein,
+          carbs: item.carbs,
+          fat: item.fat,
+        })),
+      }))
+    );
+    const filterDescription = buildNutritionFilterDescription(appliedFilters, summary.dateRange);
+
     const doc = new PDFDocument({ margin: 50 });
     
     res.setHeader('Content-Type', 'application/pdf');
@@ -412,6 +651,26 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
     doc.pipe(res);
 
     doc.fontSize(20).text('Звіт про харчування', { align: 'center' });
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Кількість записів: ${summary.totalLogs}`);
+    doc.text(`Сумарні калорії: ${summary.totalCalories.toFixed(1)} ккал`);
+    doc.text(`Сумарні білки: ${summary.totalProtein.toFixed(1)} г`);
+    doc.text(`Сумарні вуглеводи: ${summary.totalCarbs.toFixed(1)} г`);
+    doc.text(`Сумарні жири: ${summary.totalFat.toFixed(1)} г`);
+    doc.text(`Середні калорії на запис: ${summary.averageCaloriesPerLog.toFixed(1)} ккал`);
+    doc.text(`Середні калорії на день: ${summary.averageCaloriesPerDay.toFixed(1)} ккал`);
+
+    if (summary.dateRange.start && summary.dateRange.end) {
+      doc.text(
+        `Період: ${formatDate(summary.dateRange.start)} — ${formatDate(summary.dateRange.end)}`
+      );
+    }
+
+    if (filterDescription) {
+      doc.text(`Фільтри: ${filterDescription}`);
+    }
+
     doc.moveDown();
 
     if (startDate || endDate) {

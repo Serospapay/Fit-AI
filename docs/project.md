@@ -202,6 +202,7 @@ DPFah/2/
 - `GET /api/export/workouts/pdf` – експорт тренувань у PDF з аналогічними фільтрами
 - `GET /api/export/nutrition/excel` – експорт харчування у Excel; фільтри: `startDate`, `endDate`, `mealType`, `minCalories`, `maxCalories`, `minProtein`, `maxProtein`, `minCarbs`, `maxCarbs`, `minFat`, `maxFat`
 - `GET /api/export/nutrition/pdf` – експорт харчування у PDF з аналогічними фільтрами
+- Excel-файли містять окрему вкладку `Підсумки`, а PDF-звіти – секцію з ключовими показниками та застосованими фільтрами
 
 ### Health Check
 - `GET /api/health` - Статус сервера
