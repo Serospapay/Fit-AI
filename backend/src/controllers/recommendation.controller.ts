@@ -2,6 +2,7 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Отримати рекомендації користувача
 export const getUserRecommendations = async (req: AuthRequest, res: Response) => {
@@ -22,8 +23,13 @@ export const getUserRecommendations = async (req: AuthRequest, res: Response) =>
 
     res.json({ recommendations });
   } catch (error: unknown) {
-    logger.error('Get recommendations error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'RecommendationController',
+      operation: 'getUserRecommendations',
+      errorTitle: 'Помилка отримання рекомендацій',
+      userMessage: 'Не вдалося завантажити рекомендації.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -41,8 +47,12 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
 
     res.json({ count });
   } catch (error: unknown) {
-    logger.error('Get unread count error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'RecommendationController',
+      operation: 'getUnreadCount',
+      errorTitle: 'Помилка підрахунку рекомендацій',
+      userMessage: 'Не вдалося підрахувати непрочитані рекомендації.',
+    });
   }
 };
 
@@ -68,8 +78,13 @@ export const markAsRead = async (req: AuthRequest, res: Response) => {
     logger.info('Recommendation marked as read', { recommendationId: id });
     res.json(updated);
   } catch (error: unknown) {
-    logger.error('Mark as read error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'RecommendationController',
+      operation: 'markAsRead',
+      errorTitle: 'Помилка оновлення рекомендації',
+      userMessage: 'Не вдалося позначити рекомендацію як прочитану.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -94,8 +109,13 @@ export const deleteRecommendation = async (req: AuthRequest, res: Response) => {
     logger.info('Recommendation deleted', { recommendationId: id });
     res.status(204).send();
   } catch (error: unknown) {
-    logger.error('Delete recommendation error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'RecommendationController',
+      operation: 'deleteRecommendation',
+      errorTitle: 'Помилка видалення рекомендації',
+      userMessage: 'Не вдалося видалити рекомендацію.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -236,8 +256,12 @@ export const generateRecommendations = async (req: AuthRequest, res: Response) =
     logger.info('Recommendations generated', { count: createdRecommendations.length, userId });
     res.json({ recommendations: createdRecommendations });
   } catch (error: unknown) {
-    logger.error('Generate recommendations error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'RecommendationController',
+      operation: 'generateRecommendations',
+      errorTitle: 'Помилка генерації рекомендацій',
+      userMessage: 'Не вдалося згенерувати рекомендації.',
+    });
   }
 };
 

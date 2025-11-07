@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Отримати всі продукти
 export const getAllFoods = async (req: Request, res: Response) => {
@@ -43,9 +43,14 @@ export const getAllFoods = async (req: Request, res: Response) => {
         pages: Math.ceil(total / limitNum)
       }
     });
-  } catch (error: any) {
-    logger.error('Get foods error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'getAllFoods',
+      errorTitle: 'Помилка отримання продуктів',
+      userMessage: 'Не вдалося завантажити список продуктів.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -63,9 +68,14 @@ export const getFoodById = async (req: Request, res: Response) => {
     }
 
     res.json(food);
-  } catch (error: any) {
-    logger.error('Get food error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'getFoodById',
+      errorTitle: 'Помилка отримання продукту',
+      userMessage: 'Не вдалося завантажити дані продукту.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -79,9 +89,13 @@ export const createFood = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(food);
-  } catch (error: any) {
-    logger.error('Create food error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'createFood',
+      errorTitle: 'Помилка створення продукту',
+      userMessage: 'Не вдалося створити продукт.',
+    });
   }
 };
 
@@ -97,9 +111,14 @@ export const updateFood = async (req: Request, res: Response) => {
     });
 
     res.json(food);
-  } catch (error: any) {
-    logger.error('Update food error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'updateFood',
+      errorTitle: 'Помилка оновлення продукту',
+      userMessage: 'Не вдалося оновити дані продукту.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -113,9 +132,14 @@ export const deleteFood = async (req: Request, res: Response) => {
     });
 
     res.status(204).send();
-  } catch (error: any) {
-    logger.error('Delete food error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'deleteFood',
+      errorTitle: 'Помилка видалення продукту',
+      userMessage: 'Не вдалося видалити продукт.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -132,9 +156,13 @@ export const getFoodOptions = async (req: Request, res: Response) => {
       totalFoods: totalCount,
       categories: categories.map(c => c.category).filter(Boolean)
     });
-  } catch (error: any) {
-    logger.error('Get food options error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'FoodController',
+      operation: 'getFoodOptions',
+      errorTitle: 'Помилка отримання параметрів продуктів',
+      userMessage: 'Не вдалося завантажити параметри фільтрації.',
+    });
   }
 };
 

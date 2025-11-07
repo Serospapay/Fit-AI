@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Отримати випадкову цитату
 export const getRandomQuote = async (req: Request, res: Response) => {
@@ -21,8 +21,12 @@ export const getRandomQuote = async (req: Request, res: Response) => {
 
     res.json(quote);
   } catch (error: unknown) {
-    logger.error('Get random quote error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'QuoteController',
+      operation: 'getRandomQuote',
+      errorTitle: 'Помилка отримання цитати',
+      userMessage: 'Не вдалося завантажити мотиваційну цитату.',
+    });
   }
 };
 
@@ -34,8 +38,12 @@ export const getAllQuotes = async (req: Request, res: Response) => {
     });
     res.json({ quotes });
   } catch (error: unknown) {
-    logger.error('Get all quotes error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'QuoteController',
+      operation: 'getAllQuotes',
+      errorTitle: 'Помилка отримання цитат',
+      userMessage: 'Не вдалося завантажити список цитат.',
+    });
   }
 };
 

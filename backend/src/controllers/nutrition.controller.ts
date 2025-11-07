@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
 import { NutritionLogInput, NutritionItemInput } from '../types';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Створити новий запис харчування
 export const createNutritionLog = async (req: AuthRequest, res: Response) => {
@@ -50,8 +51,12 @@ export const createNutritionLog = async (req: AuthRequest, res: Response) => {
     logger.info('Nutrition log created successfully', { nutritionLogId: nutritionLog.id });
     res.status(201).json({ ...nutritionLog, totals });
   } catch (error: unknown) {
-    logger.error('Create nutrition log error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'createNutritionLog',
+      errorTitle: 'Помилка створення запису харчування',
+      userMessage: 'Не вдалося створити запис харчування.',
+    });
   }
 };
 
@@ -103,8 +108,13 @@ export const getUserNutritionLogs = async (req: AuthRequest, res: Response) => {
 
     res.json({ logs: logsWithTotals, total });
   } catch (error: unknown) {
-    logger.error('Get nutrition logs error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'getUserNutritionLogs',
+      errorTitle: 'Помилка отримання записів харчування',
+      userMessage: 'Не вдалося завантажити історію харчування.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -202,8 +212,13 @@ export const getNutritionStats = async (req: AuthRequest, res: Response) => {
       dailyBreakdown
     });
   } catch (error: unknown) {
-    logger.error('Get nutrition stats error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'getNutritionStats',
+      errorTitle: 'Помилка отримання статистики харчування',
+      userMessage: 'Не вдалося завантажити статистику харчування.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -231,7 +246,12 @@ export const deleteNutritionLog = async (req: AuthRequest, res: Response) => {
     logger.info('Nutrition log deleted successfully', { nutritionLogId: id });
     res.status(204).send();
   } catch (error: unknown) {
-    logger.error('Delete nutrition log error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'deleteNutritionLog',
+      errorTitle: 'Помилка видалення запису харчування',
+      userMessage: 'Не вдалося видалити запис харчування.',
+      details: { params: req.params },
+    });
   }
 };

@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { hashPassword, comparePassword, generateToken } from '../utils/auth';
 import logger from '../lib/logger';
 import { AuthRequest, ProfileUpdate } from '../types';
+import { handleControllerError } from '../utils/apiResponse';
 
 /**
  * @swagger
@@ -99,8 +100,12 @@ export const register = async (req: Request, res: Response) => {
       token,
     });
   } catch (error: unknown) {
-    logger.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'AuthController',
+      operation: 'register',
+      errorTitle: 'Помилка реєстрації',
+      userMessage: 'Не вдалося зареєструвати користувача.',
+    });
   }
 };
 
@@ -179,8 +184,12 @@ export const login = async (req: Request, res: Response) => {
       token,
     });
   } catch (error: unknown) {
-    logger.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'AuthController',
+      operation: 'login',
+      errorTitle: 'Помилка авторизації',
+      userMessage: 'Не вдалося ввійти до системи.',
+    });
   }
 };
 
@@ -251,8 +260,12 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
 
     res.json(user);
   } catch (error: unknown) {
-    logger.error('Get profile error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'AuthController',
+      operation: 'getProfile',
+      errorTitle: 'Помилка отримання профілю',
+      userMessage: 'Не вдалося завантажити дані профілю.',
+    });
   }
 };
 
@@ -382,8 +395,12 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     logger.info('Profile updated successfully', { userId });
     res.json(updatedUser);
   } catch (error: unknown) {
-    logger.error('Update profile error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'AuthController',
+      operation: 'updateProfile',
+      errorTitle: 'Помилка оновлення профілю',
+      userMessage: 'Не вдалося оновити дані профілю.',
+    });
   }
 };
 

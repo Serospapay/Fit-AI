@@ -2,6 +2,7 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 export const createWorkout = async (req: AuthRequest, res: Response) => {
   try {
@@ -55,9 +56,13 @@ export const createWorkout = async (req: AuthRequest, res: Response) => {
 
     logger.info('Workout created successfully', { workoutId: workout.id });
     res.status(201).json(workout);
-  } catch (error: any) {
-    logger.error('Create workout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'createWorkout',
+      errorTitle: 'Помилка створення тренування',
+      userMessage: 'Не вдалося створити тренування.',
+    });
   }
 };
 
@@ -93,9 +98,14 @@ export const getUserWorkouts = async (req: AuthRequest, res: Response) => {
     ]);
 
     res.json({ workouts, total });
-  } catch (error: any) {
-    logger.error('Get workouts error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'getUserWorkouts',
+      errorTitle: 'Помилка отримання тренувань',
+      userMessage: 'Не вдалося завантажити список тренувань.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -124,9 +134,14 @@ export const getWorkoutById = async (req: AuthRequest, res: Response) => {
     }
 
     res.json(workout);
-  } catch (error: any) {
-    logger.error('Get workout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'getWorkoutById',
+      errorTitle: 'Помилка отримання тренування',
+      userMessage: 'Не вдалося завантажити тренування.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -204,9 +219,14 @@ export const updateWorkout = async (req: AuthRequest, res: Response) => {
     }
 
     res.json(updatedWorkout);
-  } catch (error: any) {
-    logger.error('Update workout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'updateWorkout',
+      errorTitle: 'Помилка оновлення тренування',
+      userMessage: 'Не вдалося оновити тренування.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -229,9 +249,14 @@ export const deleteWorkout = async (req: AuthRequest, res: Response) => {
 
     logger.info('Workout deleted successfully', { workoutId: id });
     res.status(204).send();
-  } catch (error: any) {
-    logger.error('Delete workout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'deleteWorkout',
+      errorTitle: 'Помилка видалення тренування',
+      userMessage: 'Не вдалося видалити тренування.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -411,9 +436,14 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       // Chart data
       weeklyChartData
     });
-  } catch (error: any) {
-    logger.error('Get stats error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'WorkoutController',
+      operation: 'getWorkoutStats',
+      errorTitle: 'Помилка отримання статистики тренувань',
+      userMessage: 'Не вдалося завантажити статистику тренувань.',
+      details: { query: req.query },
+    });
   }
 };
 

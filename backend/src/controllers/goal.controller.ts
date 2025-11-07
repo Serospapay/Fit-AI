@@ -2,6 +2,7 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Створити ціль
 export const createGoal = async (req: AuthRequest, res: Response) => {
@@ -25,8 +26,12 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
     logger.info('Goal created successfully', { goalId: goal.id });
     res.status(201).json(goal);
   } catch (error: unknown) {
-    logger.error('Create goal error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'GoalController',
+      operation: 'createGoal',
+      errorTitle: 'Помилка створення цілі',
+      userMessage: 'Не вдалося створити нову ціль.',
+    });
   }
 };
 
@@ -48,8 +53,12 @@ export const getUserGoals = async (req: AuthRequest, res: Response) => {
 
     res.json({ goals });
   } catch (error: unknown) {
-    logger.error('Get goals error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'GoalController',
+      operation: 'getUserGoals',
+      errorTitle: 'Помилка отримання цілей',
+      userMessage: 'Не вдалося завантажити список цілей.',
+    });
   }
 };
 
@@ -86,8 +95,13 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
     logger.info('Goal updated successfully', { goalId: id });
     res.json(goal);
   } catch (error: unknown) {
-    logger.error('Update goal error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'GoalController',
+      operation: 'updateGoal',
+      errorTitle: 'Помилка оновлення цілі',
+      userMessage: 'Не вдалося оновити ціль.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -112,8 +126,13 @@ export const deleteGoal = async (req: AuthRequest, res: Response) => {
     logger.info('Goal deleted successfully', { goalId: id });
     res.status(204).send();
   } catch (error: unknown) {
-    logger.error('Delete goal error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'GoalController',
+      operation: 'deleteGoal',
+      errorTitle: 'Помилка видалення цілі',
+      userMessage: 'Не вдалося видалити ціль.',
+      details: { params: req.params },
+    });
   }
 };
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 export const getAllExercises = async (req: Request, res: Response) => {
   try {
@@ -35,9 +35,14 @@ export const getAllExercises = async (req: Request, res: Response) => {
         pages: Math.ceil(total / limitNum)
       }
     });
-  } catch (error: any) {
-    logger.error('Get exercises error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'getAllExercises',
+      errorTitle: 'Помилка отримання вправ',
+      userMessage: 'Не вдалося завантажити список вправ.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -54,9 +59,14 @@ export const getExerciseById = async (req: Request, res: Response) => {
     }
 
     res.json(exercise);
-  } catch (error: any) {
-    logger.error('Get exercise error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'getExerciseById',
+      errorTitle: 'Помилка отримання вправи',
+      userMessage: 'Не вдалося завантажити дані вправи.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -69,9 +79,13 @@ export const createExercise = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(exercise);
-  } catch (error: any) {
-    logger.error('Create exercise error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'createExercise',
+      errorTitle: 'Помилка створення вправи',
+      userMessage: 'Не вдалося створити нову вправу.',
+    });
   }
 };
 
@@ -86,9 +100,14 @@ export const updateExercise = async (req: Request, res: Response) => {
     });
 
     res.json(exercise);
-  } catch (error: any) {
-    logger.error('Update exercise error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'updateExercise',
+      errorTitle: 'Помилка оновлення вправи',
+      userMessage: 'Не вдалося оновити дані вправи.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -101,9 +120,14 @@ export const deleteExercise = async (req: Request, res: Response) => {
     });
 
     res.status(204).send();
-  } catch (error: any) {
-    logger.error('Delete exercise error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'deleteExercise',
+      errorTitle: 'Помилка видалення вправи',
+      userMessage: 'Не вдалося видалити вправу.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -114,9 +138,13 @@ export const getFilterOptions = async (req: Request, res: Response) => {
     res.json({
       totalExercises: totalCount
     });
-  } catch (error: any) {
-    logger.error('Get filter options error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'ExerciseController',
+      operation: 'getFilterOptions',
+      errorTitle: 'Помилка отримання параметрів фільтра',
+      userMessage: 'Не вдалося завантажити дані фільтру.',
+    });
   }
 };
 

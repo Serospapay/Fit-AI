@@ -1,9 +1,9 @@
 import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
-import logger from '../lib/logger';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
+import { handleControllerError } from '../utils/apiResponse';
 
 type DateRangeFilter = { gte?: Date; lte?: Date };
 
@@ -107,8 +107,12 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error: unknown) {
-    logger.error('Export workouts Excel error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ExportController',
+      operation: 'exportWorkoutsExcel',
+      errorTitle: 'Помилка експорту тренувань',
+      userMessage: 'Не вдалося сформувати Excel-файл тренувань.',
+    });
   }
 };
 
@@ -204,8 +208,12 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
 
     doc.end();
   } catch (error: unknown) {
-    logger.error('Export workouts PDF error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ExportController',
+      operation: 'exportWorkoutsPDF',
+      errorTitle: 'Помилка експорту тренувань',
+      userMessage: 'Не вдалося сформувати PDF зі звітом тренувань.',
+    });
   }
 };
 
@@ -271,8 +279,12 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error: unknown) {
-    logger.error('Export nutrition Excel error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ExportController',
+      operation: 'exportNutritionExcel',
+      errorTitle: 'Помилка експорту харчування',
+      userMessage: 'Не вдалося сформувати Excel-файл харчування.',
+    });
   }
 };
 
@@ -360,8 +372,12 @@ export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
 
     doc.end();
   } catch (error: unknown) {
-    logger.error('Export nutrition PDF error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ExportController',
+      operation: 'exportNutritionPDF',
+      errorTitle: 'Помилка експорту харчування',
+      userMessage: 'Не вдалося сформувати PDF зі звітом харчування.',
+    });
   }
 };
 

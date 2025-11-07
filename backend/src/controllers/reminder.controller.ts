@@ -2,6 +2,7 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Створити нагадування
 export const createReminder = async (req: AuthRequest, res: Response) => {
@@ -24,8 +25,12 @@ export const createReminder = async (req: AuthRequest, res: Response) => {
     logger.info('Reminder created successfully', { reminderId: reminder.id });
     res.status(201).json(reminder);
   } catch (error: unknown) {
-    logger.error('Create reminder error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ReminderController',
+      operation: 'createReminder',
+      errorTitle: 'Помилка створення нагадування',
+      userMessage: 'Не вдалося створити нагадування.',
+    });
   }
 };
 
@@ -53,8 +58,13 @@ export const getUserReminders = async (req: AuthRequest, res: Response) => {
 
     res.json({ reminders: remindersWithParsedDays });
   } catch (error: unknown) {
-    logger.error('Get reminders error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ReminderController',
+      operation: 'getUserReminders',
+      errorTitle: 'Помилка отримання нагадувань',
+      userMessage: 'Не вдалося завантажити список нагадувань.',
+      details: { query: req.query },
+    });
   }
 };
 
@@ -93,8 +103,13 @@ export const updateReminder = async (req: AuthRequest, res: Response) => {
     logger.info('Reminder updated successfully', { reminderId: id });
     res.json(reminderWithParsedDays);
   } catch (error: unknown) {
-    logger.error('Update reminder error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ReminderController',
+      operation: 'updateReminder',
+      errorTitle: 'Помилка оновлення нагадування',
+      userMessage: 'Не вдалося оновити нагадування.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -119,8 +134,13 @@ export const deleteReminder = async (req: AuthRequest, res: Response) => {
     logger.info('Reminder deleted successfully', { reminderId: id });
     res.status(204).send();
   } catch (error: unknown) {
-    logger.error('Delete reminder error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'ReminderController',
+      operation: 'deleteReminder',
+      errorTitle: 'Помилка видалення нагадування',
+      userMessage: 'Не вдалося видалити нагадування.',
+      details: { params: req.params },
+    });
   }
 };
 

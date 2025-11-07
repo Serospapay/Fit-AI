@@ -2,6 +2,7 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
+import { handleControllerError } from '../utils/apiResponse';
 
 // Створити шаблон тренування
 export const createWorkoutTemplate = async (req: AuthRequest, res: Response) => {
@@ -22,8 +23,12 @@ export const createWorkoutTemplate = async (req: AuthRequest, res: Response) => 
     logger.info('Workout template created successfully', { templateId: template.id });
     res.status(201).json(template);
   } catch (error: unknown) {
-    logger.error('Create workout template error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'WorkoutTemplateController',
+      operation: 'createWorkoutTemplate',
+      errorTitle: 'Помилка створення шаблону тренування',
+      userMessage: 'Не вдалося створити шаблон тренування.',
+    });
   }
 };
 
@@ -39,8 +44,12 @@ export const getUserTemplates = async (req: AuthRequest, res: Response) => {
 
     res.json({ templates });
   } catch (error: unknown) {
-    logger.error('Get templates error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'WorkoutTemplateController',
+      operation: 'getUserTemplates',
+      errorTitle: 'Помилка отримання шаблонів',
+      userMessage: 'Не вдалося завантажити шаблони тренувань.',
+    });
   }
 };
 
@@ -73,8 +82,13 @@ export const updateWorkoutTemplate = async (req: AuthRequest, res: Response) => 
     logger.info('Template updated successfully', { templateId: id });
     res.json(template);
   } catch (error: unknown) {
-    logger.error('Update template error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'WorkoutTemplateController',
+      operation: 'updateWorkoutTemplate',
+      errorTitle: 'Помилка оновлення шаблону',
+      userMessage: 'Не вдалося оновити шаблон тренування.',
+      details: { params: req.params },
+    });
   }
 };
 
@@ -99,8 +113,13 @@ export const deleteWorkoutTemplate = async (req: AuthRequest, res: Response) => 
     logger.info('Template deleted successfully', { templateId: id });
     res.status(204).send();
   } catch (error: unknown) {
-    logger.error('Delete template error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return handleControllerError(res, error, {
+      controller: 'WorkoutTemplateController',
+      operation: 'deleteWorkoutTemplate',
+      errorTitle: 'Помилка видалення шаблону',
+      userMessage: 'Не вдалося видалити шаблон тренування.',
+      details: { params: req.params },
+    });
   }
 };
 
