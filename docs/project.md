@@ -34,6 +34,7 @@ DPFah/2/
 │   │   ├── routes/           # API роути
 │   │   ├── middleware/       # Middleware
 │   │   ├── validation/       # Zod-схеми валідації запитів
+│   │   ├── services/         # Допоміжні сервіси (кеш, утиліти)
 │   │   ├── lib/              # Утиліти (logger, prisma, config)
 │   │   └── index.ts          # Точка входу
 │   ├── tests/                # Jest + Supertest інтеграційні тести
@@ -78,6 +79,7 @@ DPFah/2/
 - **Winston** - Логування
 - **bcrypt** - Хешування паролів
 - **Zod** - Валідація даних
+- **In-memory cache** - оптимізація частих запитів (мотиваційні цитати)
 
 ### База даних
 - **PostgreSQL** - Основна БД
@@ -194,6 +196,12 @@ DPFah/2/
 - `POST /api/foods` - Створити продукт (авторизовано)
 - `PUT /api/foods/:id` - Оновити продукт (авторизовано)
 - `DELETE /api/foods/:id` - Видалити продукт (авторизовано)
+
+### Експорт (`/api/export`)
+- `GET /api/export/workouts/excel` – експорт тренувань у Excel; фільтри: `startDate`, `endDate`, `type`, `status`, `minRating`, `maxRating`
+- `GET /api/export/workouts/pdf` – експорт тренувань у PDF з аналогічними фільтрами
+- `GET /api/export/nutrition/excel` – експорт харчування у Excel; фільтри: `startDate`, `endDate`, `mealType`, `minCalories`, `maxCalories`, `minProtein`, `maxProtein`, `minCarbs`, `maxCarbs`, `minFat`, `maxFat`
+- `GET /api/export/nutrition/pdf` – експорт харчування у PDF з аналогічними фільтрами
 
 ### Health Check
 - `GET /api/health` - Статус сервера

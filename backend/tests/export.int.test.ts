@@ -21,6 +21,9 @@ type PrismaMock = {
   nutritionLog: {
     findMany: jest.Mock;
   };
+  quote: {
+    findMany: jest.Mock;
+  };
 };
 
 const prisma = (globalThis as unknown as { prismaMock: PrismaMock }).prismaMock;
@@ -110,6 +113,53 @@ describe('Export API', () => {
       where: { userId: 'test-user' },
       include: { items: true },
       orderBy: { date: 'desc' },
+    });
+  });
+
+  it('застосовує фільтри для тренувань', async () => {
+    prisma.workout.findMany.mockResolvedValue([
+      {
+        id: 'workout-2',
+        userId: 'test-user',
+        date: new Date('2025-02-01T10:00:00Z'),
+        type: 'cardio',
+        duration: 45,
+        notes: null,
+        rating: 4,
+        exercises: [],
+      },
+    ]);
+
+    await request(app)
+      .get('/api/export/workouts/excel?type=cardio&status=completed&minRating=3&maxRating=5')
+      .expect(200);
+
+    const callArgs = prisma.workout.findMany.mock.calls[0][0];
+    expect(callArgs.where).toMatchObject({
+      userId: 'test-user',
+      type: 'cardio',
+      status: 'completed',
+      rating: { gte: 3, lte: 5 },
+    });
+  });
+
+  it('застосовує фільтри для харчування', async () => {
+    prisma.nutritionLog.findMany.mockResolvedValue([]);
+
+    await request(app)
+      .get('/api/export/nutrition/pdf?mealType=breakfast&minCalories=200&maxProtein=30')
+      .expect(200);
+
+    const callArgs = prisma.nutritionLog.findMany.mock.calls[0][0];
+    expect(callArgs.where).toMatchObject({
+      userId: 'test-user',
+      mealType: 'breakfast',
+      items: {
+        some: expect.objectContaining({
+          calories: { gte: 200 },
+          protein: { lte: 30 },
+        }),
+      },
     });
   });
 });

@@ -21,6 +21,9 @@ type PrismaMock = {
   nutritionLog: {
     findMany: jest.Mock;
   };
+  quote: {
+    findMany: jest.Mock;
+  };
 };
 
 const prisma = (globalThis as unknown as { prismaMock: PrismaMock }).prismaMock;

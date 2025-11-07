@@ -7,7 +7,7 @@ import { handleControllerError } from '../utils/apiResponse';
 
 type DateRangeFilter = { gte?: Date; lte?: Date };
 
-const extractDateString = (value: unknown): string | undefined => {
+const extractFirstString = (value: unknown): string | undefined => {
   if (typeof value === 'string') {
     return value;
   }
@@ -22,10 +22,24 @@ const extractDateString = (value: unknown): string | undefined => {
   return undefined;
 };
 
+const parseNumberParam = (value: unknown): number | undefined => {
+  const strValue = extractFirstString(value);
+  if (!strValue?.trim()) {
+    return undefined;
+  }
+
+  const numericValue = Number(strValue);
+  if (Number.isNaN(numericValue)) {
+    return undefined;
+  }
+
+  return numericValue;
+};
+
 const buildDateRangeFilter = (startValue?: unknown, endValue?: unknown): DateRangeFilter | undefined => {
   const filter: DateRangeFilter = {};
 
-  const startDateValue = extractDateString(startValue);
+  const startDateValue = extractFirstString(startValue);
   if (startDateValue) {
     const startDate = new Date(startDateValue);
     if (!Number.isNaN(startDate.getTime())) {
@@ -33,7 +47,7 @@ const buildDateRangeFilter = (startValue?: unknown, endValue?: unknown): DateRan
     }
   }
 
-  const endDateValue = extractDateString(endValue);
+  const endDateValue = extractFirstString(endValue);
   if (endDateValue) {
     const endDate = new Date(endDateValue);
     if (!Number.isNaN(endDate.getTime())) {
@@ -44,17 +58,96 @@ const buildDateRangeFilter = (startValue?: unknown, endValue?: unknown): DateRan
   return Object.keys(filter).length > 0 ? filter : undefined;
 };
 
+const applyWorkoutFilters = (where: Record<string, unknown>, query: Record<string, unknown>) => {
+  const typeValue = extractFirstString(query.type);
+  if (typeValue) {
+    where.type = typeValue;
+  }
+
+  const statusValue = extractFirstString(query.status);
+  if (statusValue) {
+    where.status = statusValue;
+  }
+
+  const ratingFilter: { gte?: number; lte?: number } = {};
+  const minRatingValue = parseNumberParam(query.minRating);
+  const maxRatingValue = parseNumberParam(query.maxRating);
+
+  if (minRatingValue !== undefined) {
+    ratingFilter.gte = minRatingValue;
+  }
+
+  if (maxRatingValue !== undefined) {
+    ratingFilter.lte = maxRatingValue;
+  }
+
+  if (Object.keys(ratingFilter).length > 0) {
+    where.rating = ratingFilter;
+  }
+};
+
+const applyNutritionFilters = (where: Record<string, unknown>, query: Record<string, unknown>) => {
+  const mealTypeValue = extractFirstString(query.mealType);
+  if (mealTypeValue) {
+    where.mealType = mealTypeValue;
+  }
+
+  const macroFilter: Record<string, { gte?: number; lte?: number }> = {};
+  const minCaloriesValue = parseNumberParam(query.minCalories);
+  const maxCaloriesValue = parseNumberParam(query.maxCalories);
+  const minProteinValue = parseNumberParam(query.minProtein);
+  const maxProteinValue = parseNumberParam(query.maxProtein);
+  const minCarbsValue = parseNumberParam(query.minCarbs);
+  const maxCarbsValue = parseNumberParam(query.maxCarbs);
+  const minFatValue = parseNumberParam(query.minFat);
+  const maxFatValue = parseNumberParam(query.maxFat);
+
+  const buildRange = (min?: number, max?: number) => {
+    const range: { gte?: number; lte?: number } = {};
+    if (min !== undefined) range.gte = min;
+    if (max !== undefined) range.lte = max;
+    return Object.keys(range).length > 0 ? range : undefined;
+  };
+
+  const caloriesRange = buildRange(minCaloriesValue, maxCaloriesValue);
+  if (caloriesRange) {
+    macroFilter.calories = caloriesRange;
+  }
+
+  const proteinRange = buildRange(minProteinValue, maxProteinValue);
+  if (proteinRange) {
+    macroFilter.protein = proteinRange;
+  }
+
+  const carbsRange = buildRange(minCarbsValue, maxCarbsValue);
+  if (carbsRange) {
+    macroFilter.carbs = carbsRange;
+  }
+
+  const fatRange = buildRange(minFatValue, maxFatValue);
+  if (fatRange) {
+    macroFilter.fat = fatRange;
+  }
+
+  if (Object.keys(macroFilter).length > 0) {
+    where.items = {
+      some: macroFilter,
+    };
+  }
+};
+
 // Експорт тренувань у Excel
 export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, ...restQuery } = req.query;
 
-    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const where: Record<string, unknown> = { userId };
     const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
+    applyWorkoutFilters(where, restQuery);
 
     const workouts = await prisma.workout.findMany({
       where,
@@ -120,13 +213,14 @@ export const exportWorkoutsExcel = async (req: AuthRequest, res: Response) => {
 export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, ...restQuery } = req.query;
 
-    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const where: Record<string, unknown> = { userId };
     const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
+    applyWorkoutFilters(where, restQuery);
 
     const workouts = await prisma.workout.findMany({
       where,
@@ -221,13 +315,14 @@ export const exportWorkoutsPDF = async (req: AuthRequest, res: Response) => {
 export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, ...restQuery } = req.query;
 
-    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const where: Record<string, unknown> = { userId };
     const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
+    applyNutritionFilters(where, restQuery);
 
     const logs = await prisma.nutritionLog.findMany({
       where,
@@ -292,13 +387,14 @@ export const exportNutritionExcel = async (req: AuthRequest, res: Response) => {
 export const exportNutritionPDF = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, ...restQuery } = req.query;
 
-    const where: { userId: string; date?: DateRangeFilter } = { userId };
+    const where: Record<string, unknown> = { userId };
     const dateRangeFilter = buildDateRangeFilter(startDate, endDate);
     if (dateRangeFilter) {
       where.date = dateRangeFilter;
     }
+    applyNutritionFilters(where, restQuery);
 
     const logs = await prisma.nutritionLog.findMany({
       where,

@@ -1,23 +1,31 @@
 import { Request, Response } from 'express';
+import { Quote } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { handleControllerError } from '../utils/apiResponse';
+import cache from '../services/cache';
+
+const QUOTES_CACHE_KEY = 'quotes:all';
+const QUOTES_CACHE_TTL = 10 * 60 * 1000; // 10 хвилин
 
 // Отримати випадкову цитату
 export const getRandomQuote = async (req: Request, res: Response) => {
   try {
-    const count = await prisma.quote.count();
-    if (count === 0) {
-      return res.json({ 
+    let quotes = cache.get<Quote[]>(QUOTES_CACHE_KEY);
+
+    if (!quotes) {
+      quotes = await prisma.quote.findMany();
+      cache.set(QUOTES_CACHE_KEY, quotes, QUOTES_CACHE_TTL);
+    }
+
+    if (!quotes || quotes.length === 0) {
+      return res.json({
         text: 'Тренування - це не покарання, це нагорода за те, що ти можеш це робити.',
-        author: 'Незнайомий'
+        author: 'Незнайомий',
       });
     }
 
-    const randomSkip = Math.floor(Math.random() * count);
-    const quote = await prisma.quote.findFirst({
-      skip: randomSkip,
-      take: 1,
-    });
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const quote = quotes[randomIndex];
 
     res.json(quote);
   } catch (error: unknown) {

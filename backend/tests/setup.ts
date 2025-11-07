@@ -44,6 +44,9 @@ const prismaMockFactory = {
   nutritionLog: {
     findMany: jest.fn(),
   },
+  quote: {
+    findMany: jest.fn(),
+  },
 };
 
 type PrismaMock = typeof prismaMockFactory;
