@@ -2,23 +2,35 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
-import { handleControllerError } from '../utils/apiResponse';
+import { handleControllerError, sendError } from '../utils/apiResponse';
+import { createGoalSchema, goalQuerySchema, updateGoalSchema } from '../validation/goal.schema';
 
 // Створити ціль
 export const createGoal = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { title, description, category, targetValue, unit, targetDate } = req.body;
+
+    const parsed = createGoalSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Перевірте введені дані цілі.',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    const { title, description, category, targetValue, unit, targetDate } = parsed.data;
 
     const goal = await prisma.goal.create({
       data: {
         userId,
         title,
-        description: description || null,
+        description: description ?? null,
         category,
-        targetValue: targetValue ? parseFloat(targetValue) : null,
-        unit: unit || null,
-        targetDate: targetDate ? new Date(targetDate) : null,
+        targetValue: targetValue ?? null,
+        unit: unit ?? null,
+        targetDate: targetDate ?? null,
         currentValue: 0,
       },
     });
@@ -39,7 +51,18 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
 export const getUserGoals = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { status } = req.query;
+
+    const parsedQuery = goalQuerySchema.safeParse(req.query);
+    if (!parsedQuery.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Невірні параметри фільтрації цілей.',
+        details: parsedQuery.error.flatten(),
+      });
+    }
+
+    const { status } = parsedQuery.data;
 
     const where: Record<string, unknown> = { userId };
     if (status) {
@@ -67,7 +90,16 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const { id } = req.params;
-    const { title, description, targetValue, currentValue, unit, targetDate, status } = req.body;
+
+    const parsed = updateGoalSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Перевірте дані для оновлення цілі.',
+        details: parsed.error.flatten(),
+      });
+    }
 
     // Перевірка що ціль належить користувачу
     const existingGoal = await prisma.goal.findFirst({
@@ -78,13 +110,17 @@ export const updateGoal = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Goal not found' });
     }
 
+    const { title, description, targetValue, currentValue, unit, targetDate, status, category } =
+      parsed.data;
+
     const updateData: Record<string, unknown> = {};
     if (title !== undefined) updateData.title = title;
-    if (description !== undefined) updateData.description = description;
-    if (targetValue !== undefined) updateData.targetValue = targetValue ? parseFloat(targetValue) : null;
-    if (currentValue !== undefined) updateData.currentValue = currentValue ? parseFloat(currentValue) : null;
-    if (unit !== undefined) updateData.unit = unit;
-    if (targetDate !== undefined) updateData.targetDate = targetDate ? new Date(targetDate) : null;
+    if (description !== undefined) updateData.description = description ?? null;
+    if (category !== undefined) updateData.category = category;
+    if (targetValue !== undefined) updateData.targetValue = targetValue ?? null;
+    if (currentValue !== undefined) updateData.currentValue = currentValue ?? null;
+    if (unit !== undefined) updateData.unit = unit ?? null;
+    if (targetDate !== undefined) updateData.targetDate = targetDate ?? null;
     if (status !== undefined) updateData.status = status;
 
     const goal = await prisma.goal.update({

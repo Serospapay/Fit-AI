@@ -2,22 +2,34 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
-import { handleControllerError } from '../utils/apiResponse';
+import { handleControllerError, sendError } from '../utils/apiResponse';
+import { recommendationQuerySchema } from '../validation/recommendation.schema';
 
 // Отримати рекомендації користувача
 export const getUserRecommendations = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { isRead, limit = '10' } = req.query;
+
+    const parsedQuery = recommendationQuerySchema.safeParse(req.query);
+    if (!parsedQuery.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Невірні параметри запиту рекомендацій.',
+        details: parsedQuery.error.flatten(),
+      });
+    }
+
+    const { isRead, limit = 10 } = parsedQuery.data;
 
     const where: Record<string, unknown> = { userId };
     if (isRead !== undefined) {
-      where.isRead = isRead === 'true';
+      where.isRead = isRead;
     }
 
     const recommendations = await prisma.recommendation.findMany({
       where,
-      take: parseInt(limit as string),
+      take: limit,
       orderBy: { createdAt: 'desc' },
     });
 

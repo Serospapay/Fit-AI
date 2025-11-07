@@ -33,6 +33,7 @@ DPFah/2/
 │   │   ├── controllers/      # Контролери
 │   │   ├── routes/           # API роути
 │   │   ├── middleware/       # Middleware
+│   │   ├── validation/       # Zod-схеми валідації запитів
 │   │   ├── lib/              # Утиліти (logger, prisma, config)
 │   │   └── index.ts          # Точка входу
 │   ├── prisma/
@@ -206,7 +207,8 @@ DPFah/2/
 - Middleware `authenticateToken` для захисту роутів
 
 ### Валідація
-- Zod для валідації даних
+- Zod (`backend/src/validation/*`) для валідації тіл запитів та query-параметрів
+- Централізовані відповіді `sendError/handleControllerError` в `backend/src/utils/apiResponse.ts`
 - TypeScript для типобезпеки
 - Prisma для валідації на рівні БД
 

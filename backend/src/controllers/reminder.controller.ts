@@ -2,22 +2,38 @@ import { AuthRequest } from '../types';
 import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
-import { handleControllerError } from '../utils/apiResponse';
+import { handleControllerError, sendError } from '../utils/apiResponse';
+import {
+  createReminderSchema,
+  reminderQuerySchema,
+  updateReminderSchema,
+} from '../validation/reminder.schema';
 
 // Створити нагадування
 export const createReminder = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { type, title, message, time, daysOfWeek, enabled } = req.body;
+
+    const parsed = createReminderSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Перевірте дані нагадування.',
+        details: parsed.error.flatten(),
+      });
+    }
+
+    const { type, title, message, time, daysOfWeek = [], enabled } = parsed.data;
 
     const reminder = await prisma.reminder.create({
       data: {
         userId,
         type,
         title,
-        message: message || null,
+        message: message ?? null,
         time,
-        daysOfWeek: JSON.stringify(daysOfWeek || []),
+        daysOfWeek: JSON.stringify(daysOfWeek),
         enabled: enabled !== undefined ? enabled : true,
       },
     });
@@ -38,11 +54,22 @@ export const createReminder = async (req: AuthRequest, res: Response) => {
 export const getUserReminders = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { enabled } = req.query;
+
+    const parsedQuery = reminderQuerySchema.safeParse(req.query);
+    if (!parsedQuery.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Невірні параметри фільтрації нагадувань.',
+        details: parsedQuery.error.flatten(),
+      });
+    }
+
+    const { enabled } = parsedQuery.data;
 
     const where: Record<string, unknown> = { userId };
     if (enabled !== undefined) {
-      where.enabled = enabled === 'true';
+      where.enabled = enabled;
     }
 
     const reminders = await prisma.reminder.findMany({
@@ -73,7 +100,16 @@ export const updateReminder = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const { id } = req.params;
-    const { title, message, time, daysOfWeek, enabled } = req.body;
+
+    const parsed = updateReminderSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return sendError(res, {
+        statusCode: 400,
+        error: 'Помилка валідації',
+        message: 'Перевірте дані для оновлення нагадування.',
+        details: parsed.error.flatten(),
+      });
+    }
 
     const existingReminder = await prisma.reminder.findFirst({
       where: { id, userId },
@@ -83,9 +119,12 @@ export const updateReminder = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Reminder not found' });
     }
 
+    const { title, message, time, daysOfWeek, enabled, type } = parsed.data;
+
     const updateData: Record<string, unknown> = {};
     if (title !== undefined) updateData.title = title;
-    if (message !== undefined) updateData.message = message;
+    if (type !== undefined) updateData.type = type;
+    if (message !== undefined) updateData.message = message ?? null;
     if (time !== undefined) updateData.time = time;
     if (daysOfWeek !== undefined) updateData.daysOfWeek = JSON.stringify(daysOfWeek);
     if (enabled !== undefined) updateData.enabled = enabled;
