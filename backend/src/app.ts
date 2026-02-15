@@ -6,7 +6,9 @@
  */
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import { config } from './lib/config';
 import authRoutes from './routes/auth.routes';
 import exerciseRoutes from './routes/exercise.routes';
 import workoutRoutes from './routes/workout.routes';
@@ -22,13 +24,19 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { setupSwagger } from './lib/swagger';
 import logger from './lib/logger';
 
-dotenv.config();
-
 const app = express();
+
+app.use(helmet({ contentSecurityPolicy: false }));
+
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: { error: 'Too many requests', message: 'Спробуйте пізніше' },
+}));
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: config.NODE_ENV === 'production' ? config.CORS_ORIGIN : true,
     credentials: true,
   })
 );
@@ -53,6 +61,14 @@ app.get('/api/health', (req, res) => {
 });
 
 setupSwagger(app);
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many attempts', message: 'Забагато спроб входу. Спробуйте через 15 хвилин.' },
+});
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);

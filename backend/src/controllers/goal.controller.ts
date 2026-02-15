@@ -20,7 +20,7 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const { title, description, category, targetValue, unit, targetDate } = parsed.data;
+    const { title, description, category, targetValue, currentValue, unit, targetDate } = parsed.data;
 
     const goal = await prisma.goal.create({
       data: {
@@ -31,7 +31,7 @@ export const createGoal = async (req: AuthRequest, res: Response) => {
         targetValue: targetValue ?? null,
         unit: unit ?? null,
         targetDate: targetDate ?? null,
-        currentValue: 0,
+        currentValue: currentValue ?? 0,
       },
     });
 

@@ -464,7 +464,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Перші кроки',
       description: 'Complete your first workout',
       descriptionUk: 'Виконайте своє перше тренування',
-      icon: '🎯',
+      icon: 'bi bi-bullseye',
       condition: () => totalWorkouts >= 1
     },
     {
@@ -473,7 +473,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Війна тижня',
       description: 'Workout 7 days in a row',
       descriptionUk: 'Тренуватися 7 днів підряд',
-      icon: '🔥',
+      icon: 'bi bi-fire',
       condition: () => streak >= 7
     },
     {
@@ -482,7 +482,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Війна місяця',
       description: 'Workout 30 days in a row',
       descriptionUk: 'Тренуватися 30 днів підряд',
-      icon: '💪',
+      icon: 'bi bi-lightning',
       condition: () => streak >= 30
     },
     {
@@ -491,7 +491,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Клуб сотні',
       description: 'Complete 100 workouts',
       descriptionUk: 'Виконайте 100 тренувань',
-      icon: '🏆',
+      icon: 'bi bi-trophy',
       condition: () => totalWorkouts >= 100
     },
     {
@@ -500,7 +500,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Сто днів',
       description: 'Complete 100 workouts total',
       descriptionUk: 'Виконайте 100 тренувань загалом',
-      icon: '🌟',
+      icon: 'bi bi-star-fill',
       condition: () => totalWorkouts >= 100
     },
     {
@@ -509,7 +509,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Відданість',
       description: '30 workouts in 30 days',
       descriptionUk: '30 тренувань за 30 днів',
-      icon: '⭐',
+      icon: 'bi bi-star',
       condition: () => recentCount >= 30
     },
     {
@@ -518,7 +518,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Майстер серій',
       description: 'Maintain a 14-day streak',
       descriptionUk: 'Зберігайте серію 14 днів',
-      icon: '👑',
+      icon: 'bi bi-award',
       condition: () => streak >= 14
     },
     {
@@ -527,7 +527,7 @@ async function calculateAchievements(userId: string, totalWorkouts: number, stre
       nameUk: 'Початок',
       description: 'Complete 5 workouts',
       descriptionUk: 'Виконайте 5 тренувань',
-      icon: '🚀',
+      icon: 'bi bi-star',
       condition: () => totalWorkouts >= 5
     }
   ];

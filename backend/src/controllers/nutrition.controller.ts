@@ -118,6 +118,45 @@ export const getUserNutritionLogs = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// Отримати один запис харчування за id
+export const getNutritionLogById = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { id } = req.params;
+
+    const log = await prisma.nutritionLog.findFirst({
+      where: { id, userId },
+      include: {
+        items: { orderBy: { createdAt: 'asc' } },
+      },
+    });
+
+    if (!log) {
+      return res.status(404).json({ error: 'Nutrition log not found' });
+    }
+
+    const totals = log.items.reduce(
+      (acc, item) => ({
+        calories: acc.calories + item.calories,
+        protein: acc.protein + item.protein,
+        carbs: acc.carbs + item.carbs,
+        fat: acc.fat + item.fat,
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    );
+
+    res.json({ ...log, totals });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'getNutritionLogById',
+      errorTitle: 'Помилка отримання запису харчування',
+      userMessage: 'Не вдалося завантажити запис.',
+      details: { params: req.params },
+    });
+  }
+};
+
 // Отримати статистику харчування
 export const getNutritionStats = async (req: AuthRequest, res: Response) => {
   try {
@@ -218,6 +257,80 @@ export const getNutritionStats = async (req: AuthRequest, res: Response) => {
       errorTitle: 'Помилка отримання статистики харчування',
       userMessage: 'Не вдалося завантажити статистику харчування.',
       details: { query: req.query },
+    });
+  }
+};
+
+// Оновити запис харчування
+export const updateNutritionLog = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { id } = req.params;
+    const { date, mealType, items } = req.body as NutritionLogInput;
+
+    const nutritionLog = await prisma.nutritionLog.findFirst({
+      where: { id, userId },
+      include: { items: true },
+    });
+
+    if (!nutritionLog) {
+      return res.status(404).json({ error: 'Nutrition log not found' });
+    }
+
+    const logDate = date ? new Date(date) : nutritionLog.date;
+
+    await prisma.nutritionLog.update({
+      where: { id },
+      data: {
+        date: logDate,
+        mealType: mealType ?? nutritionLog.mealType,
+      },
+    });
+
+    if (items && items.length > 0) {
+      await prisma.nutritionItem.deleteMany({
+        where: { nutritionLogId: id },
+      });
+
+      await prisma.nutritionItem.createMany({
+        data: items.map((item: NutritionItemInput) => ({
+          nutritionLogId: id,
+          name: item.name,
+          nameUk: item.nameUk || null,
+          amount: item.amount,
+          calories: item.calories,
+          protein: item.protein || 0,
+          carbs: item.carbs || 0,
+          fat: item.fat || 0,
+          fiber: item.fiber ?? null,
+        })),
+      });
+    }
+
+    const updated = await prisma.nutritionLog.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+
+    const totals = updated!.items.reduce(
+      (acc, item) => ({
+        calories: acc.calories + item.calories,
+        protein: acc.protein + item.protein,
+        carbs: acc.carbs + item.carbs,
+        fat: acc.fat + item.fat,
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    );
+
+    logger.info('Nutrition log updated successfully', { nutritionLogId: id });
+    res.json({ ...updated, totals });
+  } catch (error: unknown) {
+    return handleControllerError(res, error, {
+      controller: 'NutritionController',
+      operation: 'updateNutritionLog',
+      errorTitle: 'Помилка оновлення запису харчування',
+      userMessage: 'Не вдалося оновити запис харчування.',
+      details: { params: req.params },
     });
   }
 };

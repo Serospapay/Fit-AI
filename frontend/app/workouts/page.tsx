@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Spinner, Badge, Tabs, Tab } from 'react-bootstrap';
+import Link from 'next/link';
+import { Container, Row, Col, Card, Button, Spinner, Badge, Tabs, Tab, Alert } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
+import ConfirmModal from '../components/ConfirmModal';
 import { api } from '../lib/api';
 
 interface Workout {
@@ -14,15 +16,17 @@ interface Workout {
   rating?: number;
   notes?: string;
   status?: string;
-  exercises: any[];
+  exercises: { exerciseId?: string; exercise?: { id: string; name: string; nameUk?: string }; customName?: string; sets?: number; reps?: number; weight?: number }[];
 }
 
 export default function WorkoutsPage() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('list');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarWorkouts, setCalendarWorkouts] = useState<Record<string, Workout[]>>({});
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; id: string | null; loading: boolean }>({ show: false, id: null, loading: false });
 
   useEffect(() => {
     fetchWorkouts();
@@ -43,25 +47,31 @@ export default function WorkoutsPage() {
 
   const fetchWorkouts = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const data = await api.getWorkouts({ limit: '100' });
-      setWorkouts(data.workouts || []);
-    } catch (error) {
-      console.error('Error fetching workouts:', error);
+      const data = await api.getWorkouts({ limit: '100' }) as { workouts?: Workout[] };
+      setWorkouts(data?.workouts ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Помилка завантаження тренувань');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Видалити це тренування?')) return;
+  const handleDeleteClick = (workoutId: string) => {
+    setDeleteModal({ show: true, id: workoutId, loading: false });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.id) return;
+    setDeleteModal(prev => ({ ...prev, loading: true }));
     try {
-      await api.deleteWorkout(id);
-      setWorkouts(workouts.filter(w => w.id !== id));
-    } catch (error) {
-      console.error('Error deleting workout:', error);
-      alert('Не вдалося видалити тренування');
+      await api.deleteWorkout(deleteModal.id);
+      setWorkouts(workouts.filter(w => w.id !== deleteModal.id));
+      setDeleteModal({ show: false, id: null, loading: false });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Помилка видалення тренування');
+      setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -172,6 +182,11 @@ export default function WorkoutsPage() {
 
         <main className="flex-grow-1" style={{ position: 'relative' }}>
           <Container className="py-5" style={{ position: 'relative', zIndex: 1 }}>
+            {error && (
+              <Alert variant="danger" dismissible onClose={() => setError(null)}>
+                {error}
+              </Alert>
+            )}
             <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
               <div>
                 <h1 className="mb-2">Мої тренування</h1>
@@ -180,42 +195,14 @@ export default function WorkoutsPage() {
               <div className="d-flex gap-2 flex-wrap">
                 <Button 
                   variant="outline-warning" 
-                  onClick={async () => {
-                    const token = localStorage.getItem('token');
-                    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/workouts/excel`;
-                    const response = await fetch(url, {
-                      headers: {
-                        'Authorization': `Bearer ${token}`
-                      }
-                    });
-                    const blob = await response.blob();
-                    const downloadUrl = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = `trenuvannya_${new Date().toISOString().split('T')[0]}.xlsx`;
-                    link.click();
-                  }}
+                  onClick={() => api.downloadExport('workouts/excel', `trenuvannya_${new Date().toISOString().split('T')[0]}.xlsx`).catch((e) => setError(e instanceof Error ? e.message : 'Помилка завантаження'))}
                 >
                   <i className="bi bi-file-earmark-spreadsheet me-2"></i>
                   Excel
                 </Button>
                 <Button 
                   variant="outline-danger" 
-                  onClick={async () => {
-                    const token = localStorage.getItem('token');
-                    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/workouts/pdf`;
-                    const response = await fetch(url, {
-                      headers: {
-                        'Authorization': `Bearer ${token}`
-                      }
-                    });
-                    const blob = await response.blob();
-                    const downloadUrl = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = `trenuvannya_${new Date().toISOString().split('T')[0]}.pdf`;
-                    link.click();
-                  }}
+                  onClick={() => api.downloadExport('workouts/pdf', `trenuvannya_${new Date().toISOString().split('T')[0]}.pdf`).catch((e) => setError(e instanceof Error ? e.message : 'Помилка завантаження'))}
                 >
                   <i className="bi bi-file-pdf me-2"></i>
                   PDF
@@ -275,21 +262,26 @@ export default function WorkoutsPage() {
                                   )}
                                 </div>
                               </div>
-                              <Button
-                                variant="link"
-                                size="sm"
-                                className="text-danger"
-                                onClick={() => handleDelete(workout.id)}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </Button>
+                              <div className="d-flex gap-1">
+                                <Link href={`/workouts/${workout.id}/edit`} className="btn btn-link btn-sm text-warning p-0 me-1">
+                                  <i className="bi bi-pencil"></i>
+                                </Link>
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  className="text-danger"
+                                  onClick={() => handleDeleteClick(workout.id)}
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </Button>
+                              </div>
                             </div>
 
                             {workout.exercises && workout.exercises.length > 0 && (
                               <div className="mb-3">
                                 <h6 className="fw-bold mb-2" style={{ color: '#f5f5f5' }}>Вправи ({workout.exercises.length}):</h6>
                                 <div className="small">
-                                  {workout.exercises.slice(0, 3).map((we: any, idx: number) => (
+                                  {workout.exercises.slice(0, 3).map((we: Workout['exercises'][0], idx: number) => (
                                     <div key={idx} className="mb-1" style={{ color: '#f5f5f5', fontWeight: 500 }}>
                                       • {we.exercise?.nameUk || we.exercise?.name || we.customName || 'Вправа'}
                                       {we.sets && we.reps && ` - ${we.sets}x${we.reps}`}
@@ -371,14 +363,19 @@ export default function WorkoutsPage() {
                                         </small>
                                       )}
                                     </div>
-                                    <Button
-                                      variant="link"
-                                      size="sm"
-                                      className="text-danger"
-                                      onClick={() => handleDelete(workout.id)}
-                                    >
-                                      <i className="bi bi-trash"></i>
-                                    </Button>
+                                    <div className="d-flex gap-1">
+                                      <Link href={`/workouts/${workout.id}/edit`} className="btn btn-link btn-sm text-warning p-0 me-1">
+                                        <i className="bi bi-pencil"></i>
+                                      </Link>
+                                      <Button
+                                        variant="link"
+                                        size="sm"
+                                        className="text-danger"
+                                        onClick={() => handleDeleteClick(workout.id)}
+                                      >
+                                        <i className="bi bi-trash"></i>
+                                      </Button>
+                                    </div>
                                   </div>
                                 </Card.Body>
                               </Card>
@@ -393,6 +390,17 @@ export default function WorkoutsPage() {
             </Tabs>
           </Container>
         </main>
+
+        <ConfirmModal
+          show={deleteModal.show}
+          title="Видалити тренування"
+          message="Ви впевнені, що хочете видалити це тренування?"
+          confirmLabel="Видалити"
+          variant="danger"
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteModal({ show: false, id: null, loading: false })}
+          loading={deleteModal.loading}
+        />
 
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>

@@ -24,21 +24,29 @@ start.bat
 
 ### 3. Налаштувати базу даних
 
-1. Створити `.env` в `backend/`:
+1. Створити `.env` в `backend/` (скопіювати з `backend/.env.example`):
    ```
    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fitness_trainer?schema=public"
+   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
    PORT=5000
    CORS_ORIGIN="http://localhost:3000"
    ```
 
-2. Запустити міграції та seed (створює користувача):
+2. Опціонально: створити `frontend/.env.local` з `NEXT_PUBLIC_API_URL=http://localhost:5000` для production.
+
+3. Запустити міграції та seed (створює користувача user@fitness.local / default-password):
    ```bash
    cd backend
    npm run prisma:migrate
    npm run prisma:seed
    ```
 
-### 4. Відкрити браузер
+### 4. Вхід
+
+- Email: `user@fitness.local`
+- Пароль: `default-password`
+
+### 5. Відкрити браузер
 
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:5000
@@ -56,12 +64,12 @@ start.bat
 - 🧮 Калькулятори (ІМТ, BMR, TDEE, WHR, макроелементи, пульс, вода)
 - 🏆 Система досягнень (ачивки)
 - 📈 Візуалізація прогресу через графіки
+- 📄 Експорт даних (PDF/Excel) для тренувань та харчування
 
 ### ⏳ Опціонально (не реалізовано)
 
 - 🏋️ Програми тренувань
 - 🤖 AI-рекомендації (ML сервіс)
-- 📄 Експорт даних (PDF/Excel)
 - 📱 PWA функціонал
 
 ## 🛠️ Технології
@@ -102,9 +110,9 @@ DPFah/2/
 - `rejections.log` - необроблені проміси
 
 Сервер автоматично:
-- ✅ Перепідключається до БД при збоях
 - ✅ Коректно завершує роботу (graceful shutdown)
 - ✅ Логує всі операції та помилки
+- ✅ Helmet та rate limiting для безпеки
 
 ---
 

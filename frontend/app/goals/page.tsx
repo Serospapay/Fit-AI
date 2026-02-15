@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Container, Row, Col, Card, Button, Form, Modal, ProgressBar, Badge, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
+import ConfirmModal from '../components/ConfirmModal';
 import { api } from '../lib/api';
 
 interface Goal {
@@ -30,9 +32,11 @@ export default function GoalsPage() {
     description: '',
     category: 'custom',
     targetValue: '',
+    currentValue: '',
     unit: '',
     targetDate: '',
   });
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; id: string | null; loading: boolean }>({ show: false, id: null, loading: false });
 
   useEffect(() => {
     fetchGoals();
@@ -40,8 +44,8 @@ export default function GoalsPage() {
 
   const fetchGoals = async () => {
     try {
-      const data = await api.getGoals();
-      setGoals(data.goals || []);
+      const data = await api.getGoals() as { goals?: Goal[] };
+      setGoals(data?.goals ?? []);
     } catch (error) {
       console.error('Error fetching goals:', error);
     } finally {
@@ -56,6 +60,7 @@ export default function GoalsPage() {
       description: '',
       category: 'custom',
       targetValue: '',
+      currentValue: '',
       unit: '',
       targetDate: '',
     });
@@ -69,6 +74,7 @@ export default function GoalsPage() {
       description: goal.description || '',
       category: goal.category,
       targetValue: goal.targetValue?.toString() || '',
+      currentValue: goal.currentValue?.toString() ?? '',
       unit: goal.unit || '',
       targetDate: goal.targetDate ? new Date(goal.targetDate).toISOString().split('T')[0] : '',
     });
@@ -77,11 +83,14 @@ export default function GoalsPage() {
 
   const handleSave = async () => {
     try {
-      const data = {
+      const data: Record<string, unknown> = {
         ...formData,
         targetValue: formData.targetValue ? parseFloat(formData.targetValue) : null,
         targetDate: formData.targetDate || null,
       };
+      if (formData.currentValue !== '') {
+        data.currentValue = parseFloat(formData.currentValue);
+      }
 
       if (editingGoal) {
         await api.updateGoal(editingGoal.id, data);
@@ -93,19 +102,25 @@ export default function GoalsPage() {
       fetchGoals();
     } catch (error) {
       console.error('Error saving goal:', error);
-      alert('Помилка збереження цілі');
+      toast.error('Помилка збереження цілі');
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Ви впевнені, що хочете видалити цю ціль?')) return;
+  const handleDeleteClick = (goalId: string) => {
+    setDeleteModal({ show: true, id: goalId, loading: false });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.id) return;
+    setDeleteModal(prev => ({ ...prev, loading: true }));
     try {
-      await api.deleteGoal(id);
+      await api.deleteGoal(deleteModal.id);
       fetchGoals();
+      setDeleteModal({ show: false, id: null, loading: false });
     } catch (error) {
       console.error('Error deleting goal:', error);
-      alert('Помилка видалення цілі');
+      toast.error('Помилка видалення цілі');
+      setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -207,7 +222,7 @@ export default function GoalsPage() {
                                   <Button
                                     variant="outline-danger"
                                     size="sm"
-                                    onClick={() => handleDelete(goal.id)}
+                                    onClick={() => handleDeleteClick(goal.id)}
                                   >
                                     <i className="bi bi-trash"></i>
                                   </Button>
@@ -263,7 +278,7 @@ export default function GoalsPage() {
                                 <Button
                                   variant="outline-danger"
                                   size="sm"
-                                  onClick={() => handleDelete(goal.id)}
+                                  onClick={() => handleDeleteClick(goal.id)}
                                 >
                                   <i className="bi bi-trash"></i>
                                 </Button>
@@ -325,9 +340,14 @@ export default function GoalsPage() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label style={{ color: '#f5f5f5' }}>Категорія</Form.Label>
+            <Form.Group className="mb-3" controlId="goal-category">
+              <Form.Label id="goal-category-label" htmlFor="goal-category" style={{ color: '#f5f5f5' }}>Категорія</Form.Label>
               <Form.Select
+                id="goal-category"
+                name="category"
+                aria-labelledby="goal-category-label"
+                aria-label="Категорія цілі"
+                title="Категорія цілі"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
@@ -349,6 +369,18 @@ export default function GoalsPage() {
                 placeholder="100"
                 style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
               />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label style={{ color: '#f5f5f5' }}>Поточне значення</Form.Label>
+              <Form.Control
+                type="number"
+                value={formData.currentValue}
+                onChange={(e) => setFormData({ ...formData, currentValue: e.target.value })}
+                placeholder="0"
+                style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
+              />
+              <Form.Text className="text-muted">Поточний прогрес для відстеження цілі</Form.Text>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -382,6 +414,17 @@ export default function GoalsPage() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ConfirmModal
+        show={deleteModal.show}
+        title="Видалити ціль"
+        message="Ви впевнені, що хочете видалити цю ціль?"
+        confirmLabel="Видалити"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteModal({ show: false, id: null, loading: false })}
+        loading={deleteModal.loading}
+      />
     </>
   );
 }

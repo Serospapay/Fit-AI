@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Card, Spinner, Badge, ProgressBar } from 'react-bootstrap';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
@@ -12,7 +12,7 @@ interface Stats {
   totalWorkouts: number;
   avgDuration: number;
   avgRating: number;
-  mostExercised: any[];
+  mostExercised: { exerciseName?: string; exerciseNameUk?: string; count: number }[];
   weekWorkouts: number;
   weekAvgDuration: number;
   prevWeekWorkouts?: number;
@@ -23,10 +23,10 @@ interface Stats {
   prevMonthAvgDuration?: number;
   workoutStreak: number;
   exerciseTypeStats: { [key: string]: number };
-  recentWorkouts: any[];
+  recentWorkouts: { date: string; rating?: number; duration?: number }[];
   workoutsPerWeek?: { [key: string]: number };
   achievements?: Achievement[];
-  weeklyChartData?: any[];
+  weeklyChartData?: { week: string; workouts: number }[];
 }
 
 interface Achievement {
@@ -44,8 +44,8 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState<{ text: string; author?: string } | null>(null);
-  const [goals, setGoals] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [goals, setGoals] = useState<{ id: string; title?: string; targetValue?: number; currentValue?: number; unit?: string }[]>([]);
+  const [recommendations, setRecommendations] = useState<{ id: string; type?: string; title?: string; message?: string }[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   const fetchQuote = async () => {
     try {
-      const quoteData = await api.getRandomQuote();
+      const quoteData = await api.getRandomQuote() as { text: string; author?: string } | null;
       setQuote(quoteData);
     } catch (error) {
       console.error('Error fetching quote:', error);
@@ -65,8 +65,8 @@ export default function DashboardPage() {
 
   const fetchGoals = async () => {
     try {
-      const data = await api.getGoals('active');
-      setGoals(data.goals || []);
+      const data = await api.getGoals('active') as { goals?: { id: string; title?: string; targetValue?: number; currentValue?: number; unit?: string }[] };
+      setGoals(data?.goals ?? []);
     } catch (error) {
       console.error('Error fetching goals:', error);
     }
@@ -76,8 +76,8 @@ export default function DashboardPage() {
     try {
       // Генеруємо рекомендації автоматично при відкритті Dashboard
       await api.generateRecommendations();
-      const data = await api.getRecommendations(false, 3);
-      setRecommendations(data.recommendations || []);
+      const data = await api.getRecommendations(false, 3) as { recommendations?: { id: string; type?: string; title?: string; message?: string }[] };
+      setRecommendations(data?.recommendations ?? []);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
     }
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                     <div className="d-flex align-items-start gap-3">
                       <div className="flex-grow-1">
                         <p className="mb-2" style={{ fontSize: '1.1rem', fontStyle: 'italic', color: '#f5f5f5', fontFamily: 'var(--font-roboto-condensed)' }}>
-                          "{quote.text}"
+                          &ldquo;{quote.text}&rdquo;
                         </p>
                         {quote.author && (
                           <p className="mb-0 text-end" style={{ color: '#d4af37', fontFamily: 'var(--font-oswald)', fontSize: '0.9rem' }}>
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                         </h5>
                         {stats.exerciseTypeStats && Object.keys(stats.exerciseTypeStats).length > 0 ? (
                           <div>
-                            {Object.entries(stats.exerciseTypeStats).map(([type, count]: [string, any]) => (
+                            {Object.entries(stats.exerciseTypeStats).map(([type, count]: [string, number]) => (
                               <div key={type} className="mb-2">
                                 <div className="d-flex justify-content-between mb-1">
                                   <span style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5' }}>{getTypeLabelUk(type)}</span>
@@ -413,7 +413,7 @@ export default function DashboardPage() {
                                   <div 
                                     className={`bg-${getTypeColor(type)}`}
                                     style={{ 
-                                      width: `${(count / Object.values(stats.exerciseTypeStats).reduce((a: any, b: any) => a + b, 0)) * 100}%` 
+                                      width: `${(count / Object.values(stats.exerciseTypeStats).reduce((a: number, b: number) => a + b, 0)) * 100}%` 
                                     }}
                                   ></div>
                                 </div>
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                           >
                             <div className="d-flex align-items-center gap-2 mb-1">
                               <span style={{ fontSize: '1.5rem', filter: achievement.unlocked ? 'none' : 'grayscale(100%)' }}>
-                                {achievement.icon}
+                                <i className={achievement.icon} />
                               </span>
                               <h6 className="mb-0" style={{ 
                                 fontFamily: 'var(--font-oswald)', 

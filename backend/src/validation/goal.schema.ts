@@ -47,6 +47,7 @@ export const createGoalSchema = z.object({
     .nullable(),
   category: goalCategoryEnum,
   targetValue: nullableNumber,
+  currentValue: nullableNumber,
   unit: z
     .string()
     .trim()

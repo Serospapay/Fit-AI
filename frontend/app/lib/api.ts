@@ -1,4 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = API_BASE.endsWith('/api') ? API_BASE : `${API_BASE.replace(/\/$/, '')}/api`;
+
+export const getApiBaseUrl = () => API_BASE;
+export const getApiUrl = () => API_URL;
 
 // Types
 interface ApiError {
@@ -28,17 +32,17 @@ interface WorkoutStats {
   weekWorkouts: number;
   monthWorkouts: number;
   workoutStreak: number;
-  recentWorkouts: any[];
-  achievements?: any[];
-  weeklyChartData?: any[];
+  recentWorkouts: { date: string; rating?: number; duration?: number }[];
+  achievements?: { id: string; name: string; unlocked: boolean }[];
+  weeklyChartData?: { week: string; workouts: number }[];
 }
 
 interface NutritionLog {
   id: string;
   date: string;
   mealType: string;
-  items: any[];
-  totals?: any;
+  items: { name?: string; nameUk?: string; amount?: number; calories?: number; protein?: number; carbs?: number; fat?: number }[];
+  totals?: { calories?: number; protein?: number; carbs?: number; fat?: number };
 }
 
 interface NutritionResponse {
@@ -85,13 +89,28 @@ export interface ReminderPayload {
   notificationChannel?: 'browser' | 'push' | 'email';
 }
 
-// Helper function to handle API responses
+function clearAuthAndRedirect() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  }
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
+    if (res.status === 401) {
+      clearAuthAndRedirect();
+    }
     const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || `HTTP error! status: ${res.status}`);
+    const msg = error.message || error.error || `HTTP error! status: ${res.status}`;
+    throw new Error(msg);
   }
   return res.json();
+}
+
+export function logout() {
+  clearAuthAndRedirect();
 }
 
 export const api = {
@@ -109,16 +128,44 @@ export const api = {
 
   // Workouts
   getWorkouts: async (filters?: Record<string, string>) => {
+    const token = localStorage.getItem('token');
     const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_URL}/workouts?${params}`);
+    const res = await fetch(`${API_URL}/workouts?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return handleResponse(res);
   },
 
-  createWorkout: async (data: any) => {
+  getWorkout: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workouts/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return handleResponse(res);
+  },
+
+  createWorkout: async (data: Record<string, unknown>) => {
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/workouts`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  updateWorkout: async (id: string, data: Record<string, unknown>) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/workouts/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(data)
     });
@@ -126,8 +173,13 @@ export const api = {
   },
 
   deleteWorkout: async (id: string) => {
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/workouts/${id}`, {
       method: 'DELETE'
+      ,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
     if (!res.ok) {
       const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
@@ -137,23 +189,56 @@ export const api = {
   },
 
   getWorkoutStats: async (days?: number): Promise<WorkoutStats> => {
+    const token = localStorage.getItem('token');
     const url = days ? `${API_URL}/workouts/stats?days=${days}` : `${API_URL}/workouts/stats`;
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return handleResponse<WorkoutStats>(res);
   },
 
   // Nutrition
   getNutritionLogs: async (filters?: Record<string, string>): Promise<NutritionResponse> => {
+    const token = localStorage.getItem('token');
     const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_URL}/nutrition?${params}`);
+    const res = await fetch(`${API_URL}/nutrition?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return handleResponse<NutritionResponse>(res);
   },
 
-  createNutritionLog: async (data: any) => {
+  getNutritionLog: async (id: string) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/nutrition/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return handleResponse(res);
+  },
+
+  createNutritionLog: async (data: Record<string, unknown>) => {
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/nutrition`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+
+  updateNutritionLog: async (id: string, data: Record<string, unknown>) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/nutrition/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(data)
     });
@@ -161,8 +246,13 @@ export const api = {
   },
 
   deleteNutritionLog: async (id: string) => {
+    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/nutrition/${id}`, {
       method: 'DELETE'
+      ,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
     if (!res.ok) {
       const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
@@ -231,7 +321,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  createGoal: async (data: any) => {
+  createGoal: async (data: Record<string, unknown>) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/goals`, {
       method: 'POST',
@@ -244,7 +334,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  updateGoal: async (id: string, data: any) => {
+  updateGoal: async (id: string, data: Record<string, unknown>) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/goals/${id}`, {
       method: 'PUT',
@@ -283,7 +373,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  createWorkoutTemplate: async (data: any) => {
+  createWorkoutTemplate: async (data: Record<string, unknown>) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/workout-templates`, {
       method: 'POST',
@@ -296,7 +386,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  updateWorkoutTemplate: async (id: string, data: any) => {
+  updateWorkoutTemplate: async (id: string, data: Record<string, unknown>) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/workout-templates/${id}`, {
       method: 'PUT',
@@ -437,5 +527,69 @@ export const api = {
       throw new Error(error.error || 'Failed to delete recommendation');
     }
     return true;
+  },
+
+  // Auth
+  login: async (email: string, password: string): Promise<{ user: ProfileData; token: string }> => {
+    const url = `${API_URL}/auth/login`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const code = data.code || '';
+      const msg = data.message || data.error || (res.status === 401 ? 'Невірний email або пароль' : 'Помилка входу');
+      const full = code ? `${msg} [${code}]` : msg;
+      const err = new Error(full) as Error & { status?: number; code?: string; raw?: unknown };
+      err.status = res.status;
+      err.code = code;
+      err.raw = data;
+      throw err;
+    }
+    return data;
+  },
+
+  checkConnection: async (): Promise<{ ok: boolean; health?: unknown; error?: string }> => {
+    try {
+      const healthRes = await fetch(`${API_URL.replace('/api', '')}/api/health`);
+      const health = await healthRes.json().catch(() => ({}));
+      return { ok: healthRes.ok, health };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : String(e) };
+    }
+  },
+
+  register: async (payload: { email: string; password: string; name?: string }): Promise<{ user: ProfileData; token: string }> => {
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || 'Помилка реєстрації');
+    }
+    return result;
+  },
+
+  // Export (download file)
+  downloadExport: async (path: string, filename: string): Promise<void> => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/export/${path}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      const error: ApiError = await res.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.message || error.error || 'Помилка завантаження');
+    }
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 };

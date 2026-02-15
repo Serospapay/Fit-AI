@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 import GymPostersBackground from '../../components/GymPostersBackground';
@@ -19,23 +20,33 @@ interface Food {
 }
 
 export default function NewNutritionPage() {
+  const router = useRouter();
   const [foods, setFoods] = useState<Food[]>([]);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = useState<{ foodId: string; food: Food; amount: number; customName: string; calories: number; protein: number; carbs: number; fat: number }[]>([]);
   const [nutritionData, setNutritionData] = useState({
     date: new Date().toISOString().split('T')[0],
     mealType: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchDebounced, setSearchDebounced] = useState('');
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearchDebounced(searchQuery), 350);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
 
   useEffect(() => {
     fetchFoods();
-  }, []);
+  }, [searchDebounced]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchFoods = async () => {
     try {
-      const data = await api.getFoods();
-      setFoods(data.foods || []);
+      const filters: Record<string, string> = { limit: '100' };
+      if (searchDebounced.trim()) filters.search = searchDebounced.trim();
+      const data = await api.getFoods(filters) as { foods?: Food[] };
+      setFoods(data?.foods ?? []);
     } catch (error: unknown) {
       console.error('Error fetching foods:', error);
       setError((error as Error).message || 'Помилка завантаження продуктів');
@@ -60,12 +71,12 @@ export default function NewNutritionPage() {
     setSelectedItems(selectedItems.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: string, value: string | number) => {
     const updated = [...selectedItems];
     const item = updated[index];
     
     if (field === 'amount' || field === 'customName' || field === 'calories' || field === 'protein' || field === 'carbs' || field === 'fat') {
-      item[field] = value;
+      (item as Record<string, unknown>)[field] = value;
     } else if (field === 'foodId') {
       const food = foods.find(f => f.id === value);
       if (food) {
@@ -76,7 +87,7 @@ export default function NewNutritionPage() {
 
     // Recalculate macros if amount or food changed (only if using food from DB)
     if ((field === 'amount' || field === 'foodId') && item.food && !item.customName) {
-      const multiplier = parseFloat(item.amount) / 100;
+      const multiplier = Number(item.amount) / 100;
       item.calories = Math.round(item.food.calories * multiplier);
       item.protein = Math.round((item.food.protein || 0) * multiplier);
       item.carbs = Math.round((item.food.carbs || 0) * multiplier);
@@ -118,7 +129,7 @@ export default function NewNutritionPage() {
         items: selectedItems.map((item) => ({
           name: item.customName || item.food.name,
           nameUk: item.food.nameUk || null,
-          amount: parseFloat(item.amount),
+          amount: Number(item.amount),
           calories: item.calories || 0,
           protein: item.protein || 0,
           carbs: item.carbs || 0,
@@ -128,9 +139,9 @@ export default function NewNutritionPage() {
       };
 
       await api.createNutritionLog(logData);
-      window.location.href = '/nutrition';
-    } catch (err: any) {
-      setError(err.message || 'Помилка збереження запису');
+      router.push('/nutrition');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : null) || 'Помилка збереження запису');
     } finally {
       setLoading(false);
     }
@@ -185,6 +196,8 @@ export default function NewNutritionPage() {
                         onChange={(e) => setNutritionData({ ...nutritionData, mealType: e.target.value })}
                         required
                         style={{ color: '#ffffff', fontWeight: 500 }}
+                        aria-label="Тип прийому їжі"
+                        title="Тип прийому їжі"
                       >
                         <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>Оберіть тип</option>
                         <option value="breakfast" style={{ background: '#1a1a1a', color: '#ffffff' }}>Сніданок</option>
@@ -203,6 +216,15 @@ export default function NewNutritionPage() {
               <Card.Body>
                 <h5 className="mb-4" style={{ color: '#ffffff', fontWeight: 700 }}>Продукти</h5>
                 
+                <Form.Control
+                  type="search"
+                  placeholder="Пошук продуктів..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="mb-3"
+                  style={{ color: '#ffffff', fontWeight: 500 }}
+                />
+                
                 <Form.Select
                   className="mb-4"
                   onChange={(e) => {
@@ -210,6 +232,8 @@ export default function NewNutritionPage() {
                     if (food) addFood(food);
                   }}
                   style={{ color: '#ffffff', fontWeight: 500 }}
+                  aria-label="Виберіть продукт"
+                  title="Виберіть продукт"
                 >
                   <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>+ Додати продукт</option>
                   {foods.map(food => (

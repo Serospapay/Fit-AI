@@ -1,37 +1,36 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Container, Navbar, Nav, NavDropdown, Badge } from 'react-bootstrap';
 import GymLogo from './GymLogo';
-import { api } from '../lib/api';
+import { api, logout } from '../lib/api';
 
 export default function ModernNavbar() {
   const [expanded, setExpanded] = useState(false);
-  const [pathname, setPathname] = useState('/dashboard');
+  const pathname = usePathname() ?? '/dashboard';
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setPathname(window.location.pathname);
-      
-      // Перевірити чи користувач авторизований
-      const token = localStorage.getItem('token');
-      if (token) {
-        fetchUnreadCount();
-      }
-    }
+    if (typeof window === 'undefined' || !localStorage.getItem('token')) return;
+    let cancelled = false;
+    api.getUnreadRecommendationsCount()
+      .then((data) => {
+        if (!cancelled) setUnreadCount((data as { count?: number })?.count ?? 0);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
-  const fetchUnreadCount = async () => {
-    try {
-      const data = await api.getUnreadRecommendationsCount();
-      setUnreadCount(data.count || 0);
-    } catch (error) {
-      // Ігноруємо помилки (можливо користувач не авторизований)
-    }
-  };
+  const isLanding = pathname === '/';
 
-  const navItems = [
+  const landingNavItems = [
+    { href: '#features', label: 'Можливості', icon: 'bi-grid-3x3-gap' },
+    { href: '#how-it-works', label: 'Як це працює', icon: 'bi-lightning' },
+    { href: '/calculators', label: 'Калькулятори', icon: 'bi-calculator' },
+  ];
+
+  const appNavItems = [
     { href: '/dashboard', label: 'Панель', icon: 'bi-speedometer2' },
     { href: '/workouts', label: 'Тренування', icon: 'bi-calendar-check' },
     { href: '/nutrition', label: 'Харчування', icon: 'bi-apple' },
@@ -39,7 +38,8 @@ export default function ModernNavbar() {
     { href: '/goals', label: 'Цілі', icon: 'bi-bullseye' },
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const navItems = isLanding ? landingNavItems : appNavItems;
+  const isActive = (href: string) => !href.startsWith('#') && pathname === href;
 
   return (
     <Navbar 
@@ -61,7 +61,7 @@ export default function ModernNavbar() {
     >
       <Container>
         <Navbar.Brand 
-          href="/dashboard" 
+          href={isLanding ? '/' : '/dashboard'} 
           className="d-flex align-items-center gap-2 brand-link"
           style={{
             fontFamily: 'var(--font-oswald)',
@@ -124,6 +124,41 @@ export default function ModernNavbar() {
               </Nav.Link>
             ))}
 
+            {isLanding ? (
+              <>
+                <Nav.Link
+                  href="/login"
+                  className="nav-link-modern"
+                  style={{
+                    color: '#ccc',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.95rem',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                  }}
+                >
+                  <i className="bi bi-box-arrow-in-right me-2"></i>
+                  Увійти
+                </Nav.Link>
+                <Nav.Link
+                  href="/register"
+                  className="nav-link-modern"
+                  style={{
+                    color: '#0d0d0d',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.95rem',
+                    background: '#d4af37',
+                    border: '1px solid #d4af37',
+                    fontWeight: 600,
+                  }}
+                >
+                  <i className="bi bi-person-plus me-2"></i>
+                  Почати безкоштовно
+                </Nav.Link>
+              </>
+            ) : (
+              <>
             <NavDropdown
               title={
                 <span className="d-flex align-items-center">
@@ -179,7 +214,18 @@ export default function ModernNavbar() {
                 <i className="bi bi-info-circle me-2"></i>
                 Про проект
               </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item
+                onClick={(e) => { e.preventDefault(); logout(); }}
+                href="#"
+                style={{ color: '#dc3545' }}
+              >
+                <i className="bi bi-box-arrow-right me-2"></i>
+                Вихід
+              </NavDropdown.Item>
             </NavDropdown>
+              </>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

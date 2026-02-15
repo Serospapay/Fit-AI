@@ -47,6 +47,11 @@ const prismaMockFactory = {
   quote: {
     findMany: jest.fn(),
   },
+  user: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+  },
 };
 
 type PrismaMock = typeof prismaMockFactory;

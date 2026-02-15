@@ -3,7 +3,9 @@ import { prisma } from '../lib/prisma';
 import { hashPassword, comparePassword, generateToken } from '../utils/auth';
 import logger from '../lib/logger';
 import { AuthRequest, ProfileUpdate } from '../types';
-import { handleControllerError } from '../utils/apiResponse';
+import { handleControllerError, sendError } from '../utils/apiResponse';
+import { loginSchema, registerSchema } from '../validation/auth.schema';
+import { config } from '../lib/config';
 
 /**
  * @swagger
@@ -59,11 +61,12 @@ import { handleControllerError } from '../utils/apiResponse';
  */
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    const parsed = registerSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const msg = parsed.error.issues.map((e: { message: string }) => e.message).join('; ');
+      return sendError(res, { statusCode: 400, error: 'Помилка валідації', message: msg });
     }
+    const { email, password, name } = parsed.data;
 
     // Перевірка чи користувач вже існує
     const existingUser = await prisma.user.findUnique({
@@ -148,31 +151,52 @@ export const register = async (req: Request, res: Response) => {
  *         description: Невірний email або пароль
  */
 export const login = async (req: Request, res: Response) => {
+  const logCtx = () => ({ email: req.body?.email ?? 'no-email' });
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    const parsed = loginSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const msg = parsed.error.issues.map((e: { message: string }) => e.message).join('; ');
+      logger.warn('LOGIN_VALIDATION_FAIL', { ...logCtx(), reason: msg, issues: parsed.error.issues });
+      return sendError(res, { statusCode: 400, error: 'Помилка валідації', message: msg });
     }
+    const { email, password } = parsed.data;
+    const normalizedEmail = email.trim().toLowerCase();
+    logger.info('LOGIN_ATTEMPT', { email: normalizedEmail, bodyKeys: Object.keys(req.body || {}) });
 
     // Пошук користувача
-    const user = await prisma.user.findUnique({
-      where: { email },
+    let user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
     });
 
+    // У development гарантуємо доступність demo-користувача без ручного seed
+    const isDemoLogin = normalizedEmail === 'demo@example.com';
+    if (!user && config.NODE_ENV !== 'production' && isDemoLogin) {
+      user = await prisma.user.create({
+        data: {
+          email: normalizedEmail,
+          passwordHash: await hashPassword('demo123'),
+          name: 'Тестовий користувач',
+        },
+      });
+      logger.info('LOGIN_DEMO_USER_AUTO_CREATED', { email: normalizedEmail, userId: user.id });
+    }
+
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      logger.warn('LOGIN_USER_NOT_FOUND', { email: normalizedEmail });
+      return res.status(401).json({ error: 'Invalid email or password', code: 'USER_NOT_FOUND' });
     }
 
     // Перевірка пароля
     const isValidPassword = await comparePassword(password, user.passwordHash);
 
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      logger.warn('LOGIN_BAD_PASSWORD', { email: normalizedEmail, userId: user.id });
+      return res.status(401).json({ error: 'Invalid email or password', code: 'BAD_PASSWORD' });
     }
 
     // Генерація токену
     const token = generateToken(user.id);
+    logger.info('LOGIN_SUCCESS', { email: normalizedEmail, userId: user.id });
 
     res.json({
       user: {
@@ -184,6 +208,7 @@ export const login = async (req: Request, res: Response) => {
       token,
     });
   } catch (error: unknown) {
+    logger.error('LOGIN_ERROR', { ...logCtx(), err: String(error), stack: error instanceof Error ? error.stack : undefined });
     return handleControllerError(res, error, {
       controller: 'AuthController',
       operation: 'login',

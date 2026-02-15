@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Card, Badge, Alert } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
+import { api } from '../lib/api';
 
 interface BMIResult {
   value: string;
@@ -57,6 +58,14 @@ interface CalculatorResults {
   waterIntake: number | null;
 }
 
+const goalMap: Record<string, string> = {
+  lose_weight: 'loss',
+  gain_muscle: 'gain',
+  maintain: 'maintain',
+  endurance: 'maintain',
+  definition: 'loss'
+};
+
 export default function CalculatorsPage() {
   const [formData, setFormData] = useState({
     age: '',
@@ -70,6 +79,28 @@ export default function CalculatorsPage() {
   });
   const [results, setResults] = useState<CalculatorResults | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profile = await api.getProfile();
+        if (profile) {
+          setFormData(prev => ({
+            ...prev,
+            age: profile.age?.toString() || prev.age,
+            gender: profile.gender || prev.gender,
+            weight: profile.weight?.toString() || prev.weight,
+            height: profile.height?.toString() || prev.height,
+            activityLevel: profile.activityLevel || prev.activityLevel,
+            goal: goalMap[profile.goal || ''] || prev.goal
+          }));
+        }
+      } catch {
+        // Користувач не авторизований - залишаємо порожні поля
+      }
+    };
+    loadProfile();
+  }, []);
 
   const activityMultipliers = {
     sedentary: 1.2,
@@ -236,10 +267,31 @@ export default function CalculatorsPage() {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<any>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setResults(null);
     setError(null);
+  };
+
+  const loadFromProfile = async () => {
+    try {
+      const profile = await api.getProfile();
+      if (profile) {
+        setFormData(prev => ({
+          ...prev,
+          age: profile.age?.toString() || prev.age,
+          gender: profile.gender || prev.gender,
+          weight: profile.weight?.toString() || prev.weight,
+          height: profile.height?.toString() || prev.height,
+          activityLevel: profile.activityLevel || prev.activityLevel,
+          goal: goalMap[profile.goal || ''] || prev.goal
+        }));
+        setResults(null);
+        setError(null);
+      }
+    } catch {
+      setError('Увійдіть в акаунт, щоб використати дані з профілю');
+    }
   };
 
   return (
@@ -263,7 +315,13 @@ export default function CalculatorsPage() {
             <Col lg={8}>
               <Card className="card-hover-lift mb-4">
                 <Card.Body className="p-4">
-                  <h5 className="mb-4" style={{ color: '#ffffff', fontWeight: 700 }}>Фізіологічні показники</h5>
+                  <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <h5 className="mb-0" style={{ color: '#ffffff', fontWeight: 700 }}>Фізіологічні показники</h5>
+                    <Button variant="outline-warning" size="sm" onClick={loadFromProfile}>
+                      <i className="bi bi-person-check me-1"></i>
+                      Використати дані з профілю
+                    </Button>
+                  </div>
                   
                   <Row className="g-3">
                     <Col md={6}>
@@ -290,6 +348,8 @@ export default function CalculatorsPage() {
                           value={formData.gender}
                           onChange={handleChange}
                           style={{ color: '#ffffff', fontWeight: 500 }}
+                          aria-label="Стать"
+                          title="Стать"
                         >
                           <option value="male" style={{ background: '#1a1a1a', color: '#ffffff' }}>Чоловік</option>
                           <option value="female" style={{ background: '#1a1a1a', color: '#ffffff' }}>Жінка</option>
@@ -369,6 +429,8 @@ export default function CalculatorsPage() {
                           value={formData.activityLevel}
                           onChange={handleChange}
                           style={{ color: '#ffffff', fontWeight: 500 }}
+                          aria-label="Рівень активності"
+                          title="Рівень активності"
                         >
                           <option value="sedentary" style={{ background: '#1a1a1a', color: '#ffffff' }}>Сидячий (мало або без фізичних навантажень)</option>
                           <option value="light" style={{ background: '#1a1a1a', color: '#ffffff' }}>Легка активність (1-3 дні на тиждень)</option>
@@ -387,10 +449,12 @@ export default function CalculatorsPage() {
                           value={formData.goal}
                           onChange={handleChange}
                           style={{ color: '#ffffff', fontWeight: 500 }}
+                          aria-label="Мета"
+                          title="Мета"
                         >
                           <option value="maintain" style={{ background: '#1a1a1a', color: '#ffffff' }}>Підтримка ваги</option>
                           <option value="loss" style={{ background: '#1a1a1a', color: '#ffffff' }}>Схуднення</option>
-                          <option value="gain" style={{ background: '#1a1a1a', color: '#ffffff' }}>Набір м'язів</option>
+                          <option value="gain" style={{ background: '#1a1a1a', color: '#ffffff' }}>Набір м&apos;язів</option>
                         </Form.Select>
                       </Form.Group>
                     </Col>
@@ -537,7 +601,7 @@ export default function CalculatorsPage() {
                               <Badge bg="warning" text="dark">{results.calorieTargets.loss} ккал</Badge>
                             </div>
                             <div className="d-flex justify-content-between align-items-center">
-                              <span>Набір м'язів (+300 ккал)</span>
+                              <span>Набір м&apos;язів (+300 ккал)</span>
                               <Badge bg="success">{results.calorieTargets.gain} ккал</Badge>
                             </div>
                           </div>

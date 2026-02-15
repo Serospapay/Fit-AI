@@ -121,7 +121,7 @@ const foods: any[] = [
 ];
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('Seeding database...');
 
   // Create default user if not exists
   const existingUser = await prisma.user.findUnique({
@@ -138,7 +138,7 @@ async function main() {
         name: 'Мій Профіль'
       }
     });
-    console.log('✅ Created default user');
+    console.log('Created default user');
   }
 
   // Seed exercises
@@ -152,7 +152,7 @@ async function main() {
     }
   }
 
-  console.log(`✅ Seeded ${exercises.length} exercises`);
+  console.log(`Seeded ${exercises.length} exercises`);
 
   // Seed foods
   for (const food of foods) {
@@ -165,13 +165,15 @@ async function main() {
     }
   }
 
-  console.log(`✅ Seeded ${foods.length} foods`);
+  console.log(`Seeded ${foods.length} foods`);
 
   // Seed quotes
   await seedQuotes();
 }
+
+main()
   .catch((e) => {
-    console.error('❌ Error seeding:', e);
+    console.error('Error seeding:', e);
     process.exit(1);
   })
   .finally(async () => {

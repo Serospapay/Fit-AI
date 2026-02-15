@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import {
   Container,
   Row,
@@ -18,20 +19,25 @@ import {
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
+import ConfirmModal from '../components/ConfirmModal';
 import { api, ReminderPayload } from '../lib/api';
 
 type RepeatFrequency = 'once' | 'daily' | 'weekly' | 'custom';
 
-interface Reminder extends ReminderPayload {
+interface Reminder {
   id: string;
+  type: string;
+  title: string;
   message?: string | null;
+  time: string;
   daysOfWeek: number[];
   enabled: boolean;
   startDate?: string | null;
-  repeatEndsAt?: string | null;
+  repeatFrequency?: string;
   repeatInterval?: number | null;
+  repeatEndsAt?: string | null;
   timezone?: string | null;
-  notificationChannel?: 'browser' | 'push' | 'email';
+  notificationChannel?: string;
 }
 
 interface ReminderFormState {
@@ -95,7 +101,7 @@ const computeNextOccurrences = (
   count: number
 ): Date[] => {
   const results: Date[] = [];
-  const frequency: RepeatFrequency = reminder.repeatFrequency || 'weekly';
+  const frequency: RepeatFrequency = (reminder.repeatFrequency as RepeatFrequency) || 'weekly';
   const interval = reminder.repeatInterval && reminder.repeatInterval > 0 ? reminder.repeatInterval : 1;
   const startDate = reminder.startDate ? new Date(reminder.startDate) : new Date();
   const base = setTimeOnDate(startDate, reminder.time);
@@ -229,6 +235,7 @@ export default function RemindersPage() {
     createInitialFormState(defaultTimezone)
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; id: string | null; loading: boolean }>({ show: false, id: null, loading: false });
 
   const notificationTimeouts = useRef<number[]>([]);
   const serviceWorkerRegistration = useRef<ServiceWorkerRegistration | null>(null);
@@ -252,13 +259,12 @@ export default function RemindersPage() {
     return () => {
       notificationTimeouts.current.forEach(timeoutId => window.clearTimeout(timeoutId));
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!loading) {
       scheduleReminders(reminders);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reminders, loading]);
 
   const setupNotifications = async () => {
@@ -281,8 +287,8 @@ export default function RemindersPage() {
 
   const fetchReminders = async () => {
     try {
-      const data = await api.getReminders();
-      const parsed: Reminder[] = (data.reminders || []).map((rem: Reminder) => ({
+      const data = await api.getReminders() as { reminders?: Reminder[] };
+      const parsed: Reminder[] = (data?.reminders ?? []).map((rem) => ({
         ...rem,
         daysOfWeek: Array.isArray(rem.daysOfWeek) ? rem.daysOfWeek : [],
         repeatInterval: rem.repeatInterval ?? 1,
@@ -381,7 +387,7 @@ export default function RemindersPage() {
       repeatInterval: reminder.repeatInterval && reminder.repeatInterval > 0 ? reminder.repeatInterval : 1,
       repeatEndsAt: reminder.repeatEndsAt ? reminder.repeatEndsAt.slice(0, 10) : '',
       timezone: reminder.timezone || defaultTimezone,
-      notificationChannel: reminder.notificationChannel || 'browser',
+      notificationChannel: (reminder.notificationChannel || 'browser') as 'browser' | 'push' | 'email',
     });
     setShowModal(true);
   };
@@ -400,19 +406,25 @@ export default function RemindersPage() {
       fetchReminders();
     } catch (error) {
       console.error('Error saving reminder:', error);
-      alert('Помилка збереження нагадування');
+      toast.error('Помилка збереження нагадування');
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Ви впевнені, що хочете видалити це нагадування?')) return;
+  const handleDeleteClick = (reminderId: string) => {
+    setDeleteModal({ show: true, id: reminderId, loading: false });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.id) return;
+    setDeleteModal(prev => ({ ...prev, loading: true }));
     try {
-      await api.deleteReminder(id);
+      await api.deleteReminder(deleteModal.id);
       fetchReminders();
+      setDeleteModal({ show: false, id: null, loading: false });
     } catch (error) {
       console.error('Error deleting reminder:', error);
-      alert('Помилка видалення нагадування');
+      toast.error('Помилка видалення нагадування');
+      setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -446,7 +458,7 @@ export default function RemindersPage() {
     if (Notification.permission !== 'granted') {
       const result = await Notification.requestPermission();
       if (result !== 'granted') {
-        alert('Для тесту потрібно надати дозвіл на сповіщення.');
+        toast.error('Для тесту потрібно надати дозвіл на сповіщення.');
         return;
       }
     }
@@ -548,7 +560,7 @@ export default function RemindersPage() {
                                       <Badge bg="primary">{getTypeLabel(reminder.type)}</Badge>
                                       <Badge bg="info">
                                         {formatFrequencyLabel(
-                                          reminder.repeatFrequency || 'weekly',
+                                          (reminder.repeatFrequency || 'weekly') as RepeatFrequency,
                                           reminder.repeatInterval || 1,
                                           reminder.daysOfWeek || []
                                         )}
@@ -576,7 +588,7 @@ export default function RemindersPage() {
                                     <Button
                                       variant="outline-danger"
                                       size="sm"
-                                      onClick={() => handleDelete(reminder.id)}
+                                      onClick={() => handleDeleteClick(reminder.id)}
                                     >
                                       <i className="bi bi-trash"></i>
                                     </Button>
@@ -664,7 +676,7 @@ export default function RemindersPage() {
                                   <Button
                                     variant="outline-danger"
                                     size="sm"
-                                    onClick={() => handleDelete(reminder.id)}
+                                    onClick={() => handleDeleteClick(reminder.id)}
                                   >
                                     <i className="bi bi-trash"></i>
                                   </Button>
@@ -706,11 +718,14 @@ export default function RemindersPage() {
         <Modal.Body style={{ background: '#1a1a1a' }}>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: '#f5f5f5' }}>Тип</Form.Label>
+              <Form.Label id="reminder-type-label" htmlFor="reminder-type" style={{ color: '#f5f5f5' }}>Тип</Form.Label>
               <Form.Select
+                id="reminder-type"
                 value={formData.type}
                 onChange={e => setFormData({ ...formData, type: e.target.value })}
                 style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
+                aria-label="Тип нагадування"
+                title="Тип нагадування"
               >
                 <option value="workout">Тренування</option>
                 <option value="nutrition">Харчування</option>
@@ -755,11 +770,14 @@ export default function RemindersPage() {
               </Col>
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label style={{ color: '#f5f5f5' }}>Таймзона</Form.Label>
+                  <Form.Label id="reminder-timezone-label" htmlFor="reminder-timezone" style={{ color: '#f5f5f5' }}>Таймзона</Form.Label>
                   <Form.Select
+                    id="reminder-timezone"
                     value={formData.timezone}
                     onChange={e => setFormData({ ...formData, timezone: e.target.value })}
                     style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
+                    aria-label="Таймзона"
+                    title="Таймзона"
                   >
                     {timezoneOptions.map(tz => (
                       <option key={tz} value={tz}>
@@ -785,8 +803,9 @@ export default function RemindersPage() {
             <Row className="g-3">
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label style={{ color: '#f5f5f5' }}>Частота</Form.Label>
+                  <Form.Label id="reminder-frequency-label" htmlFor="reminder-frequency" style={{ color: '#f5f5f5' }}>Частота</Form.Label>
                   <Form.Select
+                    id="reminder-frequency"
                     value={formData.repeatFrequency}
                     onChange={e =>
                       setFormData(prev => ({
@@ -795,6 +814,8 @@ export default function RemindersPage() {
                       }))
                     }
                     style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
+                    aria-label="Частота повторення"
+                    title="Частота повторення"
                   >
                     <option value="weekly">Щотижня</option>
                     <option value="daily">Щодня</option>
@@ -882,8 +903,9 @@ export default function RemindersPage() {
                 </Row>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ color: '#f5f5f5' }}>Канал сповіщень</Form.Label>
+                  <Form.Label id="reminder-channel-label" htmlFor="reminder-channel" style={{ color: '#f5f5f5' }}>Канал сповіщень</Form.Label>
                   <Form.Select
+                    id="reminder-channel"
                     value={formData.notificationChannel}
                     onChange={e =>
                       setFormData({
@@ -892,6 +914,8 @@ export default function RemindersPage() {
                       })
                     }
                     style={{ background: '#0d0d0d', color: '#f5f5f5', borderColor: '#333' }}
+                    aria-label="Канал сповіщень"
+                    title="Канал сповіщень"
                   >
                     <option value="browser">Браузер</option>
                     <option value="push" disabled>
@@ -944,6 +968,17 @@ export default function RemindersPage() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ConfirmModal
+        show={deleteModal.show}
+        title="Видалити нагадування"
+        message="Ви впевнені, що хочете видалити це нагадування?"
+        confirmLabel="Видалити"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteModal({ show: false, id: null, loading: false })}
+        loading={deleteModal.loading}
+      />
     </>
   );
 }

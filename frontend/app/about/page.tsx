@@ -7,21 +7,26 @@ import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
 import { api } from '../lib/api';
 
+interface ExerciseStats {
+  totalExercises?: number;
+  types?: unknown[];
+  muscleGroups?: unknown[];
+}
+
 export default function AboutPage() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<ExerciseStats | null>(null);
 
   useEffect(() => {
-    fetchStats();
+    let cancelled = false;
+    api.getExerciseOptions()
+      .then((data) => {
+        if (!cancelled) setStats(data as ExerciseStats);
+      })
+      .catch((error) => {
+        if (!cancelled) console.error('Error fetching stats:', error);
+      });
+    return () => { cancelled = true; };
   }, []);
-
-  const fetchStats = async () => {
-    try {
-      const data = await api.getExerciseOptions();
-      setStats(data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
 
   return (
     <>
@@ -90,7 +95,7 @@ export default function AboutPage() {
                         {stats.muscleGroups?.length || '7'}
                       </h2>
                       <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)' }}>
-                        Груп м'язів
+                        Груп м&apos;язів
                       </p>
                     </Card.Body>
                   </Card>
@@ -328,7 +333,7 @@ export default function AboutPage() {
                     </h3>
                     <div style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', lineHeight: '1.8', maxWidth: '800px', margin: '0 auto' }}>
                       <p className="mb-3">
-                        <strong>"Кишеньковий тренер"</strong> - це дипломна робота, присвячена дослідженню 
+                        <strong>&ldquo;Кишеньковий тренер&rdquo;</strong> - це дипломна робота, присвячена дослідженню 
                         можливостей інтеграції сучасних веб-технологій у сферу фітнесу та здорового способу життя.
                       </p>
                       <p className="mb-3">

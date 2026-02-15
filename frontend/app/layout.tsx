@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
+import RequireAuth from "./components/RequireAuth";
+import ErrorBoundary from "./components/ErrorBoundary";
+import ToastProvider from "./components/ToastProvider";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -22,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${inter.variable}`}>
-        {children}
+        <ErrorBoundary>
+          <RequireAuth>{children}</RequireAuth>
+        </ErrorBoundary>
+        <ToastProvider />
       </body>
     </html>
   );

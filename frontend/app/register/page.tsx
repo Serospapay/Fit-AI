@@ -1,12 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
+import GymPostersBackground from '../components/GymPostersBackground';
+import ModernNavbar from '../components/ModernNavbar';
+import { api } from '../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+      router.replace('/dashboard');
+    }
+  }, [router]);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,26 +34,13 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Помилка реєстрації');
-        return;
-      }
-
+      const data = await api.register(formData);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
       router.push('/dashboard');
       router.refresh();
     } catch (err) {
-      setError('Помилка підключення до сервера');
+      setError(err instanceof Error ? err.message : 'Помилка підключення до сервера');
     } finally {
       setLoading(false);
     }
@@ -53,11 +49,14 @@ export default function RegisterPage() {
   return (
     <>
       <BootstrapClient />
-      <div className="min-h-screen d-flex align-items-center bg-light">
+      <div className="min-h-screen bg-dark d-flex flex-column">
+        <GymPostersBackground />
+        <ModernNavbar />
+        <main className="flex-grow-1 d-flex align-items-center app-main">
         <Container>
           <Row className="justify-content-center">
             <Col md={6} lg={5}>
-              <Card className="border-0 shadow-lg">
+              <Card className="border-0 shadow-lg auth-card">
                 <Card.Body className="p-5">
                   <div className="text-center mb-4">
                     <h2 className="fw-bold mb-2">Створити профіль</h2>
@@ -72,13 +71,13 @@ export default function RegisterPage() {
 
                   <Form onSubmit={handleRegister}>
                     <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">Ім'я</Form.Label>
+                      <Form.Label className="fw-semibold">Ім&apos;я</Form.Label>
                       <Form.Control
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Ваше ім'я"
+                        placeholder="Ваше ім&apos;я"
                         required
                       />
                     </Form.Group>
@@ -129,14 +128,15 @@ export default function RegisterPage() {
               </Card>
 
               <div className="text-center mt-4">
-                <a href="/" className="text-decoration-none">
+                <Link href="/" className="text-decoration-none">
                   <i className="bi bi-arrow-left me-2"></i>
                   Повернутися на головну
-                </a>
+                </Link>
               </div>
             </Col>
           </Row>
         </Container>
+        </main>
       </div>
     </>
   );

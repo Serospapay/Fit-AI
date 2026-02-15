@@ -56,15 +56,15 @@ export default function ProfilePage() {
         activityLevel: data.activityLevel || '',
         goal: data.goal || ''
       });
-    } catch (error: any) {
-      console.error('Error fetching profile:', error);
-      setError(error.message || 'Помилка завантаження профілю');
+    } catch (err: unknown) {
+      console.error('Error fetching profile:', err);
+      setError((err instanceof Error ? err.message : null) || 'Помилка завантаження профілю');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<any>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(null);
     setSuccess(false);
@@ -104,7 +104,7 @@ export default function ProfilePage() {
           const user = JSON.parse(userStr);
           const updatedUser = { ...user, ...updatedProfile };
           localStorage.setItem('user', JSON.stringify(updatedUser));
-        } catch (e) {
+        } catch {
           // Ignore parse errors
         }
       }
@@ -116,7 +116,7 @@ export default function ProfilePage() {
     }
   };
 
-  const getGenderLabel = (gender: string | null) => {
+  const getGenderLabel = (gender: string | null | undefined) => {
     const labels: { [key: string]: string } = {
       male: 'Чоловік',
       female: 'Жінка',
@@ -125,7 +125,7 @@ export default function ProfilePage() {
     return labels[gender || ''] || 'Не вказано';
   };
 
-  const getActivityLabel = (level: string | null) => {
+  const getActivityLabel = (level: string | null | undefined) => {
     const labels: { [key: string]: string } = {
       sedentary: 'Сидячий (мало або без фізичних навантажень)',
       light: 'Легка активність (1-3 дні на тиждень)',
@@ -136,7 +136,7 @@ export default function ProfilePage() {
     return labels[level || ''] || 'Не вказано';
   };
 
-  const getGoalLabel = (goal: string | null) => {
+  const getGoalLabel = (goal: string | null | undefined) => {
     const labels: { [key: string]: string } = {
       lose_weight: 'Схуднути',
       gain_muscle: "Набрати м'язів",
@@ -205,13 +205,13 @@ export default function ProfilePage() {
 
                         <Col md={6}>
                           <Form.Group>
-                            <Form.Label className="fw-semibold" style={{ color: '#ffffff', fontWeight: 600 }}>Ім'я</Form.Label>
+                            <Form.Label className="fw-semibold" style={{ color: '#ffffff', fontWeight: 600 }}>Ім&apos;я</Form.Label>
                             <Form.Control
                               type="text"
                               name="name"
                               value={formData.name}
                               onChange={handleChange}
-                              placeholder="Ваше ім'я"
+                              placeholder="Ваше ім&apos;я"
                               style={{ color: '#ffffff', fontWeight: 500 }}
                             />
                           </Form.Group>
@@ -241,6 +241,8 @@ export default function ProfilePage() {
                               value={formData.gender}
                               onChange={handleChange}
                               style={{ color: '#ffffff', fontWeight: 500 }}
+                              aria-label="Стать"
+                              title="Стать"
                             >
                               <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>Оберіть стать</option>
                               <option value="male" style={{ background: '#1a1a1a', color: '#ffffff' }}>Чоловік</option>
@@ -300,6 +302,8 @@ export default function ProfilePage() {
                               value={formData.activityLevel}
                               onChange={handleChange}
                               style={{ color: '#ffffff', fontWeight: 500 }}
+                              aria-label="Рівень активності"
+                              title="Рівень активності"
                             >
                               <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>Оберіть рівень активності</option>
                               <option value="sedentary" style={{ background: '#1a1a1a', color: '#ffffff' }}>Сидячий (мало або без фізичних навантажень)</option>
@@ -319,10 +323,12 @@ export default function ProfilePage() {
                               value={formData.goal}
                               onChange={handleChange}
                               style={{ color: '#ffffff', fontWeight: 500 }}
+                              aria-label="Мета"
+                              title="Мета"
                             >
                               <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>Оберіть мету</option>
                               <option value="lose_weight" style={{ background: '#1a1a1a', color: '#ffffff' }}>Схуднути</option>
-                              <option value="gain_muscle" style={{ background: '#1a1a1a', color: '#ffffff' }}>Набрати м'язів</option>
+                              <option value="gain_muscle" style={{ background: '#1a1a1a', color: '#ffffff' }}>Набрати м&apos;язів</option>
                               <option value="maintain" style={{ background: '#1a1a1a', color: '#ffffff' }}>Підтримувати вагу</option>
                               <option value="endurance" style={{ background: '#1a1a1a', color: '#ffffff' }}>Розвиток витривалості</option>
                               <option value="definition" style={{ background: '#1a1a1a', color: '#ffffff' }}>Рельєфність</option>
@@ -370,7 +376,7 @@ export default function ProfilePage() {
                         </div>
                         
                         <div>
-                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Ім'я:</small>
+                          <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Ім&apos;я:</small>
                           <div style={{ color: '#ffffff', fontWeight: 500 }}>{profile?.name || 'Не вказано'}</div>
                         </div>
                         
@@ -381,7 +387,7 @@ export default function ProfilePage() {
                         
                         <div>
                           <small style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)' }}>Стать:</small>
-                          <div style={{ color: '#ffffff', fontWeight: 500 }}>{getGenderLabel(profile?.gender)}</div>
+                          <div style={{ color: '#ffffff', fontWeight: 500 }}>{getGenderLabel(profile?.gender ?? null)}</div>
                         </div>
                         
                         <div>

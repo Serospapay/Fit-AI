@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Alert } from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import { Container, Row, Col, Card, Button, Badge, Spinner } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
@@ -28,8 +29,8 @@ export default function RecommendationsPage() {
 
   const fetchRecommendations = async () => {
     try {
-      const data = await api.getRecommendations();
-      setRecommendations(data.recommendations || []);
+      const data = await api.getRecommendations() as { recommendations?: Recommendation[] };
+      setRecommendations(data?.recommendations ?? []);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
     } finally {
@@ -44,7 +45,7 @@ export default function RecommendationsPage() {
       await fetchRecommendations();
     } catch (error) {
       console.error('Error generating recommendations:', error);
-      alert('Помилка генерації рекомендацій');
+      toast.error('Помилка генерації рекомендацій');
     } finally {
       setGenerating(false);
     }
@@ -246,7 +247,7 @@ export default function RecommendationsPage() {
                       <i className="bi bi-lightbulb" style={{ fontSize: '4rem', color: '#e0e0e0' }}></i>
                       <h4 className="mt-3 mb-3" style={{ color: '#d4af37' }}>Поки немає рекомендацій</h4>
                       <p className="text-muted mb-4">
-                        Натисніть "Згенерувати нові", щоб отримати персоналізовані рекомендації на основі вашої статистики!
+                        Натисніть &ldquo;Згенерувати нові&rdquo;, щоб отримати персоналізовані рекомендації на основі вашої статистики!
                       </p>
                       <Button onClick={handleGenerate} disabled={generating} style={{ background: '#d4af37', border: 'none' }}>
                         {generating ? (

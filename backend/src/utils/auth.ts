@@ -1,7 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-
-const JWT_SECRET: string = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+import { config } from '../lib/config';
 
 export const hashPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, 10);
@@ -13,13 +12,12 @@ export const comparePassword = async (password: string, hash: string): Promise<b
 
 export const generateToken = (userId: string): string => {
   const payload = { userId };
-  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
-  return jwt.sign(payload, JWT_SECRET, { expiresIn } as jwt.SignOptions);
+  return jwt.sign(payload, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRES_IN } as jwt.SignOptions);
 };
 
 export const verifyToken = (token: string): { userId: string } | null => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, config.JWT_SECRET);
     if (typeof decoded === 'object' && decoded !== null && 'userId' in decoded) {
       return decoded as { userId: string };
     }

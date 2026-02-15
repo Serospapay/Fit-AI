@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { Container, Row, Col, Form, Button, Card, Spinner, Modal } from 'react-bootstrap';
 import BootstrapClient from '../../components/BootstrapClient';
 import GymPostersBackground from '../../components/GymPostersBackground';
@@ -13,12 +15,13 @@ interface Exercise {
 }
 
 export default function NewWorkoutPage() {
+  const router = useRouter();
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [templates, setTemplates] = useState<any[]>([]);
-  const [selectedExercises, setSelectedExercises] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<{ id: string; name: string; exercises?: { exerciseId: string; customName?: string; sets?: number; reps?: number; weight?: number }[] }[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<{ exerciseId: string; exercise: { id: string; name: string }; customName: string; sets: string; reps: string; weight: string; order: number }[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-  const [previousWorkoutData, setPreviousWorkoutData] = useState<any>(null);
+  const [previousWorkoutData, setPreviousWorkoutData] = useState<{ exerciseId: string; sets?: number; reps?: number; weight?: number } | null>(null);
   const [workoutData, setWorkoutData] = useState({
     date: new Date().toISOString().split('T')[0],
     duration: '',
@@ -27,16 +30,28 @@ export default function NewWorkoutPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchDebounced, setSearchDebounced] = useState('');
 
   useEffect(() => {
-    fetchExercises();
+    const t = setTimeout(() => setSearchDebounced(searchQuery), 350);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
+  useEffect(() => {
     fetchTemplates();
   }, []);
 
+  useEffect(() => {
+    fetchExercises();
+  }, [searchDebounced]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fetchExercises = async () => {
     try {
-      const data = await api.getExercises();
-      setExercises(data.exercises || []);
+      const filters: Record<string, string> = { limit: '100' };
+      if (searchDebounced.trim()) filters.search = searchDebounced.trim();
+      const data = await api.getExercises(filters) as { exercises?: { id: string; name: string }[] };
+      setExercises(data?.exercises ?? []);
     } catch (error) {
       console.error('Error fetching exercises:', error);
     }
@@ -44,16 +59,16 @@ export default function NewWorkoutPage() {
 
   const fetchTemplates = async () => {
     try {
-      const data = await api.getWorkoutTemplates();
-      setTemplates(data.templates || []);
+      const data = await api.getWorkoutTemplates() as { templates?: { id: string; name: string; exercises?: { exerciseId: string; customName?: string; sets?: number; reps?: number; weight?: number }[] }[] };
+      setTemplates(data?.templates ?? []);
     } catch (error) {
       console.error('Error fetching templates:', error);
     }
   };
 
-  const loadTemplate = (template: any) => {
+  const loadTemplate = (template: { exercises?: { exerciseId: string; customName?: string; sets?: number; reps?: number; weight?: number }[] }) => {
     const templateExercises = Array.isArray(template.exercises) ? template.exercises : [];
-    setSelectedExercises(templateExercises.map((ex: any, idx: number) => ({
+    setSelectedExercises(templateExercises.map((ex, idx) => ({
       exerciseId: ex.exerciseId,
       exercise: exercises.find(e => e.id === ex.exerciseId) || { id: ex.exerciseId, name: ex.customName || 'Вправа' },
       customName: ex.customName || '',
@@ -84,20 +99,25 @@ export default function NewWorkoutPage() {
       });
       setShowSaveTemplateModal(false);
       fetchTemplates();
-      alert('Шаблон збережено!');
+      toast.success('Шаблон збережено!');
     } catch (error) {
       console.error('Error saving template:', error);
-      alert('Помилка збереження шаблону');
+      toast.error('Помилка збереження шаблону');
     }
   };
 
   const fetchPreviousWorkout = async (exerciseId: string) => {
     try {
-      const workouts = await api.getWorkouts({ limit: '10' });
-      const allExercises = workouts.workouts?.flatMap((w: any) => w.exercises || []) || [];
-      const previousExercise = allExercises.find((e: any) => e.exerciseId === exerciseId);
-      if (previousExercise) {
-        setPreviousWorkoutData(previousExercise);
+      const workouts = await api.getWorkouts({ limit: '10' }) as { workouts?: { exercises?: { exerciseId?: string; sets?: number; reps?: number; weight?: number }[] }[] };
+      const allExercises = workouts?.workouts?.flatMap((w) => w.exercises ?? []) ?? [];
+      const previousExercise = allExercises.find((e) => e.exerciseId === exerciseId);
+      if (previousExercise && previousExercise.exerciseId) {
+        setPreviousWorkoutData({
+          exerciseId: previousExercise.exerciseId,
+          sets: previousExercise.sets,
+          reps: previousExercise.reps,
+          weight: previousExercise.weight
+        });
       }
     } catch (error) {
       console.error('Error fetching previous workout:', error);
@@ -146,8 +166,8 @@ export default function NewWorkoutPage() {
       };
 
       await api.createWorkout(workout);
-      window.location.href = '/workouts';
-    } catch (err) {
+      router.push('/workouts');
+    } catch {
       setError('Помилка підключення до сервера');
     } finally {
       setLoading(false);
@@ -261,6 +281,15 @@ export default function NewWorkoutPage() {
               <Card.Body>
                 <h5 className="mb-4" style={{ color: '#ffffff', fontWeight: 700 }}>Вправи</h5>
                 
+                <Form.Control
+                  type="search"
+                  placeholder="Пошук вправ..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="mb-3"
+                  style={{ color: '#ffffff', fontWeight: 500 }}
+                />
+                
                 <Form.Select
                   className="mb-4"
                   onChange={(e) => {
@@ -268,6 +297,8 @@ export default function NewWorkoutPage() {
                     if (exercise) addExercise(exercise);
                   }}
                   style={{ color: '#ffffff', fontWeight: 500 }}
+                  aria-label="Виберіть вправу"
+                  title="Виберіть вправу"
                 >
                   <option value="" style={{ background: '#1a1a1a', color: '#ffffff' }}>+ Додати вправу</option>
                   {exercises.map(ex => (
@@ -304,7 +335,7 @@ export default function NewWorkoutPage() {
                             </Button>
                           </div>
                           <Form.Group className="mb-3">
-                            <Form.Label className="small" style={{ color: '#ffffff', fontWeight: 600 }}>Користувацька назва (необов'язково)</Form.Label>
+                            <Form.Label className="small" style={{ color: '#ffffff', fontWeight: 600 }}>Користувацька назва (необов&apos;язково)</Form.Label>
                             <Form.Control
                               type="text"
                               placeholder="Залиште порожнім для використання стандартної назви"

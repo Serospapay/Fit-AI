@@ -1,24 +1,40 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Container, Row, Col, Card, Button, Spinner, Badge, Alert } from 'react-bootstrap';
 import BootstrapClient from '../components/BootstrapClient';
 import GymPostersBackground from '../components/GymPostersBackground';
 import ModernNavbar from '../components/ModernNavbar';
+import ConfirmModal from '../components/ConfirmModal';
 import { api } from '../lib/api';
+
+interface NutritionLogItem {
+  name?: string;
+  nameUk?: string;
+  amount?: number;
+}
+
+interface NutritionLogTotals {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
 
 interface NutritionLog {
   id: string;
   date: string;
   mealType: string;
-  items: any[];
-  totals?: any;
+  items: NutritionLogItem[];
+  totals?: NutritionLogTotals;
 }
 
 export default function NutritionPage() {
   const [logs, setLogs] = useState<NutritionLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; id: string | null; loading: boolean }>({ show: false, id: null, loading: false });
 
   useEffect(() => {
     fetchLogs();
@@ -28,8 +44,8 @@ export default function NutritionPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await api.getNutritionLogs();
-      setLogs(data.logs || []);
+      const data = await api.getNutritionLogs() as { logs?: NutritionLog[] };
+      setLogs(data?.logs ?? []);
     } catch (error: unknown) {
       console.error('Error fetching nutrition logs:', error);
       setError((error as Error).message || 'Помилка завантаження записів харчування');
@@ -38,16 +54,21 @@ export default function NutritionPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Видалити цей запис?')) return;
+  const handleDeleteClick = (logId: string) => {
+    setDeleteModal({ show: true, id: logId, loading: false });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.id) return;
+    setDeleteModal(prev => ({ ...prev, loading: true }));
     try {
-      await api.deleteNutritionLog(id);
-      setLogs(logs.filter(l => l.id !== id));
+      await api.deleteNutritionLog(deleteModal.id);
+      setLogs(logs.filter(l => l.id !== deleteModal.id));
       setError(null);
-    } catch (error: unknown) {
-      console.error('Error deleting nutrition log:', error);
-      setError((error as Error).message || 'Помилка видалення запису');
+      setDeleteModal({ show: false, id: null, loading: false });
+    } catch (err) {
+      setError((err as Error).message || 'Помилка видалення запису');
+      setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -91,42 +112,14 @@ export default function NutritionPage() {
             <div className="d-flex gap-2 flex-wrap">
               <Button 
                 variant="outline-warning" 
-                onClick={async () => {
-                  const token = localStorage.getItem('token');
-                  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/nutrition/excel`;
-                  const response = await fetch(url, {
-                    headers: {
-                      'Authorization': `Bearer ${token}`
-                    }
-                  });
-                  const blob = await response.blob();
-                  const downloadUrl = window.URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = downloadUrl;
-                  link.download = `kharchuvannya_${new Date().toISOString().split('T')[0]}.xlsx`;
-                  link.click();
-                }}
+                onClick={() => api.downloadExport('nutrition/excel', `kharchuvannya_${new Date().toISOString().split('T')[0]}.xlsx`).catch((e) => setError(e instanceof Error ? e.message : 'Помилка завантаження'))}
               >
                 <i className="bi bi-file-earmark-spreadsheet me-2"></i>
                 Excel
               </Button>
               <Button 
                 variant="outline-danger" 
-                onClick={async () => {
-                  const token = localStorage.getItem('token');
-                  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/export/nutrition/pdf`;
-                  const response = await fetch(url, {
-                    headers: {
-                      'Authorization': `Bearer ${token}`
-                    }
-                  });
-                  const blob = await response.blob();
-                  const downloadUrl = window.URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = downloadUrl;
-                  link.download = `kharchuvannya_${new Date().toISOString().split('T')[0]}.pdf`;
-                  link.click();
-                }}
+                onClick={() => api.downloadExport('nutrition/pdf', `kharchuvannya_${new Date().toISOString().split('T')[0]}.pdf`).catch((e) => setError(e instanceof Error ? e.message : 'Помилка завантаження'))}
               >
                 <i className="bi bi-file-pdf me-2"></i>
                 PDF
@@ -143,6 +136,17 @@ export default function NutritionPage() {
               {error}
             </Alert>
           )}
+
+          <ConfirmModal
+            show={deleteModal.show}
+            title="Видалити запис"
+            message="Ви впевнені, що хочете видалити цей запис харчування?"
+            confirmLabel="Видалити"
+            variant="danger"
+            onConfirm={handleDeleteConfirm}
+            onCancel={() => setDeleteModal({ show: false, id: null, loading: false })}
+            loading={deleteModal.loading}
+          />
 
           {loading ? (
             <div className="text-center py-5">
@@ -182,21 +186,26 @@ export default function NutritionPage() {
                             {getMealTypeLabel(log.mealType)}
                           </Badge>
                         </div>
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="text-danger"
-                          onClick={() => handleDelete(log.id)}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </Button>
+                        <div className="d-flex gap-1">
+                          <Link href={`/nutrition/${log.id}/edit`} className="btn btn-link btn-sm text-warning p-0 me-1">
+                            <i className="bi bi-pencil"></i>
+                          </Link>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="text-danger p-0"
+                            onClick={() => handleDeleteClick(log.id)}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </Button>
+                        </div>
                       </div>
 
                       {log.items && log.items.length > 0 && (
                         <div className="mb-3">
                           <h6 className="fw-bold mb-2">Продукти ({log.items.length}):</h6>
                           <div className="small">
-                            {log.items.slice(0, 3).map((item: any, idx: number) => (
+                            {log.items.slice(0, 3).map((item: NutritionLogItem, idx: number) => (
                               <div key={idx} className="mb-1">
                                 • {item.nameUk || item.name} - {item.amount}г
                               </div>
@@ -212,19 +221,19 @@ export default function NutritionPage() {
                         <div className="border-top pt-3">
                           <div className="d-flex justify-content-between mb-1">
                             <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Калорії:</small>
-                            <small className="fw-bold">{Math.round(log.totals.calories)} ккал</small>
+                            <small className="fw-bold">{Math.round(log.totals.calories ?? 0)} ккал</small>
                           </div>
                           <div className="d-flex justify-content-between mb-1">
                             <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Білки:</small>
-                            <small className="fw-bold">{Math.round(log.totals.protein)} г</small>
+                            <small className="fw-bold">{Math.round(log.totals.protein ?? 0)} г</small>
                           </div>
                           <div className="d-flex justify-content-between mb-1">
                             <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Вуглеводи:</small>
-                            <small className="fw-bold">{Math.round(log.totals.carbs)} г</small>
+                            <small className="fw-bold">{Math.round(log.totals.carbs ?? 0)} г</small>
                           </div>
                           <div className="d-flex justify-content-between">
                             <small style={{ color: '#f5f5f5', fontWeight: 600 }}>Жири:</small>
-                            <small className="fw-bold">{Math.round(log.totals.fat)} г</small>
+                            <small className="fw-bold">{Math.round(log.totals.fat ?? 0)} г</small>
                           </div>
                         </div>
                       )}
