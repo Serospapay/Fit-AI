@@ -379,7 +379,14 @@ export default function DashboardPage() {
                         {stats.mostExercised && stats.mostExercised.length > 0 ? (
                           <div className="list-group list-group-flush">
                             {stats.mostExercised.map((ex, idx) => (
-                              <div key={idx} className="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom border-secondary">
+                              <div
+                                key={idx}
+                                className="list-group-item d-flex justify-content-between align-items-center border-bottom border-secondary"
+                                style={{
+                                  backgroundColor: 'rgba(10, 10, 10, 0.75)',
+                                  padding: '0.65rem 0.75rem',
+                                }}
+                              >
                                 <div style={{ fontFamily: 'var(--font-oswald)', color: '#f5f5f5' }}>
                                   <Badge bg="primary" className="me-2">#{idx + 1}</Badge>
                                   {ex.exerciseNameUk || ex.exerciseName}
@@ -619,7 +626,7 @@ export default function DashboardPage() {
         <footer className="flex-shrink-0 py-3" style={{ position: 'relative', zIndex: 100, borderTop: '2px solid rgba(212, 175, 55, 0.2)' }}>
           <Container>
             <div className="text-center" style={{ color: '#e0e0e0', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.85rem', fontWeight: 500 }}>
-              © 2024 Кишеньковий тренер
+              © 2026 Кишеньковий тренер
             </div>
           </Container>
         </footer>

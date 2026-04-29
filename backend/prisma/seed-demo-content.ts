@@ -18,11 +18,17 @@ async function main() {
     throw new Error(`Демо-користувача ${DEMO_EMAIL} не знайдено. Спочатку виконай prisma:seed:user`);
   }
 
-  const exercises = await prisma.exercise.findMany({
-    take: 20,
+  const allExercises = await prisma.exercise.findMany({
     orderBy: { createdAt: 'asc' },
     select: { id: true, name: true },
   });
+  const ukrainianExercises = allExercises.filter((exercise) =>
+    /[А-Яа-яІіЇїЄєҐґ]/.test(exercise.name),
+  );
+  const exercises =
+    ukrainianExercises.length >= 6
+      ? ukrainianExercises
+      : allExercises;
 
   await prisma.workoutExercise.deleteMany({
     where: { workout: { userId: user.id } },

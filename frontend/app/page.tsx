@@ -261,9 +261,9 @@ export default function Home() {
                   </ul>
                 </Col>
                 <Col md={4} className="mb-4">
-                  <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>Про проект</h6>
+                  <h6 style={{ fontFamily: 'var(--font-oswald)', color: '#d4af37', marginBottom: '1rem' }}>Про сервіс</h6>
                   <p style={{ color: '#aaa', fontFamily: 'var(--font-roboto-condensed)', fontSize: '0.9rem' }}>
-                    Освітній проект для дослідження використання AI у фітнесі та здоровому способі життя.
+                    Персональний фітнес-сервіс для відстеження тренувань, харчування та прогресу.
                     Всі дані зберігаються локально.
                   </p>
                 </Col>
@@ -271,7 +271,7 @@ export default function Home() {
               <hr style={{ borderColor: 'rgba(212, 175, 55, 0.2)' }} />
               <div className="text-center">
                 <p style={{ color: '#888', fontFamily: 'var(--font-roboto-condensed)', marginBottom: 0 }}>
-                  &copy; 2024 Кишеньковий тренер. Освітній проект
+                  &copy; 2026 Кишеньковий тренер
                 </p>
               </div>
             </Container>

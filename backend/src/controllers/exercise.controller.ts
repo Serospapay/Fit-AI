@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { handleControllerError } from '../utils/apiResponse';
+import { localizeExerciseName } from '../utils/exerciseLocalization';
 
 export const getAllExercises = async (req: Request, res: Response) => {
   try {
@@ -27,7 +28,10 @@ export const getAllExercises = async (req: Request, res: Response) => {
     ]);
 
     res.json({
-      exercises,
+      exercises: exercises.map((exercise) => ({
+        ...exercise,
+        name: localizeExerciseName(exercise.name),
+      })),
       pagination: {
         page: pageNum,
         limit: limitNum,
@@ -55,10 +59,13 @@ export const getExerciseById = async (req: Request, res: Response) => {
     });
 
     if (!exercise) {
-      return res.status(404).json({ error: 'Exercise not found' });
+      return res.status(404).json({ error: 'Вправу не знайдено' });
     }
 
-    res.json(exercise);
+    res.json({
+      ...exercise,
+      name: localizeExerciseName(exercise.name),
+    });
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'ExerciseController',

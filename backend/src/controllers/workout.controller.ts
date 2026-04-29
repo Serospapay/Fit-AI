@@ -3,6 +3,24 @@ import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import logger from '../lib/logger';
 import { handleControllerError } from '../utils/apiResponse';
+import { localizeExerciseName } from '../utils/exerciseLocalization';
+
+function localizeWorkoutPayload<T extends { exercises?: Array<{ exercise?: { name?: string | null } | null; customName?: string | null }> }>(workout: T): T {
+  if (!workout?.exercises?.length) return workout;
+  return {
+    ...workout,
+    exercises: workout.exercises.map((item) => ({
+      ...item,
+      exercise: item.exercise
+        ? {
+            ...item.exercise,
+            name: localizeExerciseName(item.exercise.name),
+          }
+        : item.exercise,
+      customName: item.customName ? localizeExerciseName(item.customName) : item.customName,
+    })),
+  };
+}
 
 export const createWorkout = async (req: AuthRequest, res: Response) => {
   try {
@@ -55,7 +73,7 @@ export const createWorkout = async (req: AuthRequest, res: Response) => {
     });
 
     logger.info('Workout created successfully', { workoutId: workout.id });
-    res.status(201).json(workout);
+    res.status(201).json(localizeWorkoutPayload(workout));
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'WorkoutController',
@@ -97,7 +115,7 @@ export const getUserWorkouts = async (req: AuthRequest, res: Response) => {
       prisma.workout.count({ where })
     ]);
 
-    res.json({ workouts, total });
+    res.json({ workouts: workouts.map(localizeWorkoutPayload), total });
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'WorkoutController',
@@ -130,10 +148,10 @@ export const getWorkoutById = async (req: AuthRequest, res: Response) => {
     });
 
     if (!workout) {
-      return res.status(404).json({ error: 'Workout not found' });
+      return res.status(404).json({ error: 'Тренування не знайдено' });
     }
 
-    res.json(workout);
+    res.json(localizeWorkoutPayload(workout));
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'WorkoutController',
@@ -156,7 +174,7 @@ export const updateWorkout = async (req: AuthRequest, res: Response) => {
     });
 
     if (!workout) {
-      return res.status(404).json({ error: 'Workout not found' });
+      return res.status(404).json({ error: 'Тренування не знайдено' });
     }
 
     // Update workout basic fields
@@ -215,10 +233,10 @@ export const updateWorkout = async (req: AuthRequest, res: Response) => {
         }
       });
 
-      return res.json(finalWorkout);
+      return res.json(finalWorkout ? localizeWorkoutPayload(finalWorkout) : finalWorkout);
     }
 
-    res.json(updatedWorkout);
+    res.json(localizeWorkoutPayload(updatedWorkout));
   } catch (error: unknown) {
     return handleControllerError(res, error, {
       controller: 'WorkoutController',
@@ -240,7 +258,7 @@ export const deleteWorkout = async (req: AuthRequest, res: Response) => {
     });
 
     if (!workout) {
-      return res.status(404).json({ error: 'Workout not found' });
+      return res.status(404).json({ error: 'Тренування не знайдено' });
     }
 
     await prisma.workout.delete({
@@ -367,7 +385,7 @@ export const getWorkoutStats = async (req: AuthRequest, res: Response) => {
       const exercise = exercises.find(e => e.id === mg.exerciseId);
       return {
         exerciseId: mg.exerciseId,
-        exerciseName: exercise?.name,
+        exerciseName: localizeExerciseName(exercise?.name),
         count: mg._count
       };
     }).sort((a, b) => b.count - a.count).slice(0, 5);
